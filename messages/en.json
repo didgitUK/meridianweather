@@ -1,0 +1,23 @@
+{
+  "Seo": {
+    "homeTitle": "weather dashboard",
+    "homeDescription": "Track current conditions and forecasts for the cities that matter to you — in your browser today, as an installable app tomorrow.",
+    "homeIntro": "meridian is a multi-city weather dashboard for tracking live conditions, short-range forecasts, and optional email alerts across the places that matter to you.",
+    "docsTitle": "Documentation",
+    "docsDescription": "Guides for using the meridian dashboard, forecasts, subscriptions, and API behaviour.",
+    "cityForecastTitle": "{city} weather forecast",
+    "cityForecastDescription": "{summary} in {city}, {country} — 7-day forecast and live conditions on meridian.",
+    "cityForecastFallback": "Track current conditions and forecasts for {city}, {country} on meridian.",
+    "dataSource": "Weather data source: OpenWeather.",
+    "notFoundTitle": "Page not found",
+    "notFoundDescription": "The page you requested could not be found on meridian."
+  },
+  "Errors": {
+    "notFoundHeading": "Page not found",
+    "notFoundBody": "The page you are looking for does not exist or may have moved.",
+    "backHome": "Back to dashboard",
+    "viewDocs": "Read documentation",
+    "errorHeading": "Something went wrong",
+    "errorBody": "meridian hit an unexpected error. Try again or return to the dashboard."
+  }
+}

@@ -1,0 +1,16 @@
+export const STORAGE_KEYS = {
+  clientId: 'meridian:client-id',
+  savedCities: 'meridian:saved-cities',
+  checkedCities: 'meridian:checked-cities',
+  userLocation: 'meridian:user-location',
+  weatherCache: 'meridian:weather-cache',
+  theme: 'meridian:theme',
+  cookieConsent: 'meridian:cookie-consent',
+  subscriptions: 'meridian:subscriptions',
+  tier: 'meridian:tier',
+  consent: 'meridian:consent',
+  accessibility: 'meridian:accessibility',
+  cityDetailAccordion: 'meridian:city-detail-accordion',
+  temperatureUnit: 'meridian:temperature-unit',
+  weatherRefreshMode: 'meridian:weather-refresh-mode',
+};

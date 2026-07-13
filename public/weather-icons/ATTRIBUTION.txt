@@ -1,0 +1,5 @@
+Meteocons weather icons
+Copyright (c) Bas Milius
+https://github.com/basmilius/meteocons
+
+MIT License — icons copied from @meteocons/svg-static (fill style).

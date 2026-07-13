@@ -1,0 +1,40 @@
+:root {
+  --font-heading: "Fraunces", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+
+  /*
+   * Fluid type scale — scales between 320px and 1280px viewports.
+   * Maps to Tailwind text-* utilities via globals.css @theme.
+   */
+  --font-size-xs: clamp(0.6875rem, 0.66rem + 0.14vw, 0.75rem);
+  --font-size-sm: clamp(0.8125rem, 0.79rem + 0.11vw, 0.875rem);
+  --font-size-base: clamp(0.9375rem, 0.91rem + 0.14vw, 1rem);
+  --font-size-lg: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --font-size-xl: clamp(1.125rem, 1.05rem + 0.38vw, 1.25rem);
+  --font-size-2xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+  --font-size-3xl: clamp(1.5rem, 1.35rem + 0.75vw, 1.875rem);
+  --font-size-4xl: clamp(1.875rem, 1.65rem + 1.13vw, 2.25rem);
+  --font-size-5xl: clamp(2.25rem, 1.95rem + 1.5vw, 3rem);
+  --font-size-6xl: clamp(2.5rem, 2.1rem + 2vw, 3.75rem);
+
+  /* Semantic aliases for hero headings and temperature displays */
+  --font-size-display: clamp(2.5rem, 1.75rem + 3vw, 4.5rem);
+  --font-size-display-sm: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+  --font-size-metric: clamp(2rem, 1.65rem + 1.75vw, 2.25rem);
+  --font-size-metric-lg: clamp(2.5rem, 2rem + 2.5vw, 3rem);
+
+  --line-height-xs: 1.25;
+  --line-height-sm: 1.43;
+  --line-height-base: 1.5;
+  --line-height-lg: 1.56;
+  --line-height-xl: 1.4;
+  --line-height-2xl: 1.33;
+  --line-height-3xl: 1.2;
+  --line-height-4xl: 1.11;
+  --line-height-5xl: 1.08;
+  --line-height-6xl: 1.05;
+  --line-height-display: 1.08;
+  --line-height-display-sm: 1.25;
+  --line-height-metric: 1;
+  --line-height-metric-lg: 1;
+}

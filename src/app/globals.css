@@ -1,26 +1,255 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import "../design-system/themes/default.css";
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-text-primary);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-text-primary);
+  --color-popover: var(--color-surface);
+  --color-popover-foreground: var(--color-text-primary);
+  --color-primary: var(--color-accent);
+  --color-primary-foreground: var(--color-accent-foreground);
+  --color-secondary: var(--color-surface-elevated);
+  --color-secondary-foreground: var(--color-text-primary);
+  --color-muted: var(--color-surface-elevated);
+  --color-muted-foreground: var(--color-text-muted);
+  --color-accent: var(--color-surface-elevated);
+  --color-accent-foreground: var(--color-text-primary);
+  --color-border: var(--color-border);
+  --color-section: var(--color-section);
+  --color-header: var(--color-header-bg);
+  --color-input: var(--color-border);
+  --color-ring: var(--color-focus-ring);
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-heading);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+
+  /* Fluid typography — overrides default Tailwind text-* scale */
+  --text-xs: var(--font-size-xs);
+  --text-xs--line-height: var(--line-height-xs);
+  --text-sm: var(--font-size-sm);
+  --text-sm--line-height: var(--line-height-sm);
+  --text-base: var(--font-size-base);
+  --text-base--line-height: var(--line-height-base);
+  --text-lg: var(--font-size-lg);
+  --text-lg--line-height: var(--line-height-lg);
+  --text-xl: var(--font-size-xl);
+  --text-xl--line-height: var(--line-height-xl);
+  --text-2xl: var(--font-size-2xl);
+  --text-2xl--line-height: var(--line-height-2xl);
+  --text-3xl: var(--font-size-3xl);
+  --text-3xl--line-height: var(--line-height-3xl);
+  --text-4xl: var(--font-size-4xl);
+  --text-4xl--line-height: var(--line-height-4xl);
+  --text-5xl: var(--font-size-5xl);
+  --text-5xl--line-height: var(--line-height-5xl);
+  --text-6xl: var(--font-size-6xl);
+  --text-6xl--line-height: var(--line-height-6xl);
+  --text-display: var(--font-size-display);
+  --text-display--line-height: var(--line-height-display);
+  --text-display-sm: var(--font-size-display-sm);
+  --text-display-sm--line-height: var(--line-height-display-sm);
+  --text-metric: var(--font-size-metric);
+  --text-metric--line-height: var(--line-height-metric);
+  --text-metric-lg: var(--font-size-metric-lg);
+  --text-metric-lg--line-height: var(--line-height-metric-lg);
+
+  /* Fluid spacing utilities — px-page-x, py-section-y, gap-card, etc. */
+  --spacing-page-x: var(--space-page-inline);
+  --spacing-section-y: var(--space-section-block);
+  --spacing-section-y-lg: var(--space-section-block-lg);
+  --spacing-card: var(--space-card-gap);
+  --spacing-stack-1: var(--space-stack-1);
+  --spacing-stack-2: var(--space-stack-2);
+  --spacing-stack-3: var(--space-stack-3);
+  --spacing-stack-4: var(--space-stack-4);
+  --spacing-stack-6: var(--space-stack-6);
+  --spacing-stack-8: var(--space-stack-8);
+  --spacing-stack-10: var(--space-stack-10);
+  --spacing-stack-12: var(--space-stack-12);
+
+  /* Fluid icon / image sizing — size-icon-xs, size-icon-lg, etc. */
+  --size-icon-xs: var(--icon-size-xs);
+  --size-icon-sm: var(--icon-size-sm);
+  --size-icon-md: var(--icon-size-md);
+  --size-icon-lg: var(--icon-size-lg);
+  --size-image-avatar-sm: var(--image-avatar-sm);
+  --spacing-touch-min: var(--touch-min);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground text-base antialiased;
+    font-family: var(--font-body);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-heading);
+    font-optical-sizing: auto;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /* Semantic layout shortcuts — prefer over breakpoint-stacked px-4 sm:px-6 */
+  .px-page {
+    padding-inline: var(--space-page-inline);
+  }
+
+  .py-section {
+    padding-block: var(--space-section-block);
+  }
+
+  .py-section-lg {
+    padding-block: var(--space-section-block-lg);
+  }
+
+  .gap-card {
+    gap: var(--space-card-gap);
+  }
+
+  .gap-stack-4 {
+    gap: var(--space-stack-4);
+  }
+
+  .gap-stack-6 {
+    gap: var(--space-stack-6);
+  }
+
+  .gap-stack-8 {
+    gap: var(--space-stack-8);
+  }
+
+  /* Image scale helper for responsive decorative assets */
+  .scale-image-fluid {
+    transform: scale(var(--image-scale-factor));
+    transform-origin: center;
+  }
+
+  /* Safe-area positioning — prefer over inline env(safe-area-inset-*) */
+  .bottom-safe {
+    bottom: max(1rem, var(--safe-area-inset-bottom));
+  }
+
+  .pb-safe {
+    padding-bottom: max(1rem, var(--safe-area-inset-bottom));
+  }
+
+  /* Touch-target minimum — prefer over min-h-11 / size-11 stacks */
+  .min-h-touch {
+    min-height: var(--touch-min);
+  }
+
+  .min-w-touch {
+    min-width: var(--touch-min);
+  }
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.font-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@media print {
+  aside {
+    display: none;
+  }
+}
+
+:root,
+.light {
+  --scrollbar-track: #ececec;
+  --scrollbar-thumb: #b3b3b3;
+  --scrollbar-thumb-hover: #8a8a8a;
+}
+
+.dark {
+  --scrollbar-track: #1f1f1f;
+  --scrollbar-thumb: #404040;
+  --scrollbar-thumb-hover: #525252;
+}
+
+.meridian-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.meridian-scrollbar::-webkit-scrollbar {
+  height: 8px;
+}
+
+.meridian-scrollbar::-webkit-scrollbar-track {
+  margin-inline: 4px;
+  border-radius: 999px;
+  background: var(--scrollbar-track);
+}
+
+.meridian-scrollbar::-webkit-scrollbar-thumb {
+  border: 2px solid var(--scrollbar-track);
+  border-radius: 999px;
+  background: var(--scrollbar-thumb);
+}
+
+.meridian-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+.meridian-scrollbar:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+html {
+  font-size: calc(100% * var(--a11y-font-scale, 1));
+}
+
+html.a11y-readable-font body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+html.a11y-underline-links a:not([class*='underline-none']) {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+html.a11y-enhanced-focus :is(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 3px;
+}
+
+html.a11y-high-contrast {
+  --color-text-primary: #000;
+  --color-text-muted: #1a1a1a;
+  --color-border: #000;
+  --color-focus-ring: #000;
+}
+
+html.a11y-high-contrast.dark {
+  --color-text-primary: #fff;
+  --color-text-muted: #e5e5e5;
+  --color-border: #fff;
+  --color-focus-ring: #fff;
+}
+
+html.a11y-reduced-motion *,
+html.a11y-reduced-motion *::before,
+html.a11y-reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }

@@ -1,0 +1,12 @@
+:root {
+  /* Reference tokens for custom media queries and JS; Tailwind defaults: sm/md/lg/xl/2xl */
+  --breakpoint-sm: 40rem; /* 640px — large phones, small tablets */
+  --breakpoint-md: 48rem; /* 768px — tablets */
+  --breakpoint-lg: 64rem; /* 1024px — small laptops */
+  --breakpoint-xl: 80rem; /* 1280px — desktop */
+  --breakpoint-2xl: 96rem; /* 1536px — wide desktop */
+
+  /* Fluid scale viewport anchors (used by clamp() token math) */
+  --fluid-min-vw: 20rem; /* 320px */
+  --fluid-max-vw: 80rem; /* 1280px */
+}

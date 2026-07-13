@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1350" viewBox="0 0 2400 1350" role="img" aria-label="United States">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a365d"/>
+      <stop offset="100%" stop-color="#fbd38d"/>
+    </linearGradient>
+    <linearGradient id="land" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2d3748"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+  <rect width="2400" height="1350" fill="url(#sky)"/>
+  <circle cx="1900" cy="320" r="90" fill="#fef3c7" opacity="0.9"/>
+  <path d="M0 820 C400 700 800 900 1200 780 C1600 660 2000 820 2400 740 L2400 1350 L0 1350 Z" fill="url(#land)"/>
+  <path d="M0 980 C500 900 900 1040 1400 960 C1800 900 2100 1000 2400 940 L2400 1350 L0 1350 Z" fill="#0b1220" opacity="0.55"/>
+  <text x="80" y="120" fill="rgba(255,255,255,0.55)" font-family="Georgia, serif" font-size="42">United States</text>
+</svg>

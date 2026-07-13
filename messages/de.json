@@ -1,0 +1,23 @@
+{
+  "Seo": {
+    "homeTitle": "Wetter-Dashboard",
+    "homeDescription": "Verfolgen Sie aktuelle Bedingungen und Vorhersagen für die Städte, die Ihnen wichtig sind — heute im Browser, morgen als installierbare App.",
+    "homeIntro": "meridian ist ein Multi-Stadt-Wetter-Dashboard für Live-Bedingungen, Kurzzeitprognosen und optionale E-Mail-Benachrichtigungen.",
+    "docsTitle": "Dokumentation",
+    "docsDescription": "Anleitungen für Dashboard, Prognosen, Abonnements und API-Verhalten.",
+    "cityForecastTitle": "Wettervorhersage {city}",
+    "cityForecastDescription": "{summary} in {city}, {country} — 7-Tage-Prognose und Live-Bedingungen auf meridian.",
+    "cityForecastFallback": "Aktuelle Bedingungen und Vorhersagen für {city}, {country} auf meridian.",
+    "dataSource": "Wetterdatenquelle: OpenWeather.",
+    "notFoundTitle": "Seite nicht gefunden",
+    "notFoundDescription": "Die angeforderte Seite wurde auf meridian nicht gefunden."
+  },
+  "Errors": {
+    "notFoundHeading": "Seite nicht gefunden",
+    "notFoundBody": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "backHome": "Zurück zum Dashboard",
+    "viewDocs": "Dokumentation lesen",
+    "errorHeading": "Etwas ist schiefgelaufen",
+    "errorBody": "meridian ist auf einen unerwarteten Fehler gestoßen. Bitte erneut versuchen."
+  }
+}

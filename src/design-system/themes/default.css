@@ -1,0 +1,47 @@
+@import "../tokens/colors.css";
+@import "../tokens/breakpoints.css";
+@import "../tokens/typography.css";
+@import "../tokens/spacing.css";
+@import "../tokens/sizing.css";
+@import "../tokens/radii.css";
+
+:root,
+.light {
+  --color-background: #ffffff;
+  --color-section: #f7f7f7;
+  --color-surface: #ffffff;
+  --color-surface-elevated: #f7f7f7;
+  --color-text-primary: var(--primitive-gray-950);
+  --color-text-muted: var(--primitive-gray-500);
+  --color-border: #e8e8e8;
+  --color-accent: var(--primitive-gray-950);
+  --color-accent-foreground: var(--primitive-white);
+  --color-accent-hover: var(--primitive-gray-800);
+  --color-focus-ring: rgb(10 10 10 / 0.3);
+  --color-header-bg: var(--primitive-gray-950);
+  --color-header-fg: #ffffff;
+  --color-header-muted: #a3a3a3;
+  --color-header-border: #262626;
+  --color-footer-legal-bg: var(--primitive-black);
+  --weather-card-bg: var(--color-surface);
+  --weather-card-border: var(--color-border);
+}
+
+.dark {
+  --color-background: var(--primitive-black);
+  --color-section: #111111;
+  --color-surface: var(--primitive-gray-900);
+  --color-surface-elevated: var(--primitive-gray-800);
+  --color-text-primary: var(--primitive-white);
+  --color-text-muted: var(--primitive-gray-400);
+  --color-border: var(--primitive-gray-800);
+  --color-accent: var(--primitive-white);
+  --color-accent-foreground: var(--primitive-black);
+  --color-accent-hover: var(--primitive-gray-100);
+  --color-focus-ring: rgb(255 255 255 / 0.3);
+  --color-header-bg: #0a0a0a;
+  --color-header-fg: #ffffff;
+  --color-header-muted: var(--primitive-gray-400);
+  --color-header-border: var(--primitive-gray-800);
+  --color-footer-legal-bg: var(--primitive-black);
+}

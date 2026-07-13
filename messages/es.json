@@ -1,0 +1,23 @@
+{
+  "Seo": {
+    "homeTitle": "panel meteorológico",
+    "homeDescription": "Sigue las condiciones actuales y los pronósticos de las ciudades que te importan.",
+    "homeIntro": "meridian es un panel meteorológico multi-ciudad para condiciones en vivo, pronósticos a corto plazo y alertas por correo.",
+    "docsTitle": "Documentación",
+    "docsDescription": "Guías del panel meridian, pronósticos, suscripciones y comportamiento de la API.",
+    "cityForecastTitle": "Pronóstico del tiempo en {city}",
+    "cityForecastDescription": "{summary} en {city}, {country} — pronóstico de 7 días en meridian.",
+    "cityForecastFallback": "Sigue condiciones y pronósticos para {city}, {country} en meridian.",
+    "dataSource": "Fuente meteorológica: OpenWeather.",
+    "notFoundTitle": "Página no encontrada",
+    "notFoundDescription": "No se encontró la página solicitada en meridian."
+  },
+  "Errors": {
+    "notFoundHeading": "Página no encontrada",
+    "notFoundBody": "La página que buscas no existe o se ha movido.",
+    "backHome": "Volver al panel",
+    "viewDocs": "Leer documentación",
+    "errorHeading": "Algo salió mal",
+    "errorBody": "meridian encontró un error inesperado. Inténtalo de nuevo."
+  }
+}

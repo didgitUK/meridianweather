@@ -1,0 +1,42 @@
+:root,
+.light {
+  --scrollbar-track: #ececec;
+  --scrollbar-thumb: #b3b3b3;
+  --scrollbar-thumb-hover: #8a8a8a;
+}
+
+.dark {
+  --scrollbar-track: #1f1f1f;
+  --scrollbar-thumb: #404040;
+  --scrollbar-thumb-hover: #525252;
+}
+
+.meridian-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.meridian-scrollbar::-webkit-scrollbar {
+  height: 8px;
+}
+
+.meridian-scrollbar::-webkit-scrollbar-track {
+  margin-inline: 4px;
+  border-radius: 999px;
+  background: var(--scrollbar-track);
+}
+
+.meridian-scrollbar::-webkit-scrollbar-thumb {
+  border: 2px solid var(--scrollbar-track);
+  border-radius: 999px;
+  background: var(--scrollbar-thumb);
+}
+
+.meridian-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+.meridian-scrollbar:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}

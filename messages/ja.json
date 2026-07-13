@@ -1,0 +1,23 @@
+{
+  "Seo": {
+    "homeTitle": "天気ダッシュボード",
+    "homeDescription": "大切な都市の現在の天気と予報をブラウザで確認できます。",
+    "homeIntro": "meridian は複数都市の天気を追跡できるダッシュボードです。",
+    "docsTitle": "ドキュメント",
+    "docsDescription": "ダッシュボード、予報、購読、API のガイド。",
+    "cityForecastTitle": "{city}の天気予報",
+    "cityForecastDescription": "{city}（{country}）の{summary} — meridian で7日間の予報を確認。",
+    "cityForecastFallback": "{city}（{country}）の天気と予報を meridian で追跡。",
+    "dataSource": "天気データ提供: OpenWeather。",
+    "notFoundTitle": "ページが見つかりません",
+    "notFoundDescription": "要求されたページは meridian に見つかりませんでした。"
+  },
+  "Errors": {
+    "notFoundHeading": "ページが見つかりません",
+    "notFoundBody": "お探しのページは存在しないか移動しました。",
+    "backHome": "ダッシュボードへ戻る",
+    "viewDocs": "ドキュメントを読む",
+    "errorHeading": "問題が発生しました",
+    "errorBody": "meridian で予期しないエラーが発生しました。もう一度お試しください。"
+  }
+}

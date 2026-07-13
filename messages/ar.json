@@ -1,0 +1,23 @@
+{
+  "Seo": {
+    "homeTitle": "لوحة الطقس",
+    "homeDescription": "تابع الأحوال الحالية والتوقعات للمدن المهمة لك.",
+    "homeIntro": "meridian لوحة طقس متعددة المدن لتتبع الأحوال المباشرة والتوقعات قصيرة المدى.",
+    "docsTitle": "التوثيق",
+    "docsDescription": "أدلة استخدام لوحة meridian والتوقعات والاشتراكات وسلوك API.",
+    "cityForecastTitle": "توقعات الطقس في {city}",
+    "cityForecastDescription": "{summary} في {city}، {country} — توقعات لمدة 7 أيام على meridian.",
+    "cityForecastFallback": "تابع الأحوال والتوقعات لـ {city}، {country} على meridian.",
+    "dataSource": "مصدر بيانات الطقس: OpenWeather.",
+    "notFoundTitle": "الصفحة غير موجودة",
+    "notFoundDescription": "تعذر العثور على الصفحة المطلوبة على meridian."
+  },
+  "Errors": {
+    "notFoundHeading": "الصفحة غير موجودة",
+    "notFoundBody": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+    "backHome": "العودة إلى اللوحة",
+    "viewDocs": "قراءة التوثيق",
+    "errorHeading": "حدث خطأ ما",
+    "errorBody": "واجه meridian خطأ غير متوقع. حاول مرة أخرى."
+  }
+}

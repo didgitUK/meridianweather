@@ -1,0 +1,2 @@
+Static hero fallbacks are original meridian SVG illustrations (not Unsplash).
+When UNSPLASH_ACCESS_KEY is set, live Unsplash photos are preferred and attributed in the UI.

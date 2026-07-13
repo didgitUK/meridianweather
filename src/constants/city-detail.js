@@ -1,0 +1,5 @@
+export const CITY_DETAIL_CURRENT_CONDITIONS_ID = 'current-conditions';
+
+export const CITY_DETAIL_ACCORDION_LOCATION = 'location';
+export const CITY_DETAIL_ACCORDION_SUN_TIMES = 'sun-times';
+export const CITY_DETAIL_ACCORDION_CONDITIONS = CITY_DETAIL_CURRENT_CONDITIONS_ID;

@@ -1,0 +1,23 @@
+{
+  "Seo": {
+    "homeTitle": "tableau météo",
+    "homeDescription": "Suivez les conditions actuelles et les prévisions pour les villes qui comptent pour vous.",
+    "homeIntro": "meridian est un tableau de bord météo multi-villes pour suivre les conditions en direct, les prévisions à court terme et les alertes e-mail.",
+    "docsTitle": "Documentation",
+    "docsDescription": "Guides pour le tableau de bord meridian, les prévisions, les abonnements et l'API.",
+    "cityForecastTitle": "Prévisions météo {city}",
+    "cityForecastDescription": "{summary} à {city}, {country} — prévisions sur 7 jours sur meridian.",
+    "cityForecastFallback": "Suivez les conditions et prévisions pour {city}, {country} sur meridian.",
+    "dataSource": "Source météo : OpenWeather.",
+    "notFoundTitle": "Page introuvable",
+    "notFoundDescription": "La page demandée est introuvable sur meridian."
+  },
+  "Errors": {
+    "notFoundHeading": "Page introuvable",
+    "notFoundBody": "La page recherchée n'existe pas ou a été déplacée.",
+    "backHome": "Retour au tableau de bord",
+    "viewDocs": "Lire la documentation",
+    "errorHeading": "Une erreur est survenue",
+    "errorBody": "meridian a rencontré une erreur inattendue. Veuillez réessayer."
+  }
+}

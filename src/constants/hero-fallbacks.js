@@ -1,0 +1,53 @@
+/**
+ * Static hero fallbacks when Unsplash is unavailable.
+ * Paths are served from /public/hero and work on any deploy host.
+ */
+
+function variant(path, label) {
+  return {
+    imageUrl: path,
+    blurHash: null,
+    photographer: label,
+    photographerUrl: null,
+    unsplashUrl: null,
+    queryUsed: 'static-fallback',
+  };
+}
+
+const DEFAULT_HERO = {
+  landscape: variant('/hero/default-landscape.svg', 'meridian static hero'),
+  portrait: variant('/hero/default-portrait.svg', 'meridian static hero'),
+  photographer: 'meridian static hero',
+  photographerUrl: null,
+  unsplashUrl: null,
+};
+
+/** Country-code → dual landscape/portrait hero (ISO-style uppercase keys). */
+export const HERO_STATIC_FALLBACKS = Object.freeze({
+  DEFAULT: DEFAULT_HERO,
+  GB: {
+    landscape: variant('/hero/gb-landscape.svg', 'meridian static hero (GB)'),
+    portrait: variant('/hero/gb-portrait.svg', 'meridian static hero (GB)'),
+    photographer: 'meridian static hero (GB)',
+    photographerUrl: null,
+    unsplashUrl: null,
+  },
+  US: {
+    landscape: variant('/hero/us-landscape.svg', 'meridian static hero (US)'),
+    portrait: variant('/hero/us-portrait.svg', 'meridian static hero (US)'),
+    photographer: 'meridian static hero (US)',
+    photographerUrl: null,
+    unsplashUrl: null,
+  },
+});
+
+/**
+ * @param {{ country?: string | null }} region
+ */
+export function resolveStaticHeroFallback(region) {
+  const country = region?.country?.trim()?.toUpperCase();
+  if (country && HERO_STATIC_FALLBACKS[country]) {
+    return HERO_STATIC_FALLBACKS[country];
+  }
+  return HERO_STATIC_FALLBACKS.DEFAULT;
+}

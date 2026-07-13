@@ -1,0 +1,19 @@
+:root {
+  /* Inline icons (lucide) — replaces size-3.5 / size-4 / size-10 / sm:size-12 patterns */
+  --icon-size-xs: clamp(0.875rem, 0.85rem + 0.125vw, 1rem);
+  --icon-size-sm: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --icon-size-md: clamp(1.125rem, 1.05rem + 0.38vw, 1.25rem);
+  --icon-size-lg: clamp(2.25rem, 2rem + 1.25vw, 3rem);
+
+  /* Decorative / hero imagery */
+  --image-hero-icon: var(--icon-size-lg);
+  --image-avatar-sm: clamp(2rem, 1.85rem + 0.75vw, 2.5rem);
+  --image-scale-factor: clamp(0.92, 0.88 + 0.2vw, 1);
+
+  /* Minimum interactive target (WCAG 2.5.5 — 44×44 CSS px) */
+  --touch-min: 2.75rem;
+
+  /* Safe-area insets for notched / home-indicator devices */
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+}
