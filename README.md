@@ -1,10 +1,112 @@
 # meridian — Weather Dashboard
 
-Multi-city weather dashboard built for the interview coding exercise: search cities, **pin** them from city detail, show current conditions, persist selections in localStorage, and stay mindful of OpenWeather’s free-tier limits.
+Multi-city weather dashboard for the interview coding exercise: search cities, **pin** them from city detail, show current conditions, persist selections in localStorage, and stay mindful of OpenWeather’s free-tier limits.
+
+This build is a **responsive website** optimised for phones and desktops — not a native app (store badges in the footer hint at a possible future, not a shipped App Store / Play product).
 
 **Scope:** see **[SCOPE.md](SCOPE.md)** — required demo vs stretch extras.  
 **Study sheet:** **[docs/STUDY-BACKEND.md](docs/STUDY-BACKEND.md)** — choices, cache/quota, interview cue card.  
 **Live demo:** _paste production URL here after deploy_ (see [Deploy](#deploy)).
+
+![Home dashboard — search, Your locations, near you, ad placeholders, journal](docs/screenshots/01-home-dashboard.png)
+
+## Design choices
+
+Built to feel intentional on a public product surface (not a bare API shell):
+
+- **Header search, no site nav** — find a place immediately; chrome stays quiet.
+- **Ads in the first viewport** — square + banner high on home/city for impression/CTR (demo placeholders until AdSense + advertising consent).
+- **Pin → toast → Your locations** — preview on city detail, then save with clear feedback.
+- **7 locales** (`en`, `en-GB`, `de`, `fr`, `es`, `ja`, `ar`); US English (`en`) defaults to **°F**, others to **°C**.
+- **Location-aware** — reverse-IP / region hint, confirm dialog, map/satellite-style hero when resolved.
+- **Email updates** — weekly digest + alerts; **22** optional alert types.
+- **Cookies + accessibility** — Settings sheet (not buried in the footer alone).
+- **Legal + journal for trust and SEO** — policies and long-form posts with schema-style side anchors; more indexable URLs beyond volatile city pages.
+- **Discovery** — `/robots.txt` and `/sitemap.xml` ship with the app (set `NEXT_PUBLIC_APP_URL` in production for absolute URLs).
+
+## Product gallery
+
+### City options & pin feedback
+
+Subscribe, pin, or share from the city Options menu. Pinning confirms with a toast that lands the place under **Your locations**.
+
+![City Options menu](docs/screenshots/02-city-options.png)
+
+![Pin toast on city detail](docs/screenshots/09-city-pin-toast.png)
+
+### Locales
+
+Primary pair — German and Spanish:
+
+<p>
+  <img src="docs/screenshots/03-locale-de.png" alt="German UI" width="48%" />
+  <img src="docs/screenshots/04-locale-es.png" alt="Spanish UI" width="48%" />
+</p>
+
+Secondary pair — French and Japanese:
+
+<p>
+  <img src="docs/screenshots/06-locale-fr.png" alt="French UI" width="48%" />
+  <img src="docs/screenshots/07-locale-ja.png" alt="Japanese UI" width="48%" />
+</p>
+
+### Location & floating controls
+
+Confirm “are we right?” for the suggested place; unit and theme floats stay reachable without a traditional nav bar.
+
+![Location confirm and floating controls](docs/screenshots/05-location-prompt.png)
+
+### Ads in the viewport
+
+Square hero and in-content banner sit where users look first. Live AdSense needs publisher/slot env vars **and** advertising consent. Until then, branded creatives from `public/ads/` fill the slots.
+
+![First-viewport ad placements](docs/screenshots/10-ads-viewport.png)
+
+### City detail load & tabs
+
+First paint can wait on upstream weather + hero; repeats benefit from browser (L0), memory (L1), and SQLite (L2) caches. Detail tabs cover Today / Hourly / 10-Day / History (as implemented).
+
+![City detail loading](docs/screenshots/08-city-loading.png)
+
+### Your locations
+
+Pinned cities become the home dashboard grid.
+
+![Your locations](docs/screenshots/11-your-locations.png)
+
+### Email updates
+
+Subscribe for weekly updates and weather alerts; refine the matrix across **22** alert types when you want more control.
+
+![Email updates dialog](docs/screenshots/12-subscribe-email.png)
+
+### Cookies & accessibility
+
+Settings sheet: cookie categories and accessibility preferences. **Accept all** turns on functional + advertising (analytics stays opt-in). Before any choice, advertising starts **off**.
+
+![Cookie and accessibility preferences](docs/screenshots/13-cookies-settings.png)
+
+## Legal & trust
+
+Privacy, cookies, terms, and accessibility policies are in-product templates (demo completeness — not counsel). Sidebars use the same **schema / in-this-article** anchors as journal posts.
+
+![Privacy policy with schema sidebar](docs/screenshots/14-legal-privacy.png)
+
+## Journal & SEO
+
+Why blog posts on a weather app? **SEO.** City pages are useful but thin and changeable. Journal adds archive depth, images, internal links, and shareable URLs — larger crawl surface and topical authority beyond “weather in X.”
+
+![Journal post with schema sidebar](docs/screenshots/15-journal-post.png)
+
+**Crawl discovery:** Next.js serves [`src/app/robots.js`](src/app/robots.js) → `/robots.txt` and [`src/app/sitemap.js`](src/app/sitemap.js) → `/sitemap.xml` (locales, docs, legal, journal, search, indexable cities). Production absolute URLs use `NEXT_PUBLIC_APP_URL`.
+
+## Devices vs apps
+
+Mobile- and desktop-optimised **web**. Footer store badges are a roadmap signal only — available-soon placeholders, not published native apps.
+
+![Footer store badges — future native signal](docs/screenshots/16-store-badges.png)
+
+---
 
 ## Quick start
 
@@ -59,7 +161,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - Without AdSense env/consent, slots show branded demo placeholders in `public/ads/` (overlay text is sr-only).
 - Home ads + journal teaser are **on by default**; set `NEXT_PUBLIC_SHOW_HOME_STRETCH=0` for a leaner demo focused on search → pin → cards.
 - Popular-searches strip seeds showcase cities when empty (disable with `NEXT_PUBLIC_SHOW_DEMO_POPULAR_SEARCHES=0`).
-- Set `NEXT_PUBLIC_APP_URL` in production for SEO canonicals, email unsubscribe, admin invite/reset links, and AdSense OAuth callback fallback.
+- Set `NEXT_PUBLIC_APP_URL` in production for SEO canonicals, sitemap/robots host, email unsubscribe, admin invite/reset links, and AdSense OAuth callback fallback.
 
 ## Environment
 
@@ -93,7 +195,7 @@ Suggested host: **Vercel** (or any Node host that can build native modules / sup
 | Env | Core demo | Notes |
 | --- | --- | --- |
 | `OPENWEATHER_API_KEY` | Required | Without it, weather/geocode fail closed |
-| `NEXT_PUBLIC_APP_URL` | Required in prod | Canonical URLs, email/unsubscribe, invites |
+| `NEXT_PUBLIC_APP_URL` | Required in prod | Canonical URLs, sitemap/robots, email/unsubscribe, invites |
 | `DATABASE_PATH` | Recommended | Point at persistent storage when the host allows it. Ephemeral disk is acceptable for a short interview demo (cache/quota reset on redeploy). |
 
 **Stretch only** (skip unless showing those surfaces): `ADMIN_SECRET`, `ADMIN_PASSWORD`, `ADMIN_EMAIL`, `CRON_SECRET`, AdSense keys, email provider keys. Hide home ads/journal with `NEXT_PUBLIC_SHOW_HOME_STRETCH=0`.
