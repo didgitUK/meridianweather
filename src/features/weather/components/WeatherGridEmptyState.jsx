@@ -18,7 +18,7 @@ export function WeatherGridEmptyState({ onCheckCity }) {
   return (
     <div
       className={cn(
-        'rounded-xl border border-dashed bg-[#f7f7f7] p-8 text-center',
+        'rounded-xl border border-dashed border-border bg-muted/60 p-8 text-center dark:bg-muted/40',
         isSearchOpen && 'relative z-20 overflow-visible',
       )}
     >
@@ -34,9 +34,8 @@ export function WeatherGridEmptyState({ onCheckCity }) {
           size="lg"
           className={cn(
             TOUCH.minH,
-            'w-full gap-2 bg-white! text-base hover:bg-white!',
-            'aria-expanded:bg-white! aria-expanded:hover:bg-white!',
-            'dark:bg-white! dark:hover:bg-white! dark:aria-expanded:bg-white!',
+            'w-full gap-2 bg-background text-base hover:bg-background',
+            'aria-expanded:bg-background aria-expanded:hover:bg-background',
           )}
           aria-expanded={isSearchOpen}
           aria-controls={contentId}
@@ -61,7 +60,7 @@ export function WeatherGridEmptyState({ onCheckCity }) {
             <div
               className={cn(
                 'relative pt-4 transition-opacity duration-300',
-                '[&_input]:bg-white [&_input]:text-center [&_input]:pr-10 [&_input]:dark:bg-white',
+                '[&_input]:bg-background [&_input]:text-center [&_input]:pr-10',
                 isSearchOpen ? 'opacity-100' : 'pointer-events-none opacity-0',
               )}
             >

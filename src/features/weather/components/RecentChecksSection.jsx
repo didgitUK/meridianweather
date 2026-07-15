@@ -258,7 +258,8 @@ export function RecentChecksSection() {
     };
   }, [hasHomeCoords, nearbyPlaces]);
 
-  const popularChecks = useMemo(() => {
+  const [popularChecks, setPopularChecks] = useState([]);
+  const popularSeed = useMemo(() => {
     if (meridianChecks.length > 0) {
       return meridianChecks;
     }
@@ -268,7 +269,86 @@ export function RecentChecksSection() {
     return [];
   }, [meridianChecks, meridianLoading]);
 
-  const showPopularEmptyAction = popularChecks.length === 0 && !meridianLoading;
+  useEffect(() => {
+    let cancelled = false;
+
+    if (popularSeed.length === 0) {
+      setPopularChecks([]);
+      return undefined;
+    }
+
+    const needsWeather = popularSeed.filter(
+      (check) =>
+        check.temperature == null
+        && Number.isFinite(Number(check.lat))
+        && Number.isFinite(Number(check.lon)),
+    );
+
+    if (needsWeather.length === 0) {
+      setPopularChecks(popularSeed);
+      return undefined;
+    }
+
+    setPopularChecks(popularSeed);
+    loadWeatherBatch(
+      needsWeather.map((check) => ({
+        lat: check.lat,
+        lon: check.lon,
+        scopes: ['current'],
+        maxAgeMs: DASHBOARD_CURRENT_MAX_AGE_MS,
+      })),
+      { trigger: WEATHER_CHECK_TRIGGERS.dashboardLoad },
+    )
+      .then((payload) => {
+        if (cancelled) {
+          return;
+        }
+
+        const byKey = new Map();
+        for (let index = 0; index < needsWeather.length; index += 1) {
+          const check = needsWeather[index];
+          const current = payload.cities?.[index]?.scopes?.current;
+          if (!check || !current?.data) {
+            continue;
+          }
+          const key = check.cityId ?? `${check.lat},${check.lon}`;
+          byKey.set(key, {
+            temperature: current.data.temperature ?? null,
+            description: current.data.description ?? null,
+            condition: current.data.condition ?? null,
+            icon: current.data.icon ?? null,
+            fetchedAt: current.meta?.fetchedAt ?? new Date().toISOString(),
+          });
+          writeLocalWeatherCache(
+            check.cityId ?? buildCityId(check.cityName, check.country ?? 'XX', check.lat),
+            'current',
+            {
+              payload: current.data,
+              fetchedAt: current.meta?.fetchedAt ?? new Date().toISOString(),
+            },
+          );
+        }
+
+        setPopularChecks(
+          popularSeed.map((check) => {
+            const key = check.cityId ?? `${check.lat},${check.lon}`;
+            const weather = byKey.get(key);
+            return weather ? { ...check, ...weather } : check;
+          }),
+        );
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setPopularChecks(popularSeed);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [popularSeed]);
+
+  const showPopularEmptyAction = popularSeed.length === 0 && !meridianLoading;
 
   return (
     <section className={cn('flex flex-col', SPACING.stack4)}>
@@ -287,7 +367,7 @@ export function RecentChecksSection() {
           emptyActionLabel={showPopularEmptyAction ? t('popularSearchesEmptyCta') : null}
           onEmptyAction={showPopularEmptyAction ? focusHeroSearch : null}
           checks={popularChecks}
-          isLoading={meridianLoading}
+          isLoading={meridianLoading && popularChecks.length === 0}
         />
       </div>
     </section>

@@ -105,7 +105,12 @@
       "recentChecks": "Recent Checks",
       "yourLocations": "Your Locations",
       "nearbyCarouselTitle": "Nearby locations",
-      "nearbyCarouselLabel": "Nearby locations carousel"
+      "nearbyCarouselLabel": "Nearby locations carousel",
+      "locationFound": "Location Found",
+      "locationDenied": "Location permission was blocked. Allow location in your browser settings, then try again.",
+      "locationNeedsHttps": "Location needs a secure (HTTPS) connection. Open this site over HTTPS, then try again.",
+      "locationUnsupported": "This browser does not support location.",
+      "locationFailed": "Could not read your location. Try again."
     },
     "localCard": {
       "weatherLoadFailedNear": "Near {label}, but weather could not load.",

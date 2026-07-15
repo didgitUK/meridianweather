@@ -11,8 +11,12 @@ import {
   createAcceptedConsentDraft,
   createRejectedOptionalDraft,
 } from '@/components/layout/settings/CookiePreferencesPanel';
-import { SAFE_AREA, TOUCH } from '@/constants/design-tokens';
+import { TOUCH } from '@/constants/design-tokens';
 import { cn } from '@/lib/utils';
+
+/** Sit just above the fixed left floating controls dock (h-11 + gap). */
+const BANNER_ABOVE_DOCK =
+  'bottom-[calc(3.75rem+var(--safe-area-inset-bottom,0px))]';
 
 export function CookieBanner() {
   const t = useTranslations('Cookie.banner');
@@ -47,8 +51,8 @@ export function CookieBanner() {
       aria-labelledby="cookie-banner-title"
       aria-describedby="cookie-banner-description"
       className={cn(
-        'fixed left-4 right-4 z-40 mx-auto max-h-[min(70dvh,28rem)] w-auto max-w-sm overflow-y-auto rounded-xl border bg-card p-4 shadow-lg sm:left-auto sm:right-4 sm:w-[min(100vw-2rem,24rem)]',
-        SAFE_AREA.bottom,
+        'fixed left-4 z-40 max-h-[min(70dvh,28rem)] w-[min(100vw-2rem,22rem)] overflow-y-auto rounded-xl border bg-card p-4 shadow-lg',
+        BANNER_ABOVE_DOCK,
       )}
     >
       <p id="cookie-banner-title" className="text-sm font-medium">

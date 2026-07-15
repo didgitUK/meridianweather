@@ -105,7 +105,12 @@
       "recentChecks": "最近の確認",
       "yourLocations": "あなたの場所",
       "nearbyCarouselTitle": "近くの場所",
-      "nearbyCarouselLabel": "近くの場所のカルーセル"
+      "nearbyCarouselLabel": "近くの場所のカルーセル",
+      "locationFound": "位置情報を取得しました",
+      "locationDenied": "位置情報の許可がブロックされています。ブラウザ設定で許可してから再度お試しください。",
+      "locationNeedsHttps": "位置情報には安全な接続（HTTPS）が必要です。HTTPSで開いてから再度お試しください。",
+      "locationUnsupported": "このブラウザは位置情報に対応していません。",
+      "locationFailed": "位置情報を取得できませんでした。再度お試しください。"
     },
     "localCard": {
       "weatherLoadFailedNear": "{label}の近くですが、天気を読み込めませんでした。",

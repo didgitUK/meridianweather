@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { usePathname } from '@/i18n/navigation';
 import { scrollToSection } from '@/lib/scroll-to-section';
 
@@ -23,6 +23,8 @@ function getHashId() {
 
 function scrollWindowToTop() {
   window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
 }
 
 function scrollToHashTarget(hashId) {
@@ -51,11 +53,10 @@ export function ScrollToTop() {
     }
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const hashId = getHashId();
 
     if (hashId) {
-      // Soft navigations often paint before the target exists — retry briefly.
       if (scrollToHashTarget(hashId)) {
         return undefined;
       }
@@ -72,13 +73,24 @@ export function ScrollToTop() {
     }
 
     scrollWindowToTop();
-    return undefined;
+
+    // Soft navigation / late layout can re-apply scroll — reinforce top briefly.
+    const frames = [0, 50, 150, 300].map((delay) =>
+      window.setTimeout(scrollWindowToTop, delay),
+    );
+
+    return () => {
+      for (const id of frames) {
+        window.clearTimeout(id);
+      }
+    };
   }, [pathname]);
 
   useEffect(() => {
     function handleHashChange() {
       const hashId = getHashId();
       if (!hashId) {
+        scrollWindowToTop();
         return;
       }
       scrollToHashTarget(hashId);

@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { History, MapPin, Navigation } from 'lucide-react';
+import { MapPin, Navigation } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ICONS, TOUCH } from '@/constants/design-tokens';
 import {
@@ -24,8 +25,18 @@ function hasStoredPreciseLocation() {
 
 function requestBrowserLocation() {
   return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) {
+    if (typeof window === 'undefined') {
       reject(new Error('Geolocation unavailable'));
+      return;
+    }
+
+    if (!window.isSecureContext) {
+      reject(Object.assign(new Error('Insecure context'), { code: 'INSECURE' }));
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      reject(Object.assign(new Error('Geolocation unavailable'), { code: 'UNSUPPORTED' }));
       return;
     }
 
@@ -36,14 +47,31 @@ function requestBrowserLocation() {
           lon: position.coords.longitude,
         });
       },
-      reject,
+      (error) => {
+        reject(Object.assign(error ?? new Error('Geolocation denied'), {
+          code: error?.code === 1 ? 'DENIED' : 'FAILED',
+        }));
+      },
       {
-        enableHighAccuracy: false,
-        maximumAge: 15 * 60 * 1000,
-        timeout: 8000,
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 15000,
       },
     );
   });
+}
+
+async function readPermissionState() {
+  if (typeof navigator === 'undefined' || !navigator.permissions?.query) {
+    return 'unknown';
+  }
+
+  try {
+    const status = await navigator.permissions.query({ name: 'geolocation' });
+    return status.state;
+  } catch {
+    return 'unknown';
+  }
 }
 
 export function DashboardHeroActions() {
@@ -54,13 +82,55 @@ export function DashboardHeroActions() {
   const [isRequesting, setIsRequesting] = useState(false);
 
   useEffect(() => {
-    function syncFromStorage() {
-      setHasLocation(hasStoredPreciseLocation());
+    let cancelled = false;
+
+    async function syncLocationState() {
+      const stored = hasStoredPreciseLocation();
+      if (stored) {
+        if (!cancelled) {
+          setHasLocation(true);
+        }
+        return;
+      }
+
+      const permission = await readPermissionState();
+      if (cancelled || permission !== 'granted' || !window.isSecureContext) {
+        if (!cancelled) {
+          setHasLocation(false);
+        }
+        return;
+      }
+
+      // Browser already granted location — hydrate GPS silently.
+      try {
+        const position = await requestBrowserLocation();
+        if (cancelled) {
+          return;
+        }
+        const previous = readUserLocationProfile();
+        const current = resolveEffectiveLocationProfile(previous);
+        saveUserLocationProfile({
+          ...previous,
+          country: current?.country ?? null,
+          label: current?.label ?? null,
+          lat: position.lat,
+          lon: position.lon,
+          source: 'gps',
+        });
+        setHasLocation(true);
+      } catch {
+        if (!cancelled) {
+          setHasLocation(false);
+        }
+      }
     }
 
-    syncFromStorage();
-    window.addEventListener('meridian:storage', syncFromStorage);
-    return () => window.removeEventListener('meridian:storage', syncFromStorage);
+    void syncLocationState();
+    window.addEventListener('meridian:storage', syncLocationState);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('meridian:storage', syncLocationState);
+    };
   }, []);
 
   const handleAllowLocation = useCallback(async () => {
@@ -75,15 +145,14 @@ export function DashboardHeroActions() {
         setConsent({ functional: true });
       }
 
-      const stored = readUserLocationProfile();
-      const current = resolveEffectiveLocationProfile(stored);
-
-      if (current?.source === 'confirmed' || current?.source === 'gps') {
+      if (hasStoredPreciseLocation()) {
         setHasLocation(true);
         return;
       }
 
       const position = await requestBrowserLocation();
+      const stored = readUserLocationProfile();
+      const current = resolveEffectiveLocationProfile(stored);
 
       saveUserLocationProfile({
         ...stored,
@@ -95,29 +164,40 @@ export function DashboardHeroActions() {
       });
 
       setHasLocation(true);
-    } catch {
+      toast.success(t('locationFound'));
+    } catch (error) {
       setHasLocation(false);
+      if (error?.code === 'INSECURE') {
+        toast.error(t('locationNeedsHttps'));
+      } else if (error?.code === 'DENIED' || error?.code === 1) {
+        toast.error(t('locationDenied'));
+      } else if (error?.code === 'UNSUPPORTED') {
+        toast.error(t('locationUnsupported'));
+      } else {
+        toast.error(t('locationFailed'));
+      }
     } finally {
       setIsRequesting(false);
     }
-  }, [consent.functional, isRequesting, setConsent]);
+  }, [consent.functional, isRequesting, setConsent, t]);
 
   return (
     <div className="flex flex-wrap items-center justify-center gap-3">
       {hasLocation ? (
-        <Button
-          type="button"
-          variant="outline"
-          size="lg"
+        <div
           className={cn(
             TOUCH.minH,
-            'gap-2 border-border bg-white px-4 text-base text-neutral-950 hover:bg-white hover:text-neutral-950 dark:bg-white dark:text-neutral-950 dark:hover:bg-white',
+            'inline-flex items-center gap-2 rounded-lg border border-border bg-background px-4 text-base text-foreground',
           )}
-          onClick={() => scrollToSection(DASHBOARD_RECENT_CHECKS_SECTION_ID)}
+          role="status"
         >
-          <History className={ICONS.sm} aria-hidden />
-          {t('recentChecks')}
-        </Button>
+          <span
+            className="size-2.5 shrink-0 rounded-full bg-emerald-500"
+            aria-hidden
+          />
+          <MapPin className={ICONS.sm} aria-hidden />
+          <span>{t('locationFound')}</span>
+        </div>
       ) : (
         <Button
           type="button"
@@ -125,7 +205,7 @@ export function DashboardHeroActions() {
           size="lg"
           className={cn(
             TOUCH.minH,
-            'gap-2 border-border bg-white px-4 text-base text-neutral-950 hover:bg-white hover:text-neutral-950 dark:bg-white dark:text-neutral-950 dark:hover:bg-white',
+            'gap-2 border-border bg-background px-4 text-base text-foreground hover:bg-background',
           )}
           disabled={isRequesting}
           aria-busy={isRequesting}

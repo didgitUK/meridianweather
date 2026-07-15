@@ -105,7 +105,12 @@
       "recentChecks": "Consultas recientes",
       "yourLocations": "Tus ubicaciones",
       "nearbyCarouselTitle": "Ubicaciones cercanas",
-      "nearbyCarouselLabel": "Carrusel de ubicaciones cercanas"
+      "nearbyCarouselLabel": "Carrusel de ubicaciones cercanas",
+      "locationFound": "Ubicación encontrada",
+      "locationDenied": "Se bloqueó el permiso de ubicación. Actívelo en el navegador e inténtelo de nuevo.",
+      "locationNeedsHttps": "La ubicación requiere una conexión segura (HTTPS). Abra el sitio por HTTPS e inténtelo de nuevo.",
+      "locationUnsupported": "Este navegador no admite ubicación.",
+      "locationFailed": "No se pudo leer su ubicación. Inténtelo de nuevo."
     },
     "localCard": {
       "weatherLoadFailedNear": "Cerca de {label}, pero no se pudo cargar el tiempo.",

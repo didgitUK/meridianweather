@@ -105,7 +105,12 @@
       "recentChecks": "Vérifications récentes",
       "yourLocations": "Vos lieux",
       "nearbyCarouselTitle": "Lieux à proximité",
-      "nearbyCarouselLabel": "Carrousel des lieux à proximité"
+      "nearbyCarouselLabel": "Carrousel des lieux à proximité",
+      "locationFound": "Localisation trouvée",
+      "locationDenied": "L’autorisation de localisation a été refusée. Autorisez-la dans le navigateur, puis réessayez.",
+      "locationNeedsHttps": "La localisation nécessite une connexion sécurisée (HTTPS). Ouvrez le site en HTTPS, puis réessayez.",
+      "locationUnsupported": "Ce navigateur ne prend pas en charge la localisation.",
+      "locationFailed": "Impossible de lire votre position. Réessayez."
     },
     "localCard": {
       "weatherLoadFailedNear": "Près de {label}, mais la météo n’a pas pu être chargée.",

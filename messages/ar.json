@@ -105,7 +105,12 @@
       "recentChecks": "عمليات التحقق الأخيرة",
       "yourLocations": "مواقعك",
       "nearbyCarouselTitle": "مواقع قريبة",
-      "nearbyCarouselLabel": "عرض مواقع قريبة"
+      "nearbyCarouselLabel": "عرض مواقع قريبة",
+      "locationFound": "تم العثور على الموقع",
+      "locationDenied": "تم حظر إذن الموقع. اسمح بالموقع من إعدادات المتصفح ثم حاول مرة أخرى.",
+      "locationNeedsHttps": "يتطلب الموقع اتصالًا آمنًا (HTTPS). افتح الموقع عبر HTTPS ثم حاول مرة أخرى.",
+      "locationUnsupported": "هذا المتصفح لا يدعم الموقع.",
+      "locationFailed": "تعذر قراءة موقعك. حاول مرة أخرى."
     },
     "localCard": {
       "weatherLoadFailedNear": "قرب {label}، لكن تعذّر تحميل الطقس.",

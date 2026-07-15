@@ -105,7 +105,12 @@
       "recentChecks": "Aktuelle Prüfungen",
       "yourLocations": "Ihre Orte",
       "nearbyCarouselTitle": "Orte in der Nähe",
-      "nearbyCarouselLabel": "Karussell Orte in der Nähe"
+      "nearbyCarouselLabel": "Karussell Orte in der Nähe",
+      "locationFound": "Standort gefunden",
+      "locationDenied": "Standortberechtigung wurde blockiert. Erlauben Sie den Standort in den Browsereinstellungen und versuchen Sie es erneut.",
+      "locationNeedsHttps": "Standort erfordert eine sichere Verbindung (HTTPS). Öffnen Sie die Seite über HTTPS und versuchen Sie es erneut.",
+      "locationUnsupported": "Dieser Browser unterstützt keinen Standort.",
+      "locationFailed": "Standort konnte nicht gelesen werden. Bitte erneut versuchen."
     },
     "localCard": {
       "weatherLoadFailedNear": "In der Nähe von {label}, aber Wetter konnte nicht geladen werden.",

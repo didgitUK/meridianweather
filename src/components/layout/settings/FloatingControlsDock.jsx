@@ -4,12 +4,10 @@ import { usePathname } from '@/i18n/navigation';
 import { SettingsFab } from '@/components/layout/settings/SettingsFab';
 import { ThemeToggleButton } from '@/components/layout/settings/ThemeToggleButton';
 import { TemperatureUnitSwitch } from '@/features/weather/components/TemperatureUnitSwitch';
-import { STORAGE_KEYS } from '@/constants/storage-keys';
 import { SAFE_AREA } from '@/constants/design-tokens';
 import { useScrollHeaderVisibility } from '@/hooks/useScrollHeaderVisibility';
 import { useAccessibility } from '@/providers/AccessibilityProvider';
 import { cn } from '@/lib/utils';
-import { useHasMounted, useLocalStorageValue } from '@/hooks/use-browser-storage';
 
 function isPublicFrontendRoute(pathname) {
   return !pathname.endsWith('/login') && !pathname.includes('/admin');
@@ -17,10 +15,7 @@ function isPublicFrontendRoute(pathname) {
 
 export function FloatingControlsDock({ onOpenSettings }) {
   const pathname = usePathname();
-  const isMounted = useHasMounted();
   const { reducedMotion } = useAccessibility();
-  const cookieConsent = useLocalStorageValue(STORAGE_KEYS.cookieConsent);
-  const bannerVisible = isMounted && cookieConsent !== 'accepted';
   const showFrontendControls = isPublicFrontendRoute(pathname);
   const showSettings = useScrollHeaderVisibility(showFrontendControls && !reducedMotion);
 
@@ -32,9 +27,7 @@ export function FloatingControlsDock({ onOpenSettings }) {
     <div
       className={cn(
         'fixed left-4 z-50',
-        bannerVisible
-          ? 'bottom-[calc(17rem+var(--safe-area-inset-bottom))] sm:bottom-56'
-          : SAFE_AREA.bottom,
+        SAFE_AREA.bottom,
       )}
     >
       <div
