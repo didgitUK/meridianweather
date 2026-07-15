@@ -1,55 +1,61 @@
 export const monetizationDoc = {
   slug: 'monetization',
   title: 'Monetization & consent',
-  lastUpdated: '2026-07-09',
+  lastUpdated: '2026-07-15',
   sections: [
     {
       id: 'tiers',
-      title: 'Free and Premium tiers',
+      title: 'Free tier (Premium reserved)',
       body:
-        'meridian:tier stores free or premium in localStorage. Free tier may show Google AdSense when configured. Premium removes ads and unlocks the minutely precipitation strip on city detail. Stripe checkout is not implemented; dev tier toggle is in the admin modal (Ctrl+Shift+L).',
+        'The product currently operates as free only. ConsentProvider hardcodes tier free; meridian:tier is reserved and unused at runtime. Stripe checkout and PremiumGate are not wired. Ads are gated by advertising consent and AdSense config — not by a premium flag.',
     },
     {
       id: 'premium-features',
-      title: 'What Premium unlocks today',
+      title: 'What Premium would unlock (not shipped)',
       body:
-        'Implemented: no ad script load, minutely forecast visible on city detail. Marketing copy references “full 10-day outlook” but daily/hourly on city detail are not gated in code — only MinutelyPrecipStrip uses PremiumGate. PremiumBadge component exists but is unused in UI.',
+        'Reserved / not implemented in UI: hiding AdSense for a paid tier, and a minutely precipitation strip. City detail today loads current, hourly, and daily scopes only. There is no MinutelyPrecipStrip component in the app.',
     },
     {
       id: 'consent-model',
       title: 'Consent model',
       body:
-        'meridian:consent JSON fields: essential (always on), functional (weather cache preference), marketing (reserved), analytics (coming soon), advertising (AdSense). meridian:cookie-consent legacy flag. Cookie banner: Accept (functional), Accept all (functional + advertising), Manage preferences. Footer link “Privacy preferences” reopens the dialog anytime.',
+        'meridian:consent JSON fields: essential (always on), functional (weather cache localStorage writes and GPS helpers), marketing (reserved), analytics (GA4 loader when configured), advertising (AdSense). meridian:cookie-consent legacy flag. Cookie banner: Accept all, Accept functional, Essential only, Manage preferences. Reopen anytime via the floating Settings control → Cookies tab. “Accept all” enables functional + advertising; turn on Google Analytics separately in preferences if offered.',
     },
     {
       id: 'adsense',
       title: 'Google AdSense (live)',
       body:
-        'When GOOGLE_ADSENSE_CLIENT_ID and placement slot env vars are set, AdSense is live — not placeholders. AdSenseProvider loads the script once after advertising consent on free tier. GET /api/ads/config returns script config; GET /api/ads?placement= returns per-slot config. GET /ads.txt serves publisher verification from env. Client ID validated server-side (ca-pub-… format); never committed to git.',
+        'When GOOGLE_ADSENSE_CLIENT_ID and placement slot env vars are set, AdSense is live — not placeholders. AdSenseProvider loads the script once after advertising consent when configured. GET /api/ads/config returns script config; GET /api/ads?placement= returns per-slot config. GET /ads.txt serves publisher verification from env. Client ID validated server-side (ca-pub-… format); never committed to git.',
     },
     {
       id: 'placements',
       title: 'Ad placements',
       body:
-        'Active UI placements: dashboard (below city grid), recent-checks (below strip). Defined but unused: hero (env GOOGLE_ADSENSE_SLOT_HERO exists). Without slot IDs, placements show “not configured” while auto ads may still run from script. Dev test mode shows dashed placeholder when AdSense env is unset.',
+        'Active UI placements with AdSlot: dashboard (below city grid), hero (home hero + journal sidebar), city-detail (under tabs). Placement id recent-checks exists in constants/env but has no home-page AdSlot. Slot env vars: GOOGLE_ADSENSE_SLOT_DASHBOARD, _HERO, _RECENT, _CITY_DETAIL, _DEFAULT. Without slot IDs, placements show branded demo placeholders; auto ads may still run from script when the client ID is set.',
     },
     {
       id: 'adslot-states',
       title: 'AdSlot UI states',
       body:
-        'Premium tier — hidden. No consent — message with link to privacy preferences. Not configured — placeholder explaining slots. Test mode — monetization doc link placeholder. Configured + consent — ins.adsbygoogle unit rendered after script ready.',
+        'Default (AdSense unset / no advertising consent): branded PNG placeholders under public/ads/ (banner and square). Overlay copy is screen-reader-only (sr-only), not painted on the image. GET /api/ads/placeholder-bg may still serve hero-image lookups for other surfaces. Configured + consent — ins.adsbygoogle unit after script ready.',
+    },
+    {
+      id: 'analytics',
+      title: 'Analytics',
+      body:
+        'First-party SiteAnalyticsBeacon posts page path / engagement to POST /api/analytics/collect into site_analytics_events when consent.analytics is on (collect endpoint also checks the consent flag in the request body). Ad-slot view events also require consent.advertising. Optional GA4 (AnalyticsProvider) loads only when NEXT_PUBLIC_GA_MEASUREMENT_ID is set and consent.analytics is on. Cookie banner “Accept all” does not enable analytics — turn it on in Settings → Cookies.',
     },
     {
       id: 'stripe',
       title: 'Stripe (planned)',
       body:
-        'Premium upgrade button in PremiumGate is disabled (“coming soon”). Future Stripe integration would set tier server-side; v1 tier is client-only for demonstration.',
+        'Premium / Stripe checkout is not implemented. Any future billing would need server-side tier enforcement; do not treat meridian:tier as live.',
     },
     {
       id: 'data',
       title: 'Data licensing',
       body:
-        'meridian v1 does not sell or license user data. Analytics consent category is reserved. Any future B2B or anonymised analytics requires separate consent and policy updates.',
+        'meridian does not sell or license user data. First-party analytics and optional GA4 are for operating the product. Any future B2B or anonymised analytics product would require separate consent and policy updates.',
     },
   ],
 };

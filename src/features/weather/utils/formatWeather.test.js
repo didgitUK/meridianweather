@@ -7,9 +7,9 @@ import {
 } from '@/features/weather/utils/formatWeather';
 
 describe('formatWeather', () => {
-  it('formats temperature with degree symbol', () => {
-    expect(formatTemperature(18.4)).toBe('18°');
-    expect(formatTemperature(18.4, TEMPERATURE_UNIT.FAHRENHEIT)).toBe('65°');
+  it('formats temperature with degree unit', () => {
+    expect(formatTemperature(18.4)).toBe('18°C');
+    expect(formatTemperature(18.4, TEMPERATURE_UNIT.FAHRENHEIT)).toBe('65°F');
     expect(formatTemperature(null)).toBe('—');
   });
 

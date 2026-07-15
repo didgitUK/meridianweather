@@ -1,9 +1,11 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useAccessibility } from '@/providers/AccessibilityProvider';
 import { cn } from '@/lib/utils';
 
 export function SkipToMainLink() {
+  const t = useTranslations('Common');
   const { preferences } = useAccessibility();
 
   if (!preferences.showSkipLink) {
@@ -20,7 +22,7 @@ export function SkipToMainLink() {
         'focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50',
       )}
     >
-      Skip to main content
+      {t('skipToMainContent')}
     </a>
   );
 }

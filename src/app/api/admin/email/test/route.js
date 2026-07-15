@@ -18,7 +18,7 @@ export async function POST(request) {
 
   if (!isEmailConfigured()) {
     return NextResponse.json(
-      { error: 'email_not_configured', message: 'Configure an email connector API key first.' },
+      { error: 'email_not_configured', message: 'Configure an email connector first.' },
       { status: 400 },
     );
   }

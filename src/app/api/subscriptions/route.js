@@ -10,7 +10,11 @@ import {
 } from '@/lib/db/repositories/subscriptions';
 import { sendWelcomeEmail } from '@/lib/email';
 import { apiError, apiErrorFromCaught } from '@/lib/server/api-response';
+import { enforceRateLimit } from '@/lib/server/rate-limit';
+import { parseEmail, parseLatLon } from '@/lib/validators';
 import { SUBSCRIPTION_TYPES } from '@/features/subscriptions/utils/subscription-state';
+
+const ALLOWED_SUBSCRIPTION_TYPES = new Set(Object.values(SUBSCRIPTION_TYPES));
 
 export async function GET(request) {
   try {
@@ -29,14 +33,39 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
+  const limited = enforceRateLimit(request, { bucket: 'subscriptions', limit: 15, windowMs: 60_000 });
+  if (limited) {
+    return limited;
+  }
+
   try {
     const body = await request.json();
-    const email = body.email?.trim();
     const clientId = body.clientId?.trim();
     const type = body.type;
 
-    if (!email || !clientId || !type) {
+    if (!clientId || !type) {
       return apiError('invalid_request', 'email, clientId and type are required', 400);
+    }
+
+    let email;
+    try {
+      email = parseEmail(body.email);
+    } catch {
+      return apiError('invalid_request', 'A valid email is required', 400);
+    }
+
+    if (!ALLOWED_SUBSCRIPTION_TYPES.has(type)) {
+      return apiError('invalid_request', 'Invalid subscription type', 400);
+    }
+
+    let cityLat = body.cityLat;
+    let cityLon = body.cityLon;
+    if (type !== SUBSCRIPTION_TYPES.newsletter) {
+      try {
+        ({ lat: cityLat, lon: cityLon } = parseLatLon(body.cityLat, body.cityLon));
+      } catch {
+        return apiError('invalid_request', 'Valid cityLat and cityLon are required', 400);
+      }
     }
 
     if (type === SUBSCRIPTION_TYPES.weekly) {
@@ -55,8 +84,8 @@ export async function POST(request) {
       email,
       type,
       cityName: body.cityName,
-      cityLat: body.cityLat,
-      cityLon: body.cityLon,
+      cityLat,
+      cityLon,
       frequency: body.frequency,
       alertOnRain: Boolean(body.alertOnRain),
       alertOnStorm: Boolean(body.alertOnStorm),
@@ -64,7 +93,9 @@ export async function POST(request) {
     });
 
     if (type === SUBSCRIPTION_TYPES.newsletter) {
-      await sendWelcomeEmail(email);
+      await sendWelcomeEmail(email, {
+        unsubscribeToken: subscription.unsubscribeToken ?? subscription.unsubscribe_token,
+      });
     }
 
     return NextResponse.json({ subscription }, { status: 201 });

@@ -53,16 +53,24 @@ function lerpValue(left, right, ratio) {
 function interpolateChartPoint(left, right, dt) {
   const gap = right.dt - left.dt;
   const ratio = gap > 0 ? (dt - left.dt) / gap : 0;
+  const preferLeft = ratio < 0.5;
 
   return {
     dt,
     temp: lerpValue(left.temp, right.temp, ratio),
+    feelsLike: lerpValue(left.feelsLike, right.feelsLike, ratio),
     pop: lerpValue(left.pop, right.pop, ratio),
     rain1h: lerpValue(left.rain1h, right.rain1h, ratio),
+    snow1h: lerpValue(left.snow1h, right.snow1h, ratio),
     windSpeedKmh: lerpValue(left.windSpeedKmh, right.windSpeedKmh, ratio),
-    windDeg: ratio < 0.5 ? left.windDeg ?? right.windDeg : right.windDeg ?? left.windDeg,
-    description: ratio < 0.5 ? left.description ?? right.description : right.description ?? left.description,
-    icon: ratio < 0.5 ? left.icon ?? right.icon : right.icon ?? left.icon,
+    windGustKmh: lerpValue(left.windGustKmh, right.windGustKmh, ratio),
+    humidity: lerpValue(left.humidity, right.humidity, ratio),
+    uvi: lerpValue(left.uvi, right.uvi, ratio),
+    windDeg: preferLeft ? left.windDeg ?? right.windDeg : right.windDeg ?? left.windDeg,
+    description: preferLeft
+      ? left.description ?? right.description
+      : right.description ?? left.description,
+    icon: preferLeft ? left.icon ?? right.icon : right.icon ?? left.icon,
   };
 }
 
@@ -91,6 +99,31 @@ export function densifyChartPoints(points, intervalSeconds = 3600) {
   return densified;
 }
 
+const HOUR_SECONDS = 3600;
+
+/**
+ * Next N clock hours from now, densified to 1h steps when upstream points are sparse.
+ * @param {Array<{ dt?: number }>} hourlyPoints
+ * @param {number} [count=12]
+ */
+export function selectNextHours(hourlyPoints, count = 12) {
+  const nowSec = Math.floor(Date.now() / 1000);
+  const upcoming = (hourlyPoints ?? [])
+    .filter((point) => point?.dt != null && point.dt >= nowSec - HOUR_SECONDS / 2)
+    .sort((a, b) => a.dt - b.dt);
+
+  if (upcoming.length === 0) {
+    return [];
+  }
+
+  const densified = densifyChartPoints(upcoming, HOUR_SECONDS);
+  const windowEnd = nowSec + count * HOUR_SECONDS;
+
+  return densified
+    .filter((point) => point.dt <= windowEnd)
+    .slice(0, count);
+}
+
 export function buildDayChartPoints({
   dateKey,
   timezone,
@@ -115,6 +148,24 @@ export function buildDayChartPoints({
     : [];
 
   return densifyChartPoints(mergeChartPoints([livePoints, archivedPoints, observationPoints]));
+}
+
+/** True when a day’s chart points carry at least one plottable metric. */
+export function dayHasExpandableMetrics(chartPoints) {
+  if (!Array.isArray(chartPoints) || chartPoints.length === 0) {
+    return false;
+  }
+
+  return chartPoints.some(
+    (point) =>
+      point.temp != null
+      || point.pop != null
+      || point.rain1h != null
+      || point.snow1h != null
+      || point.windSpeedKmh != null
+      || point.humidity != null
+      || point.uvi != null,
+  );
 }
 
 const CHART_AXIS_HOURS = [0, 3, 6, 9, 12, 15, 18, 21];
@@ -167,6 +218,8 @@ export const FORECAST_METRIC_TABS = [
   { id: 'temperature', label: 'Temperature' },
   { id: 'precipitation', label: 'Precipitation' },
   { id: 'wind', label: 'Wind' },
+  { id: 'humidity', label: 'Humidity' },
+  { id: 'uv', label: 'UV' },
 ];
 
 export function getMetricValue(point, metricId) {
@@ -185,6 +238,10 @@ export function getMetricValue(point, metricId) {
       return 0;
     case 'wind':
       return point.windSpeedKmh;
+    case 'humidity':
+      return point.humidity;
+    case 'uv':
+      return point.uvi;
     default:
       return null;
   }
@@ -202,6 +259,10 @@ export function formatMetricValue(value, metricId, unit = TEMPERATURE_UNIT.CELSI
       return value <= 1 ? `${Math.round(value)}%` : `${value} mm`;
     case 'wind':
       return `${Math.round(value)}`;
+    case 'humidity':
+      return `${Math.round(value)}%`;
+    case 'uv':
+      return `${Math.round(value * 10) / 10}`;
     default:
       return String(value);
   }
@@ -218,7 +279,8 @@ export function buildChartSeries(points, metricId) {
 
   const min = Math.min(...values);
   const max = Math.max(...values);
-  const paddedMin = metricId === 'precipitation' ? 0 : min - Math.max((max - min) * 0.1, 1);
+  const zeroBased = metricId === 'precipitation' || metricId === 'humidity' || metricId === 'uv';
+  const paddedMin = zeroBased ? 0 : min - Math.max((max - min) * 0.1, 1);
   const paddedMax = max + Math.max((max - min) * 0.1, metricId === 'precipitation' ? 10 : 1);
 
   return {

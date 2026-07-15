@@ -1,4 +1,7 @@
+'use client';
+
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 export const FOOTER_STORE_BADGE_WIDTH = 120;
@@ -7,22 +10,24 @@ export const FOOTER_STORE_BADGE_HEIGHT = 40;
 const STORE_BADGES = {
   'app-store': {
     src: '/brand/app-store-badge.svg',
-    alt: 'Download on the App Store',
+    altKey: 'appStore',
   },
   'google-play': {
     src: '/brand/google-play-badge-trimmed.png',
-    alt: 'Get it on Google Play',
+    altKey: 'googlePlay',
   },
 };
 
 export function FooterStoreBadge({ store, href, disabled = false }) {
+  const t = useTranslations('Footer');
   const badge = STORE_BADGES[store];
   const isDisabled = disabled || !href;
+  const alt = t(`storeBadges.${badge.altKey}`);
 
   const image = (
     <Image
       src={badge.src}
-      alt={badge.alt}
+      alt={alt}
       width={FOOTER_STORE_BADGE_WIDTH}
       height={FOOTER_STORE_BADGE_HEIGHT}
       className="block h-10 w-[120px] object-contain object-left"
@@ -37,7 +42,7 @@ export function FooterStoreBadge({ store, href, disabled = false }) {
 
   if (isDisabled) {
     return (
-      <span className={className} title="Coming soon">
+      <span className={className} title={t('comingSoon')}>
         {image}
       </span>
     );

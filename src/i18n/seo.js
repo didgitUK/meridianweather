@@ -1,10 +1,10 @@
 import { getTranslations } from 'next-intl/server';
-import { openWeatherLangByLocale, ogLocaleByLocale } from '@/i18n/locales';
+import { ogLocaleByLocale, resolveOpenWeatherLang } from '@/i18n/locales';
 import { routing } from '@/i18n/routing';
 import { absoluteUrl } from '@/lib/seo';
 
 export function getOpenWeatherLang(locale) {
-  return openWeatherLangByLocale[locale] ?? 'en';
+  return resolveOpenWeatherLang(locale);
 }
 
 export function getOgLocale(locale) {

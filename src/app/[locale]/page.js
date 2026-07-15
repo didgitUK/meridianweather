@@ -9,7 +9,6 @@ import { buildLanguageAlternates, buildLocalizedPath, getOgLocale } from '@/i18n
 import { resolveRegionHint } from '@/lib/geo/resolve-region-hint';
 import { getHeroImageForRegion } from '@/lib/hero-image/get-hero-image-for-region';
 import { buildPageMetadata } from '@/lib/seo';
-import { getRecentChecksPayload } from '@/lib/weather/recent-checks';
 
 export async function generateMetadata({ params }) {
   const { locale } = await params;
@@ -30,10 +29,7 @@ export default async function Home({ params }) {
 
   const requestHeaders = await headers();
   const region = await resolveRegionHint({ headers: requestHeaders });
-  const [heroImage, recentChecks] = await Promise.all([
-    region ? getHeroImageForRegion(region) : Promise.resolve(null),
-    getRecentChecksPayload().catch(() => ({ checks: [] })),
-  ]);
+  const heroImage = region ? await getHeroImageForRegion(region) : null;
 
   return (
     <>
@@ -43,9 +39,9 @@ export default async function Home({ params }) {
       />
       <HomeIntro />
       <DashboardHeroSection heroImage={heroImage}>
-        <DashboardHeroWithCheck />
+        <DashboardHeroWithCheck heroImage={heroImage} />
       </DashboardHeroSection>
-      <DashboardPage initialRecentChecks={recentChecks.checks} />
+      <DashboardPage heroImage={heroImage} />
     </>
   );
 }

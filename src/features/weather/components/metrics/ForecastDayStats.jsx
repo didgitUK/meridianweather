@@ -1,13 +1,14 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Archive, CloudRain, Sun, ThermometerSun, Wind } from 'lucide-react';
+import { Archive } from 'lucide-react';
 import {
   formatPop,
   formatUvi,
   formatWind,
 } from '@/features/weather/utils/forecast-formatters';
 import { useTemperatureUnit } from '@/providers/TemperatureUnitProvider';
+import { METRIC_METEOCON } from '@/features/weather/utils/weather-icon';
 import { ForecastStatItem } from '@/features/weather/components/metrics/ForecastStatItem';
 
 export function ForecastDayStats({ day, current = null, isForecastDay = true, className }) {
@@ -39,14 +40,22 @@ export function ForecastDayStats({ day, current = null, isForecastDay = true, cl
   return (
     <div className={cn('flex flex-col gap-2 border-l border-border/60 pl-4', className)}>
       {isForecastDay && formatPop(pop) ? (
-        <ForecastStatItem icon={CloudRain}>Rain chance {formatPop(pop)}</ForecastStatItem>
+        <ForecastStatItem iconName={METRIC_METEOCON.rain}>
+          Rain chance {formatPop(pop)}
+        </ForecastStatItem>
       ) : null}
       {windSpeedKmh != null ? (
-        <ForecastStatItem icon={Wind}>{formatWind(windSpeedKmh, windDeg)}</ForecastStatItem>
+        <ForecastStatItem iconName={METRIC_METEOCON.wind}>
+          {formatWind(windSpeedKmh, windDeg)}
+        </ForecastStatItem>
       ) : null}
-      {uvi != null ? <ForecastStatItem icon={Sun}>UV {formatUvi(uvi)}</ForecastStatItem> : null}
+      {uvi != null ? (
+        <ForecastStatItem iconName={METRIC_METEOCON.uvi}>UV {formatUvi(uvi)}</ForecastStatItem>
+      ) : null}
       {feelsLike != null ? (
-        <ForecastStatItem icon={ThermometerSun}>Feels like {formatTemp(feelsLike)}</ForecastStatItem>
+        <ForecastStatItem iconName={METRIC_METEOCON.feelsLike}>
+          Feels like {formatTemp(feelsLike)}
+        </ForecastStatItem>
       ) : null}
       {!isForecastDay && day?.observationCount > 0 ? (
         <ForecastStatItem icon={Archive}>{day.observationCount} stored readings</ForecastStatItem>

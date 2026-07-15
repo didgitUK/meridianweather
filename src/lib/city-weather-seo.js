@@ -1,21 +1,22 @@
+import { cache } from 'react';
 import { WEATHER_CHECK_TRIGGERS } from '@/constants/weather-check-triggers';
 import { fetchWeatherForScope } from '@/lib/weather-fetch-orchestrator';
 
-export async function getCityWeatherForSeo(city, locale = 'en') {
-  if (!city?.lat || !city?.lon) {
-    return null;
-  }
-
+const getCityWeatherForSeoByKey = cache(async (lat, lon, locale) => {
   try {
-    const [currentResponse, dailyResponse] = await Promise.all([
-      fetchWeatherForScope(city.lat, city.lon, 'current', {
+    const [currentResponse, dailyResponse, hourlyResponse] = await Promise.all([
+      fetchWeatherForScope(lat, lon, 'current', {
         lang: locale,
         trigger: WEATHER_CHECK_TRIGGERS.cityDetail,
       }),
-      fetchWeatherForScope(city.lat, city.lon, 'daily', {
+      fetchWeatherForScope(lat, lon, 'daily', {
         lang: locale,
         trigger: WEATHER_CHECK_TRIGGERS.cityDetail,
       }),
+      fetchWeatherForScope(lat, lon, 'hourly', {
+        lang: locale,
+        trigger: WEATHER_CHECK_TRIGGERS.cityDetail,
+      }).catch(() => null),
     ]);
 
     return {
@@ -23,10 +24,21 @@ export async function getCityWeatherForSeo(city, locale = 'en') {
       currentMeta: currentResponse.meta,
       daily: dailyResponse.data,
       dailyMeta: dailyResponse.meta,
+      hourly: hourlyResponse?.data ?? null,
+      hourlyMeta: hourlyResponse?.meta ?? null,
     };
   } catch {
     return null;
   }
+});
+
+/** Dedupes generateMetadata + page fetches within one RSC request (keyed by coords + lang). */
+export async function getCityWeatherForSeo(city, locale = 'en') {
+  if (!city?.lat || !city?.lon) {
+    return null;
+  }
+
+  return getCityWeatherForSeoByKey(Number(city.lat), Number(city.lon), locale);
 }
 
 export function summarizeCityWeather(weather, city) {

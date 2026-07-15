@@ -1,23 +1,513 @@
 {
+  "Common": {
+    "loading": "جارٍ التحميل…",
+    "loadingLocations": "جارٍ تحميل مواقعك…",
+    "retry": "إعادة المحاولة",
+    "cancel": "إلغاء",
+    "done": "تم",
+    "check": "تحقق",
+    "search": "بحث",
+    "open": "فتح",
+    "backToDashboard": "العودة إلى لوحة التحكم",
+    "unavailable": "غير متاح",
+    "justNow": "الآن",
+    "minutesAgo": "منذ {minutes} د",
+    "hoursAgo": "منذ {hours} س",
+    "near": "قرب {label}",
+    "basedOn": "بناءً على {source}",
+    "nearYou": "بقربك",
+    "localWeather": "الطقس المحلي",
+    "currentWeather": "الطقس الحالي",
+    "weatherIcon": "أيقونة الطقس",
+    "feelsLike": "الإحساس {temp}",
+    "highLow": "ع {high} · د {low}",
+    "photoBy": "صورة بواسطة",
+    "onUnsplash": "على Unsplash",
+    "onSource": "على {source}",
+    "copyright": "© {year} Meridian",
+    "comingSoon": "قريبًا",
+    "viewAll": "عرض الكل",
+    "estimated": "تقديري",
+    "enableAdvertisingInSettings": "تفعيل الإعلانات في الإعدادات",
+    "openSettings": "فتح الإعدادات",
+    "skipToMainContent": "تخطي إلى المحتوى الرئيسي",
+    "toggleTheme": "تبديل السمة",
+    "switchToCelsius": "التبديل إلى مئوية",
+    "switchToFahrenheit": "التبديل إلى فهرنهايت",
+    "pinned": "تم التثبيت في مواقعك",
+    "unpinned": "تمت الإزالة من مواقعك",
+    "alreadyPinned": "مثبت مسبقًا في مواقعك",
+    "cityRemoved": "تمت إزالة {city}",
+    "subscriptionsUpdated": "تم تحديث الاشتراكات لـ {city}",
+    "newsletterSubscribed": "تم الاشتراك في تحديثات meridian",
+    "newsletterUnsubscribed": "تم إلغاء الاشتراك من نشرة meridian",
+    "reportSubmitted": "تم إرسال البلاغ. سيراجع فريقنا هذا الموقع.",
+    "reportReviewing": "فريقنا يراجع هذا الموقع بالفعل",
+    "selectAtLeastOneAlert": "اختر تنبيه طقس واحدًا على الأقل، أو أوقف التنبيهات.",
+    "showPreviousArticles": "عرض المقالات السابقة",
+    "showNextArticles": "عرض المقالات التالية"
+  },
+  "Brand": {
+    "tagline": "تتبع الطقس عبر عالمك",
+    "description": "تتبع الأحوال الحالية والتوقعات للمدن التي تهمك — في المتصفح اليوم، وكتطبيق قابل للتثبيت غدًا.",
+    "heroEyebrow": "Meridian Weather",
+    "heroIntro": "تحقق من أي مدينة فورًا، وثبّت ما تريد متابعته، واحصل على تنبيهات عند تغيّر الأحوال."
+  },
+  "Header": {
+    "checkAction": "تحقق",
+    "language": {
+      "changeLanguage": "تغيير اللغة",
+      "selectLanguage": "اختر اللغة",
+      "searchPlaceholder": "البحث في اللغات…",
+      "searchLabel": "البحث في اللغات",
+      "noMatch": "لا توجد لغة مطابقة",
+      "footerNote": "نصوص الواجهة متاحة لهذه اللغات. يتبع نص أحوال OpenWeather نفس اللغة المحلية عند التوفر."
+    }
+  },
+  "Search": {
+    "placeholder": "ابحث عن موقع في أنحاء العالم",
+    "label": "ابحث عن موقع",
+    "dropdownLabel": "نتائج بحث المدن",
+    "searching": "جارٍ البحث…",
+    "noCitiesFound": "لم يتم العثور على مدن.",
+    "archive": {
+      "title": "بحث الموقع",
+      "description": "قارن الأماكن المطابقة على الخريطة ثم افتح التوقعات المناسبة.",
+      "placeholder": "ابحث عن موقع في أنحاء العالم",
+      "ariaLabel": "البحث عن المواقع",
+      "hintWithQuery": "اكتب اسم مدينة أو بلدة أو مكان ثم اضغط بحث.",
+      "minChars": "أدخل حرفين على الأقل للبحث.",
+      "noMatches": "لا أماكن تطابق هذا البحث.",
+      "openAction": "فتح التوقعات",
+      "resultsLabel": "نتائج البحث",
+      "resultsFor": "نتائج لـ \"{query}\"",
+      "mapAlt": "خريطة شوارع مركّزة على {name}",
+      "osmAttribution": "تتضمن اقتراحات الأماكن بيانات OpenStreetMap."
+    },
+    "wrongLocation": {
+      "title": "حدد موقعك",
+      "description": "ابحث عن المكان الذي يطابق موقعك. سنتذكره على هذا الجهاز في المرة القادمة.",
+      "actionLabel": "استخدم هذا الموقع"
+    },
+    "sources": {
+      "confirmed": "موقع منزلك المحفوظ",
+      "gps": "موقع الجهاز الدقيق",
+      "history": "عمليات التحقق الأخيرة",
+      "ip": "موقع الشبكة التقريبي"
+    }
+  },
+  "Dashboard": {
+    "hero": {
+      "shareLocationTitle": "مشاركة موقعك",
+      "shareLocationBody": "اسمح بالموقع أعلاه لرؤية الأحوال المحلية هنا.",
+      "searchCardTitle": "ابحث عن موقع",
+      "allowLocation": "السماح بالموقع",
+      "recentChecks": "عمليات التحقق الأخيرة",
+      "yourLocations": "مواقعك",
+      "nearbyCarouselTitle": "مواقع قريبة",
+      "nearbyCarouselLabel": "عرض مواقع قريبة"
+    },
+    "localCard": {
+      "weatherLoadFailedNear": "قرب {label}، لكن تعذّر تحميل الطقس.",
+      "weatherLoadFailed": "تعذّر تحميل الطقس المحلي بعد.",
+      "setLocation": "تعيين الموقع",
+      "wrongLocation": "خطأ؟"
+    },
+    "recentChecks": {
+      "title": "حولك",
+      "description": "أماكن قريبة ومدن بحثت عنها على هذا الجهاز.",
+      "nearYouTitle": "بالقرب منك",
+      "nearYouDescription": "مواقع قريبة من نقطة الطقس المنزلية لديك.",
+      "nearYouEmpty": "لا توجد أماكن قريبة متاحة الآن.",
+      "nearYouNeedLocation": "اسمح بالموقع لرؤية الطقس بالقرب منك.",
+      "empty": "لا توجد عمليات تحقق حديثة على المنصة بعد.",
+      "carouselLabel": "عمليات تحقق الطقس الأخيرة",
+      "popularSearchesTitle": "عمليات البحث الشائعة",
+      "popularSearchesEmpty": "لا توجد عمليات بحث شائعة بعد. ابحث عن مدينة أعلاه — تظهر الأماكن التي تفحصها هنا.",
+      "popularSearchesDescription": "أكثر الأماكن بحثًا عبر meridian.",
+      "popularSearchesEmptyCta": "ابحث عن مدينة"
+    },
+    "locations": {
+      "title": "مواقعك",
+      "description": "مدن ثبّتها بعد التحقق.",
+      "emptyTitle": "لا مواقع بعد",
+      "emptyDescription": "ابحث عن موقع ثم ثبّته هنا لمتابعته على هذا الجهاز.",
+      "searchToggle": "ابحث عن موقع"
+    },
+    "blog": {
+      "title": "من مجلة meridian",
+      "description": "مقالات قصيرة عن التوقعات والتنبيهات والاستفادة من لوحة التحكم.",
+      "carouselLabel": "مقالات المدونة"
+    },
+    "weatherCard": {
+      "loadFailedTitle": "تعذّر تحميل الطقس",
+      "unpin": "إلغاء التثبيت",
+      "refresh": "تحديث الطقس لـ {city}",
+      "updated": "تم التحديث {age}",
+      "staleUpdated": "مخزّن · تم التحديث {age}",
+      "sevenDayOutlook": "نظرة 7 أيام",
+      "viewFullForecast": "عرض التوقعات الكاملة",
+      "dailyUnavailable": "التوقعات اليومية غير متاحة.",
+      "humidity": "الرطوبة",
+      "wind": "الرياح"
+    }
+  },
+  "CityDetail": {
+    "loading": "جارٍ التحميل…",
+    "notFoundTitle": "المدينة غير موجودة",
+    "notFoundBody": "تحقق من مدينة عبر بحث لوحة التحكم لعرض توقعاتها هنا.",
+    "loadFailedTitle": "تعذّر تحميل الطقس",
+    "tabs": {
+      "label": "عروض التوقعات",
+      "today": "اليوم",
+      "hourly": "ساعيًا",
+      "daily": "10 أيام",
+      "history": "السجل"
+    },
+    "options": {
+      "menu": "خيارات",
+      "menuLabel": "خيارات المدينة",
+      "rerunCheck": "إعادة التحقق",
+      "rerunCheckDescription": "جلب أحدث طقس لهذه المدينة",
+      "reportInaccurate": "إبلاغ عن عدم دقة",
+      "reportInaccurateDescription": "الإبلاغ عن بيانات طقس أو توقعات تبدو خاطئة",
+      "reportInaccurateActive": "فريقنا يراجع هذا الموقع بالفعل",
+      "removeFromLocations": "إزالة من المواقع",
+      "removeFromLocationsDescription": "إلغاء تثبيت هذه المدينة من لوحة التحكم",
+      "pinToLocations": "تثبيت في مواقعك",
+      "pinToLocationsDescription": "حفظ هذه المدينة في لوحة التحكم",
+      "emailOptions": "خيارات البريد",
+      "emailOptionsManage": "إدارة التوقعات وتنبيهات الطقس على مستوى المنصة",
+      "emailOptionsGet": "الحصول على التوقعات وتنبيهات الطقس على مستوى المنصة"
+    },
+    "inaccurateBanner": "أحد أعضاء فريقنا يفحص بلاغًا عن بيانات غير دقيقة. شكرًا لصبركم بينما نحسّن الطقس والتوقعات المعروضة.",
+    "hero": {
+      "title": "طقس اليوم في {city}",
+      "titleFallback": "طقس اليوم",
+      "atAGlance": "لمحة سريعة",
+      "currentConditions": "الأحوال الحالية"
+    },
+    "metrics": {
+      "humidity": "الرطوبة",
+      "pressure": "الضغط",
+      "visibility": "مدى الرؤية",
+      "cloudCover": "الغطاء السحابي",
+      "sunrise": "شروق الشمس",
+      "sunset": "غروب الشمس",
+      "temperature": "درجة الحرارة",
+      "feelsLike": "الإحساس",
+      "dewPoint": "نقطة الندى",
+      "uvIndex": "مؤشر الأشعة فوق البنفسجية",
+      "wind": "الرياح",
+      "windGust": "هبات الرياح",
+      "rain1h": "مطر (ساعة)",
+      "snow1h": "ثلج (ساعة)"
+    },
+    "today": {
+      "next12HoursTitle": "الاثنا عشر ساعة القادمة",
+      "next12HoursDescription": "درجة الحرارة على المدى القريب، واحتمال المطر، والرياح.",
+      "next12HoursEmpty": "نقاط الساعات للفترة القادمة ما زالت تُحمَّل."
+    },
+    "hourly": {
+      "next12HoursTitle": "الاثنا عشر ساعة القادمة",
+      "next12HoursDescription": "بطاقة لكل ساعة من الآن وحتى الاثنتي عشرة ساعة القادمة.",
+      "next12HoursEmpty": "نقاط الساعات للفترة القادمة ما زالت تُحمَّل.",
+      "dayChartTitle": "مخطط اليوم",
+      "dayChartDescription": "اختر يومًا لرسم درجة الحرارة أو الهطول أو الرياح أو الرطوبة أو الأشعة فوق البنفسجية."
+    },
+    "daily": {
+      "title": "نظرة 10 أيام",
+      "description": "انقر يومًا لفتح المخططات. الطبقة المجانية من OpenWeather تغطي حوالي 5–6 أيام؛ تُوسَم الأيام المتبقية بـ تقديري عند عدم توفر موصلات أطول.",
+      "unavailable": "التوقعات اليومية غير متاحة بعد."
+    },
+    "history": {
+      "title": "السجل",
+      "description": "ملاحظات مخزّنة ومخططات ساعات مؤرشفة لأيام سابقة في هذا الموقع.",
+      "loading": "جارٍ تحميل السجل المخزّن…",
+      "noData": "بيانات التوقعات غير متاحة بعد.",
+      "noEntries": "لا توجد إدخالات سجل لهذا الموقع بعد. ستظهر عمليات التحقق هنا مع الوقت."
+    },
+    "loadingDataFor": "جارٍ تحميل بيانات {location}",
+    "checkingAlerts": "جارٍ التحقق من التنبيهات…",
+    "formulatingCharts": "جارٍ إعداد الرسوم البيانية…",
+    "preparingForecast": "جارٍ إعداد توقعاتك…",
+    "loadingLocation": "جارٍ تحميل الموقع…"
+  },
+  "Forecast": {
+    "hourly": {
+      "title": "توقعات ساعاتية",
+      "description": "درجة الحرارة والرياح والهطول حسب الساعة.",
+      "empty": "التوقعات الساعية غير متاحة بعد."
+    },
+    "minute": {
+      "title": "توقعات دقائق",
+      "description": "شدة الهطول للـ 60 دقيقة القادمة."
+    },
+    "range": {
+      "label": "نطاق التوقعات",
+      "week": "أسبوع",
+      "month": "شهر"
+    },
+    "metrics": {
+      "temperature": "درجة الحرارة",
+      "precipitation": "الهطول",
+      "wind": "الرياح",
+      "humidity": "الرطوبة",
+      "uv": "أشعة فوق بنفسجية",
+      "noChartData": "لا بيانات مخطط لهذا اليوم."
+    }
+  },
+  "Subscriptions": {
+    "emailMeUpdates": "أرسل لي التحديثات",
+    "manageUpdates": "إدارة التحديثات",
+    "forecastsOn": "التوقعات مفعّلة",
+    "alertsOn": "التنبيهات مفعّلة",
+    "dialog": {
+      "title": "تحديثات بريد لـ {city}",
+      "description": "احصل على بريد توقعات أسبوعي (حتى {limit} مواقع) وتنبيهات طقس اختيارية لهذا المكان.",
+      "emailLabel": "البريد",
+      "emailPlaceholder": "you@example.com",
+      "weeklyTitle": "بريد التوقعات الأسبوعي",
+      "weeklyHint": "ضمّن {city} في ملخصك الأسبوعي مع مواقعك الأخرى.",
+      "weeklyLimitHint": "وصلت إلى حد {limit} مواقع للتوقعات الأسبوعية.",
+      "alertsTitle": "تنبيهات الطقس",
+      "alertsHint": "بريد عند تطابق الأحوال لهذا المكان.",
+      "saveSubscriptions": "حفظ"
+    },
+    "alertPrefs": {
+      "title": "تنبيهات الطقس",
+      "description": "إشعارات لكل مدينة عند تطابق الأحوال مع اختياراتك.",
+      "modeLabel": "وضع اختيار التنبيهات",
+      "allTitle": "كل التنبيهات",
+      "allHint": "ستستلم كل أنواع التنبيه التي ندعمها لهذا المكان.",
+      "customTitle": "اختر الأنواع",
+      "selectedCount": "{count} من {total} محددة",
+      "selectGroup": "تحديد المجموعة",
+      "disabledHint": "فعّل تنبيهات الطقس لاختيار كل الأنواع أو تخصيص ما تستلمه لهذه المدينة."
+    },
+    "removeCity": {
+      "title": "إزالة {city}؟",
+      "hasSubscriptions": "تستلم تحديثات بريد لهذه المدينة. هل تريد إيقافها أيضًا؟",
+      "noSubscriptions": "ستُزال هذه المدينة من لوحة التحكم.",
+      "stopForecasts": "إيقاف توقعات المنصة",
+      "stopAlerts": "إيقاف تنبيهات الطقس",
+      "removeOnly": "إزالة المدينة فقط",
+      "removeAndUnsubscribe": "إزالة وإلغاء الاشتراك"
+    },
+    "newsletter": {
+      "description": "تحديثات المنتج وميزات التوقعات لـ meridianweather.co.uk.",
+      "placeholder": "you@example.com",
+      "subscribe": "اشترك في meridian",
+      "subscribed": "تم الاشتراك في تحديثات meridian.",
+      "unsubscribe": "إلغاء الاشتراك"
+    }
+  },
+  "Footer": {
+    "getTheApp": "احصل على التطبيق",
+    "comingSoon": "قريبًا",
+    "newsletterTitle": "النشرة البريدية",
+    "legalNavLabel": "قانوني",
+    "documentation": "التوثيق",
+    "adminAccess": "وصول المسؤول",
+    "storeBadges": {
+      "appStore": "تحميل من App Store",
+      "googlePlay": "احصل عليه من Google Play"
+    }
+  },
+  "Cookie": {
+    "banner": {
+      "title": "نستخدم تخزين المتصفح لمدنك وتفضيلاتك",
+      "descriptionBefore": "يخزّن meridian البيانات الأساسية محليًا. تشمل الميزات الاختيارية تخزين الطقس المؤقت والموقع الدقيق والإعلانات. اقرأ",
+      "cookiePolicy": "سياسة ملفات تعريف الارتباط",
+      "descriptionAfter": ".",
+      "acceptAll": "قبول الكل",
+      "acceptFunctional": "قبول الوظيفي",
+      "essentialOnly": "الأساسي فقط",
+      "managePreferences": "إدارة التفضيلات"
+    },
+    "preferences": {
+      "intro": "اختر التخزين والبرامج النصية الاختيارية التي يجوز لـ meridian استخدامها. الميزات الأساسية مثل المدن المحفوظة والسمة تبقى مفعّلة دائمًا.",
+      "essentialTitle": "أساسي",
+      "essentialDescription": "المدن المحفوظة ومعرّف العميل والسمة وحالة التطبيق الأساسية اللازمة لتشغيل meridian.",
+      "functionalTitle": "وظيفي",
+      "functionalDescription": "تخزين طقس مؤقت لتحميل أسرع وموقع جهاز دقيق اختياري لترتيب البحث.",
+      "analyticsTitle": "تحليلات",
+      "analyticsDescription": "محجوز لرؤى استخدام مجهولة. يُفعّل فقط عند الموافقة.",
+      "advertisingTitle": "إعلانات",
+      "advertisingDescription": "Google AdSense على الطبقة المجانية. قد يضع Google ملفات تعريف ارتباط لطرف ثالث عند التفعيل.",
+      "marketingTitle": "تسويق",
+      "marketingDescription": "محجوز لاتصالات ترويجية مستقبلية. غير مستخدم في الإصدار 1.",
+      "cookiePolicy": "سياسة ملفات تعريف الارتباط",
+      "privacyPolicy": "سياسة الخصوصية",
+      "savePreferences": "حفظ تفضيلات ملفات تعريف الارتباط",
+      "acceptAll": "قبول الكل",
+      "rejectNonEssential": "رفض غير الأساسي"
+    }
+  },
+  "Settings": {
+    "title": "الإعدادات",
+    "description": "إدارة ملفات تعريف الارتباط وإمكانية الوصول لـ meridian على هذا الجهاز.",
+    "tabs": {
+      "label": "أقسام الإعدادات",
+      "cookies": "ملفات تعريف الارتباط",
+      "accessibility": "إمكانية الوصول"
+    },
+    "accessibility": {
+      "intro": "اضبط العرض والتفاعل لهذا الجهاز. تُطبَّق التغييرات فورًا وتُحفظ في المتصفح.",
+      "colourScheme": "مخطط الألوان",
+      "colourSchemeDescription": "اختر فاتحًا أو داكنًا أو اتبع تفضيل نظام التشغيل.",
+      "motion": "الحركة",
+      "motionDescription": "تقليل الرسوم المتحركة والدوّارات ذات التقدم التلقائي عند التفعيل.",
+      "textSize": "حجم النص",
+      "textSizeDescription": "تكبير نص الواجهة عبر الموقع.",
+      "highContrast": "تباين عالٍ",
+      "highContrastDescription": "زيادة التباين للنص والحدود وحالات التركيز.",
+      "underlineLinks": "تسطير الروابط",
+      "underlineLinksDescription": "تسطير روابط النص دائمًا لتسهيل المسح.",
+      "enhancedFocus": "مؤشرات تركيز معزّزة",
+      "enhancedFocusDescription": "إظهار حلقات تركيز أقوى عند التنقل بلوحة المفاتيح.",
+      "readableFont": "خط مقروء",
+      "readableFontDescription": "استخدام خط نظام بلا زوائد محسّن للقراءة.",
+      "skipLink": "رابط التخطي إلى المحتوى الرئيسي",
+      "skipLinkDescription": "إظهار رابط تخطٍّ يسهل الوصول إليه بلوحة المفاتيح أعلى كل صفحة.",
+      "accessibilityStatement": "بيان إمكانية الوصول",
+      "save": "حفظ إعدادات إمكانية الوصول",
+      "reset": "إعادة إلى الافتراضي",
+      "colorScheme": {
+        "system": "افتراضي النظام",
+        "light": "فاتح",
+        "dark": "داكن"
+      },
+      "motionOptions": {
+        "system": "استخدام إعداد النظام",
+        "reduce": "تقليل الحركة",
+        "full": "حركة كاملة"
+      },
+      "fontScale": {
+        "100": "افتراضي (100%)",
+        "110": "كبير (110%)",
+        "125": "كبير جدًا (125%)",
+        "150": "الحد الأقصى (150%)"
+      }
+    }
+  },
+  "Journal": {
+    "archive": {
+      "title": "مجلة Meridian",
+      "description": "كل المنشورات — توقعات وملاحظات المنتج وأدلة للاستفادة أكثر من لوحة الطقس.",
+      "backLink": "← كل منشورات المجلة",
+      "relatedTitle": "المزيد من المجلة"
+    },
+    "post": {
+      "commentsTitle": "التعليقات",
+      "commentsDescription": "Share a note about this article. Comments stay on this device for the demo — they are not synced to a server.",
+      "commentsNameLabel": "Name",
+      "commentsNamePlaceholder": "Your name",
+      "commentsBodyLabel": "Comment",
+      "commentsBodyPlaceholder": "What stood out for you?",
+      "commentsSubmit": "نشر تعليق",
+      "commentsEmpty": "لا تعليقات بعد. كن أول من يعلق.",
+      "commentsValidation": "Please add a name (2+ characters) and a short comment.",
+      "otherPostsTitle": "مقالات أخرى",
+      "bannerAdLabel": "Advertisement",
+      "sidebarLabel": "Journal sidebar",
+      "sidebarAdLabel": "Advertisement",
+      "schemaTitle": "مخطط الموقع",
+      "schemaDescription": "Related pages in the meridian documentation and journal.",
+      "schemaJournal": "أرشيف اليوميات",
+      "schemaDocs": "الوثائق",
+      "schemaPrivacy": "الخصوصية",
+      "localityTitle": "بالقرب منك"
+    }
+  },
+  "Legal": {
+    "navLabel": "تنقل السياسات",
+    "navTitle": "قانوني",
+    "tocLabel": "جدول المحتويات",
+    "tocTitle": "في هذه الصفحة",
+    "lastUpdated": "آخر تحديث {date}",
+    "breadcrumb": "قانوني"
+  },
+  "Docs": {
+    "title": "توثيق meridian",
+    "description": "أدلة لاستخدام لوحة التحكم والاشتراكات وسلوك واجهة برمجة التطبيقات.",
+    "navLabel": "التوثيق",
+    "tocTitle": "في هذه الصفحة",
+    "lastUpdated": "آخر تحديث {date}",
+    "breadcrumb": "التوثيق",
+    "relatedTitle": "توثيق ذو صلة"
+  },
+  "Alerts": {
+    "groups": {
+      "standard": "تنبيهات قياسية",
+      "severity": "مستويات الشدة",
+      "hydrological": "هيدرولوجي",
+      "environment": "البيئة",
+      "us_severe": "طقس قاسٍ (الولايات المتحدة)"
+    },
+    "types": {
+      "rain": "مطر",
+      "wind": "رياح",
+      "thunderstorm": "عواصف رعدية",
+      "snow": "ثلج",
+      "ice": "جليد",
+      "extreme_heat": "حر شديد",
+      "fog": "ضباب",
+      "lightning": "برق",
+      "yellow_warning": "تحذير أصفر",
+      "amber_warning": "تحذير برتقالي",
+      "red_warning": "تحذير أحمر",
+      "flood_alert": "تنبيه فيضان",
+      "flood_warning": "تحذير فيضان",
+      "severe_flood_warning": "تحذير فيضان شديد",
+      "air_quality": "جودة الهواء",
+      "marine": "أمواج عالية / بحري",
+      "uv": "أشعة فوق بنفسجية / شمس",
+      "tornado_watch": "مراقبة إعصار",
+      "tornado_warning": "تحذير إعصار",
+      "tornado_emergency": "طوارئ إعصار",
+      "severe_thunderstorm": "عاصفة رعدية شديدة",
+      "hurricane": "إعصار مداري / استوائي"
+    }
+  },
+  "Monetization": {
+    "placeholderOverlay": "موقع AdSense: ستظهر الإعلانات هنا على الموقع المباشر.",
+    "enableAdvertisingCta": "تفعيل الإعلانات في الإعدادات"
+  },
   "Seo": {
-    "homeTitle": "لوحة الطقس",
-    "homeDescription": "تابع الأحوال الحالية والتوقعات للمدن المهمة لك.",
-    "homeIntro": "meridian لوحة طقس متعددة المدن لتتبع الأحوال المباشرة والتوقعات قصيرة المدى.",
+    "homeTitle": "لوحة طقس",
+    "homeDescription": "تتبع الأحوال الحالية والتوقعات للمدن التي تهمك — في المتصفح اليوم، وكتطبيق قابل للتثبيت غدًا.",
+    "homeIntro": "meridian لوحة طقس لعدة مدن لتتبع الأحوال المباشرة والتوقعات قصيرة المدى وتنبيهات البريد الاختيارية في الأماكن التي تهمك.",
     "docsTitle": "التوثيق",
-    "docsDescription": "أدلة استخدام لوحة meridian والتوقعات والاشتراكات وسلوك API.",
-    "cityForecastTitle": "توقعات الطقس في {city}",
-    "cityForecastDescription": "{summary} في {city}، {country} — توقعات لمدة 7 أيام على meridian.",
-    "cityForecastFallback": "تابع الأحوال والتوقعات لـ {city}، {country} على meridian.",
+    "docsDescription": "أدلة لاستخدام لوحة meridian والتوقعات والاشتراكات وسلوك واجهة برمجة التطبيقات.",
+    "cityForecastTitle": "توقعات الطقس لـ {city}",
+    "cityForecastDescription": "{summary} في {city}، {country} — توقعات 7 أيام وأحوال مباشرة على meridian.",
+    "cityForecastFallback": "تتبع الأحوال الحالية والتوقعات لـ {city}، {country} على meridian.",
     "dataSource": "مصدر بيانات الطقس: OpenWeather.",
     "notFoundTitle": "الصفحة غير موجودة",
-    "notFoundDescription": "تعذر العثور على الصفحة المطلوبة على meridian."
+    "notFoundDescription": "تعذّر العثور على الصفحة المطلوبة على meridian.",
+    "searchTitle": "بحث الموقع",
+    "searchTitleWithQuery": "بحث: {query}",
+    "searchDescription": "ابحث عن مدن وأماكن في أنحاء العالم على meridian.",
+    "searchDescriptionWithQuery": "أماكن تطابق \"{query}\" على meridian.",
+    "journalTitle": "المجلة",
+    "journalDescription": "أدلة وملاحظات عن التوقعات والتنبيهات واستخدام meridian."
   },
   "Errors": {
     "notFoundHeading": "الصفحة غير موجودة",
-    "notFoundBody": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
-    "backHome": "العودة إلى اللوحة",
+    "notFoundBody": "الصفحة التي تبحث عنها غير موجودة أو ربما نُقلت.",
+    "backHome": "العودة إلى لوحة التحكم",
     "viewDocs": "قراءة التوثيق",
     "errorHeading": "حدث خطأ ما",
-    "errorBody": "واجه meridian خطأ غير متوقع. حاول مرة أخرى."
+    "errorBody": "واجه meridian خطأ غير متوقع. أعد المحاولة أو عد إلى لوحة التحكم.",
+    "tryAgain": "أعد المحاولة",
+    "geolocationUnavailable": "تحديد الموقع غير متاح",
+    "unableToLoadLocalWeather": "تعذّر تحميل الطقس المحلي",
+    "unableToSubscribe": "تعذّر الاشتراك",
+    "unableToUnsubscribe": "تعذّر إلغاء الاشتراك",
+    "unableToUpdateAlerts": "تعذّر تحديث التنبيهات",
+    "unableToSubmitReport": "تعذّر إرسال البلاغ",
+    "newsletterSaveFailed": "تعذّر حفظ اشتراك النشرة",
+    "newsletterUnsubscribeFailed": "تعذّر إلغاء الاشتراك"
   }
 }

@@ -3,6 +3,7 @@ import {
   canMakeUpstreamCall,
   trackUpstreamCall,
 } from '@/lib/api-usage-tracker';
+import { WEATHER_CHECK_TRIGGERS } from '@/constants/weather-check-triggers';
 
 const reverseCache = new Map();
 
@@ -24,7 +25,12 @@ export function createReverseGeocodeLookup() {
     const tracked = await trackUpstreamCall(
       'geocode_reverse',
       () => fetchOpenWeather(url, { endpoint: 'geocode_reverse' }),
-      { lat, lon },
+      {
+        lat,
+        lon,
+        trigger: WEATHER_CHECK_TRIGGERS.geocodeReverse,
+        reason: 'reverse_geocode_lookup',
+      },
     );
 
     if (tracked.blocked) {

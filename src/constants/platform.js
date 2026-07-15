@@ -6,6 +6,21 @@ export const PLATFORM_SHOWCASE_CITIES = [
   { name: 'Sydney', country: 'AU', state: 'NSW', lat: -33.8688, lon: 151.2093 },
 ];
 
+/**
+ * When true, home also renders ads + journal teaser below the core grid.
+ * Default off so the interview demo path stays search → pin → cards.
+ * Set NEXT_PUBLIC_SHOW_HOME_STRETCH=1 to restore the stretch sections.
+ */
+export const SHOW_HOME_STRETCH_SECTIONS =
+  process.env.NEXT_PUBLIC_SHOW_HOME_STRETCH === '1';
+
+/**
+ * Fresh installs show showcase cities in the popular-searches strip until real
+ * search traffic exists. Set NEXT_PUBLIC_SHOW_DEMO_POPULAR_SEARCHES=0 to disable.
+ */
+export const SHOW_DEMO_POPULAR_SEARCHES =
+  process.env.NEXT_PUBLIC_SHOW_DEMO_POPULAR_SEARCHES !== '0';
+
 export const AD_PLACEMENTS = {
   dashboard: 'dashboard',
   hero: 'hero',

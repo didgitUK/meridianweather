@@ -4,7 +4,7 @@ const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 12;
 
 function getEncryptionKey() {
-  const secret = process.env.ADMIN_SECRET || process.env.ADMIN_PASSWORD || '';
+  const secret = process.env.ADMIN_SECRET?.trim() || '';
 
   if (!secret) {
     return null;

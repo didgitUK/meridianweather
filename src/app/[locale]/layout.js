@@ -10,6 +10,7 @@ import { SkipToMainLink } from '@/components/layout/SkipToMainLink';
 import { HtmlAttributes } from '@/components/layout/HtmlAttributes';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { AnalyticsProvider } from '@/components/seo/AnalyticsProvider';
+import { SiteAnalyticsBeacon } from '@/components/analytics/SiteAnalyticsBeacon';
 import { routing } from '@/i18n/routing';
 import { buildOrganizationSchema, buildWebsiteSchema, ROOT_METADATA } from '@/lib/seo';
 
@@ -72,6 +73,7 @@ export default async function LocaleLayout({ children, params }) {
       <NextIntlClientProvider messages={messages}>
         <AppProviders>
           <AnalyticsProvider />
+          <SiteAnalyticsBeacon />
           <SkipToMainLink />
           <SiteHeader />
           <main id="main-content" className="flex-1 scroll-mt-6">

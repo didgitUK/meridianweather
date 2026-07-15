@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { usePathname } from '@/i18n/navigation';
 import { FooterBrand } from '@/components/layout/footer/FooterBrand';
 import { FooterColumn } from '@/components/layout/footer/FooterColumn';
@@ -24,6 +25,8 @@ function isAdminPortalPath(pathname) {
 }
 
 function FooterMarketing() {
+  const t = useTranslations('Footer');
+
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
       <div className="grid gap-8 sm:gap-10 lg:grid-cols-[1fr_22rem] lg:items-start">
@@ -32,8 +35,8 @@ function FooterMarketing() {
           <FooterColumn
             title={
               <>
-                <span className="line-through opacity-70">Get the app</span>
-                <span className="ml-2 normal-case tracking-normal">Coming soon</span>
+                <span className="line-through opacity-70">{t('getTheApp')}</span>
+                <span className="ml-2 normal-case tracking-normal">{t('comingSoon')}</span>
               </>
             }
           >
@@ -42,7 +45,7 @@ function FooterMarketing() {
         </div>
 
         <div className="rounded-xl border p-6 sm:p-7" style={legalBarStyle}>
-          <FooterColumn title="Newsletter">
+          <FooterColumn title={t('newsletterTitle')}>
             <FooterNewsletter />
           </FooterColumn>
         </div>

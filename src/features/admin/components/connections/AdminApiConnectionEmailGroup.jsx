@@ -20,7 +20,7 @@ export function AdminApiConnectionEmailGroup({ connection, tone = 'light', onSec
           'flex flex-col border-l pl-2',
           isDark ? 'border-white/15' : 'border-border/60',
         )}
-        aria-label="Email connector statuses"
+        aria-label={`${connection.label} connector statuses`}
       >
         {children.map((child) => (
           <AdminApiConnectionStatusRow

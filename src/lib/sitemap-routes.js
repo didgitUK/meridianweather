@@ -1,5 +1,6 @@
 import { DOCS_PAGE_DEFAULTS } from '@/content/docs';
 import { LEGAL_POLICY_DEFAULTS } from '@/content/legal';
+import { HOME_BLOG_POSTS } from '@/constants/blog-posts';
 import { listIndexableCities } from '@/lib/location-repo';
 import { getShowcaseCities } from '@/lib/resolve-city';
 import { routing } from '@/i18n/routing';
@@ -7,6 +8,9 @@ import { routing } from '@/i18n/routing';
 const STATIC_PATHS = [
   '',
   '/docs',
+  '/journal',
+  '/search',
+  ...HOME_BLOG_POSTS.map((post) => post.href),
   ...DOCS_PAGE_DEFAULTS.map((page) => `/docs/${page.slug}`),
   ...LEGAL_POLICY_DEFAULTS.map((policy) => `/legal/${policy.slug}`),
 ];

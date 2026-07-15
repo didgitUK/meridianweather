@@ -11,11 +11,14 @@ import {
 import { SearchResultWeatherPreview } from '@/features/cities/components/SearchResultWeatherPreview';
 
 export function CitySearchResultRow({
+  id,
   result,
   preview,
   isHero,
   inDropdown = false,
+  selected = false,
   userContext,
+  onHighlight,
   onSelect,
   actionLabel = 'Check',
 }) {
@@ -26,10 +29,12 @@ export function CitySearchResultRow({
 
   return (
     <button
+      id={id}
       type="button"
       role="option"
-      aria-selected={false}
+      aria-selected={selected}
       onClick={() => onSelect(result)}
+      onMouseEnter={onHighlight}
       aria-label={`${actionLabel} ${accessibleLabel}`}
       className={cn(
         'flex w-full cursor-pointer items-center gap-2 px-2 py-2.5 text-left transition-colors sm:gap-3',
@@ -37,6 +42,7 @@ export function CitySearchResultRow({
         useDropdownStyle
           ? 'rounded-md hover:bg-muted/60 focus-visible:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50'
           : 'rounded-lg border border-border bg-card px-3 py-2.5',
+        selected && useDropdownStyle && 'bg-muted/60',
       )}
     >
       <span

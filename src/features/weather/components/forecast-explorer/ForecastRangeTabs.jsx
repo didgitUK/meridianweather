@@ -1,30 +1,30 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { TOUCH } from '@/constants/design-tokens';
 
-const RANGE_OPTIONS = [
-  { id: 'week', label: 'Week' },
-  { id: 'month', label: 'Month' },
-];
+const RANGE_IDS = ['week', 'month'];
 
 export function ForecastRangeTabs({ value, onChange }) {
+  const t = useTranslations('Forecast.range');
+
   return (
     <div
       role="tablist"
-      aria-label="Forecast range"
+      aria-label={t('label')}
       className="inline-flex rounded-lg border border-border/80 bg-muted/30 p-1"
     >
-      {RANGE_OPTIONS.map((option) => {
-        const isActive = option.id === value;
+      {RANGE_IDS.map((id) => {
+        const isActive = id === value;
 
         return (
           <button
-            key={option.id}
+            key={id}
             type="button"
             role="tab"
             aria-selected={isActive}
-            onClick={() => onChange(option.id)}
+            onClick={() => onChange(id)}
             className={cn(
               'rounded-md px-3 py-2 text-sm font-medium transition-colors sm:py-1.5',
               TOUCH.minH,
@@ -33,7 +33,7 @@ export function ForecastRangeTabs({ value, onChange }) {
                 : 'text-muted-foreground hover:text-foreground',
             )}
           >
-            {option.label}
+            {t(id)}
           </button>
         );
       })}

@@ -83,4 +83,47 @@ describe('geocode-ranking', () => {
 
     expect(ranked).toHaveLength(1);
   });
+
+  it('keeps exact Hart first and includes Hartlepool prefix match', () => {
+    const ranked = mergeAndRankGeocodeResults(
+      'hart',
+      [],
+      [
+        {
+          name: 'Hart',
+          state: 'England',
+          country: 'GB',
+          lat: 54.7,
+          lon: -1.25,
+          label: 'Hart, England, GB',
+        },
+        {
+          name: 'Hartlepool',
+          state: 'England',
+          country: 'GB',
+          lat: 54.69,
+          lon: -1.21,
+          label: 'Hartlepool, England, GB',
+        },
+        {
+          name: 'Hartford',
+          state: 'Connecticut',
+          country: 'US',
+          lat: 41.76,
+          lon: -72.69,
+          label: 'Hartford, Connecticut, US',
+        },
+      ],
+      10,
+      { country: 'GB', lat: 54.69, lon: -1.3 },
+    );
+
+    expect(ranked[0]?.name).toBe('Hart');
+    expect(ranked.some((city) => city.name === 'Hartlepool')).toBe(true);
+    const hartlepoolIndex = ranked.findIndex((city) => city.name === 'Hartlepool');
+    const hartfordIndex = ranked.findIndex((city) => city.name === 'Hartford');
+    expect(hartlepoolIndex).toBeGreaterThan(-1);
+    expect(hartfordIndex).toBeGreaterThan(-1);
+    expect(hartlepoolIndex).toBeLessThan(hartfordIndex);
+  });
 });

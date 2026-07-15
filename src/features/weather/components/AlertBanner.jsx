@@ -5,15 +5,21 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export function AlertBanner({ alertIds }) {
   const [alerts, setAlerts] = useState([]);
+  const alertKey = Array.isArray(alertIds) && alertIds.length > 0
+    ? alertIds.join(',')
+    : '';
 
   useEffect(() => {
-    if (!alertIds?.length) return undefined;
+    if (!alertKey) {
+      return undefined;
+    }
 
+    const ids = alertKey.split(',');
     let cancelled = false;
 
     async function load() {
       const results = [];
-      for (const alertId of alertIds.slice(0, 3)) {
+      for (const alertId of ids.slice(0, 3)) {
         const response = await fetch(`/api/alerts/${alertId}`);
         if (response.ok) {
           const data = await response.json();
@@ -23,13 +29,13 @@ export function AlertBanner({ alertIds }) {
       if (!cancelled) setAlerts(results);
     }
 
-    load();
+    void load();
     return () => {
       cancelled = true;
     };
-  }, [alertIds]);
+  }, [alertKey]);
 
-  if (!alertIds?.length || alerts.length === 0) return null;
+  if (!alertKey || alerts.length === 0) return null;
 
   return (
     <div className="flex flex-col gap-3">

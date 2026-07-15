@@ -1,52 +1,65 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
-import { getAdPlaceholderImage } from '@/constants/monetization';
+import { useTranslations } from 'next-intl';
+import {
+  getAdPlaceholderImage,
+  isHeroAdPlacement,
+  isSquareAdPlacement,
+} from '@/constants/monetization';
+import { cn } from '@/lib/utils';
 
 /**
- * Clearly labeled demo ad when AdSense is unavailable.
+ * Default AdSense placement chrome: branded static creative on muted ground.
  * Live adsbygoogle units never use this component.
  */
 export function AdPlaceholder({
   placement = 'dashboard',
-  label = 'meridian free is supported by advertising',
-  href = '/docs/monetization',
   className = '',
   onOpenSettings,
   showConsentCta = false,
 }) {
+  const t = useTranslations('Monetization');
   const src = getAdPlaceholderImage(placement);
+  const isHero = isHeroAdPlacement(placement);
+  const isSquare = isSquareAdPlacement(placement);
 
   return (
     <div
       role="complementary"
       aria-label={`Advertisement placeholder ${placement}`}
-      className={`overflow-hidden rounded-xl border border-dashed border-border/80 bg-muted/40 p-3 text-center ${className}`}
+      className={cn(
+        'relative overflow-hidden',
+        isHero
+          ? 'absolute inset-0 size-auto rounded-[inherit] border-0 bg-transparent'
+          : cn(
+              'size-full min-h-0 rounded-xl border-0 bg-transparent',
+              isSquare ? 'aspect-square' : 'aspect-[4466/1302] w-full min-h-[7.5rem]',
+            ),
+        className,
+      )}
     >
-      <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">
-        Advertisement
-      </p>
-      <div className="relative mx-auto flex min-h-[90px] w-full max-w-3xl items-center justify-center">
-        <Image
-          src={src}
-          alt="Demo advertisement placeholder — AdSense not configured"
-          width={728}
-          height={90}
-          className="h-auto max-h-[120px] w-full object-contain"
-          unoptimized
-        />
-      </div>
-      <p className="mt-2 text-sm text-muted-foreground">{label}</p>
-      {href ? (
-        <Link href={href} className="mt-1 inline-block text-xs underline">
-          Learn about meridian monetization
-        </Link>
-      ) : null}
+      <Image
+        src={src}
+        alt=""
+        fill
+        sizes={isSquare ? '280px' : '(max-width: 768px) 100vw, 1152px'}
+        className="object-cover"
+        priority={isHero}
+        unoptimized
+        aria-hidden
+      />
+      <span className="sr-only">{t('placeholderOverlay')}</span>
       {showConsentCta && onOpenSettings ? (
-        <button type="button" className="mt-2 block w-full text-xs underline" onClick={onOpenSettings}>
-          Enable advertising in settings
-        </button>
+        <div className="absolute inset-x-0 bottom-0 flex justify-center bg-black/50 p-2">
+          <button
+            type="button"
+            className="text-xs font-medium text-white underline underline-offset-4 hover:text-white"
+            onClick={onOpenSettings}
+          >
+            {t('enableAdvertisingCta')}
+          </button>
+        </div>
       ) : null}
     </div>
   );

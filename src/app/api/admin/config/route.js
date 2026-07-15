@@ -39,6 +39,7 @@ function sanitizeSettings(settings) {
     sendgridApiKey: '',
     sesAccessKeyId: '',
     sesSecretAccessKey: '',
+    smtpPassword: '',
     adsenseOauthRefreshToken: '',
   };
 }
@@ -180,6 +181,30 @@ export async function PATCH(request) {
     next.sesFromEmail = String(body.sesFromEmail).trim();
   }
 
+  if (body.smtpHost != null) {
+    next.smtpHost = String(body.smtpHost).trim();
+  }
+
+  if (body.smtpPort != null) {
+    next.smtpPort = Number(body.smtpPort);
+  }
+
+  if (body.smtpUser != null) {
+    next.smtpUser = String(body.smtpUser).trim();
+  }
+
+  if (body.smtpPassword != null && !isBlankOrMasked(body.smtpPassword)) {
+    next.smtpPassword = String(body.smtpPassword).trim();
+  }
+
+  if (body.smtpFromEmail != null) {
+    next.smtpFromEmail = String(body.smtpFromEmail).trim();
+  }
+
+  if (body.smtpSecure != null) {
+    next.smtpSecure = Boolean(body.smtpSecure);
+  }
+
   if (body.emailLastSyncedAt != null) {
     next.emailLastSyncedAt = body.emailLastSyncedAt ? String(body.emailLastSyncedAt) : null;
   }
@@ -196,6 +221,28 @@ export async function PATCH(request) {
     next.windAlertThresholdMs = Number(body.windAlertThresholdMs);
   }
 
+  if (body.weeklyDigestFrequencyDefault != null) {
+    const frequency = String(body.weeklyDigestFrequencyDefault).trim();
+    if (frequency !== 'weekly' && frequency !== 'daily') {
+      return NextResponse.json(
+        { error: 'invalid_request', message: 'weeklyDigestFrequencyDefault must be weekly or daily' },
+        { status: 400 },
+      );
+    }
+    next.weeklyDigestFrequencyDefault = frequency;
+  }
+
+  if (body.weeklyDigestDayOfWeek != null) {
+    const day = Number(body.weeklyDigestDayOfWeek);
+    if (!Number.isInteger(day) || day < 0 || day > 6) {
+      return NextResponse.json(
+        { error: 'invalid_request', message: 'weeklyDigestDayOfWeek must be 0–6' },
+        { status: 400 },
+      );
+    }
+    next.weeklyDigestDayOfWeek = day;
+  }
+
   const numericFields = [
     'staleCacheMaxMs',
     'dailyLimit',
@@ -205,6 +252,7 @@ export async function PATCH(request) {
     'maxSavedCities',
     'inaccuracyAutoDismissDays',
     'windAlertThresholdMs',
+    'smtpPort',
   ];
 
   for (const field of numericFields) {

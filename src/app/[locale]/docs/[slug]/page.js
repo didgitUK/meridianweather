@@ -16,7 +16,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const { locale, slug } = await params;
-  const doc = getDocBySlug(slug);
+  const doc = getDocBySlug(slug, locale);
 
   if (!doc) {
     return {};
@@ -29,10 +29,10 @@ export default async function DocsSlugPage({ params }) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
-  const doc = getDocBySlug(slug);
+  const doc = getDocBySlug(slug, locale);
   if (!doc) {
     notFound();
   }
 
-  return <DocsPageTemplate page={doc} pages={getDocsPages()} />;
+  return <DocsPageTemplate page={doc} pages={getDocsPages(locale)} />;
 }

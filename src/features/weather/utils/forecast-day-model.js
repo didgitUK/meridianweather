@@ -87,6 +87,7 @@ function entryFromDailyPoint(point, time, todayKey, source, observationCount = 0
     source,
     dailyPoint: point,
     observationCount,
+    isExtended: Boolean(point.isExtended || point.source === 'extended_outlook'),
   };
 }
 

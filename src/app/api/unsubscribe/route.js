@@ -24,5 +24,5 @@ export async function GET(request) {
   }
 
   deactivateSubscription(token);
-  return NextResponse.json({ success: true, email: subscription.email });
+  return NextResponse.json({ success: true });
 }

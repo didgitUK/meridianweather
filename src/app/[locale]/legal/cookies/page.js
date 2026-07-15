@@ -6,7 +6,7 @@ import { setRequestLocale } from 'next-intl/server';
 
 export async function generateMetadata({ params }) {
   const { locale } = await params;
-  const policy = getPolicyBySlug('cookies');
+  const policy = getPolicyBySlug('cookies', locale);
   if (!policy) {
     return {};
   }
@@ -17,10 +17,10 @@ export async function generateMetadata({ params }) {
 export default async function CookiesPage({ params }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const policy = getPolicyBySlug('cookies');
+  const policy = getPolicyBySlug('cookies', locale);
   if (!policy) {
     notFound();
   }
 
-  return <LegalPageTemplate policy={policy} />;
+  return <LegalPageTemplate policy={policy} locale={locale} />;
 }

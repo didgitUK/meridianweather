@@ -1,25 +1,25 @@
 export const apiLimitsDoc = {
   slug: 'api-limits',
   title: 'API limits',
-  lastUpdated: '2026-07-09',
+  lastUpdated: '2026-07-15',
   sections: [
     {
       id: 'quota',
       title: 'Daily and per-minute quota',
       body:
-        'Defaults from constants/weather.js: DAILY_LIMIT 1000, WARNING_THRESHOLD 800, SOFT_BLOCK_THRESHOLD 950, PER_MINUTE_LIMIT 60 upstream calls per rolling minute. platform_settings row can override daily_limit and soft_block_threshold (defaults seeded on first DB open). Counter resets at UTC midnight.',
+        'Defaults from constants/weather.js: DAILY_LIMIT 1000, WARNING_THRESHOLD 800, SOFT_BLOCK_THRESHOLD 950, PER_MINUTE_LIMIT 60 upstream calls per rolling minute. platform_settings can override daily_limit, soft_block_threshold, warning_threshold, and per_minute_limit (defaults seeded on first DB open). Counter resets at UTC midnight.',
     },
     {
       id: 'status',
       title: 'Status values',
       body:
-        'ok — under warning threshold. warning — at or above 800 calls today. soft_block — at or above 950; upstream blocked. hard_block — at daily limit 1000. Per-minute cap also blocks upstream when 60 calls occurred in the last 60 seconds.',
+        'ok — under warning threshold. warning — at or above warning_threshold (default 800 calls today). soft_block — at or above soft_block_threshold (default 950); upstream blocked. hard_block — at daily_limit (default 1000). Per-minute cap also blocks upstream when per_minute_limit calls occurred in the last 60 seconds.',
     },
     {
       id: 'cache-hits',
       title: 'Cache hits vs upstream',
       body:
-        'L1/L2 hits log to api_call_log with cache_hit=1 and do not increment daily upstream counter. Only successful upstream OpenWeather calls count toward quota. Emergency stale serves avoid upstream when blocked.',
+        'L2 database hits log to api_call_log with cache_hit=1 and do not increment the daily upstream counter. L1 memory hits are not logged to SQLite — recordCacheHit returns early when meta.layer is memory. Only successful upstream OpenWeather calls (status 200, cache_hit=0) count toward quota. Emergency stale serves avoid upstream when blocked.',
     },
     {
       id: 'admin-shortcut',
@@ -31,7 +31,7 @@ export const apiLimitsDoc = {
       id: 'admin-api',
       title: 'Admin API',
       body:
-        'GET /api/admin/usage — quota snapshot and recent calls. PATCH /api/admin/settings — body {refreshIntervalMs} updates platform_settings and affects current-scope TTL. Auth: x-admin-secret header must match ADMIN_SECRET. In development or when ADMIN_SECRET is unset, auth is bypassed (document for local/review use only).',
+        'GET /api/admin/usage — quota snapshot and recent calls. GET|PATCH /api/admin/config — primary admin settings API (refresh interval, connectors, digest defaults, AdSense, alert toggles, etc.). Narrow legacy: PATCH /api/admin/settings { refreshIntervalMs }. Auth: HttpOnly session cookie meridian_admin_session after /login. Signing secret is ADMIN_SECRET (not ADMIN_PASSWORD). Dev bypass when NODE_ENV=development, ALLOW_DEV_ADMIN_BYPASS=1, and ADMIN_SECRET unset.',
     },
     {
       id: 'openweather',

@@ -52,7 +52,7 @@ export function AdminAlertConnectorsPanel({ settings, alertConnectors, onUpdated
 
       <AdminPanel
         title="How feeds map to alert columns"
-        description="Subscriber toggles in Alerts → Subscribers decide which matched events trigger email."
+        description="Subscriber toggles in Email → Mailing Lists decide which matched events trigger email."
       >
         <ul className="space-y-2 text-sm text-muted-foreground">
           <li>

@@ -1,10 +1,12 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { TEMPERATURE_UNIT } from '@/constants/temperature-unit';
 import { useTemperatureUnit } from '@/providers/TemperatureUnitProvider';
 import { cn } from '@/lib/utils';
 
 export function TemperatureUnitSwitch({ className }) {
+  const t = useTranslations('Common');
   const { isFahrenheit, setUnit } = useTemperatureUnit();
 
   return (
@@ -26,20 +28,25 @@ export function TemperatureUnitSwitch({ className }) {
         type="button"
         role="switch"
         aria-checked={isFahrenheit}
-        aria-label={isFahrenheit ? 'Switch to Celsius' : 'Switch to Fahrenheit'}
+        aria-label={isFahrenheit ? t('switchToCelsius') : t('switchToFahrenheit')}
         onClick={() => setUnit(
           isFahrenheit ? TEMPERATURE_UNIT.CELSIUS : TEMPERATURE_UNIT.FAHRENHEIT,
         )}
         className={cn(
-          'relative inline-flex h-6 w-11 shrink-0 rounded-full border border-border transition-colors',
+          'relative inline-flex h-6 w-11 shrink-0 rounded-full border transition-colors',
           'hover:opacity-90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50',
           'active:opacity-80 disabled:pointer-events-none disabled:opacity-50',
-          isFahrenheit ? 'bg-primary' : 'bg-muted',
+          isFahrenheit
+            ? 'border-foreground bg-foreground'
+            : 'border-foreground/40 bg-muted',
         )}
       >
         <span
           className={cn(
-            'pointer-events-none absolute top-0.5 left-0.5 block size-5 rounded-full bg-background shadow-sm transition-transform',
+            'pointer-events-none absolute top-0.5 left-0.5 block size-5 rounded-full shadow-sm transition-transform',
+            isFahrenheit
+              ? 'bg-background'
+              : 'bg-foreground',
             isFahrenheit && 'translate-x-5',
           )}
         />

@@ -1,33 +1,32 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { TOUCH } from '@/constants/design-tokens';
 
-const SETTINGS_TABS = [
-  { id: 'cookies', label: 'Cookie preferences' },
-  { id: 'weather', label: 'Weather' },
-  { id: 'accessibility', label: 'Accessibility' },
-];
+const SETTINGS_TAB_IDS = ['cookies', 'accessibility'];
 
 export function SettingsTabList({ value, onChange }) {
+  const t = useTranslations('Settings.tabs');
+
   return (
     <div
       role="tablist"
-      aria-label="Settings sections"
+      aria-label={t('label')}
       className="flex w-full rounded-lg border border-border/80 bg-muted/30 p-1"
     >
-      {SETTINGS_TABS.map((tab) => {
-        const isActive = tab.id === value;
+      {SETTINGS_TAB_IDS.map((id) => {
+        const isActive = id === value;
 
         return (
           <button
-            key={tab.id}
+            key={id}
             type="button"
             role="tab"
             aria-selected={isActive}
-            aria-controls={`settings-panel-${tab.id}`}
-            id={`settings-tab-${tab.id}`}
-            onClick={() => onChange(tab.id)}
+            aria-controls={`settings-panel-${id}`}
+            id={`settings-tab-${id}`}
+            onClick={() => onChange(id)}
             className={cn(
               'flex flex-1 items-center justify-center rounded-md px-2 py-2.5 text-center text-xs font-medium leading-tight transition-colors sm:px-3 sm:text-sm',
               TOUCH.minH,
@@ -36,7 +35,7 @@ export function SettingsTabList({ value, onChange }) {
                 : 'text-muted-foreground hover:text-foreground',
             )}
           >
-            {tab.label}
+            {t(id)}
           </button>
         );
       })}
@@ -44,4 +43,4 @@ export function SettingsTabList({ value, onChange }) {
   );
 }
 
-export { SETTINGS_TABS };
+export const SETTINGS_TABS = SETTINGS_TAB_IDS.map((id) => ({ id, labelKey: id }));

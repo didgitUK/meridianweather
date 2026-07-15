@@ -2,11 +2,17 @@ import { NextResponse } from 'next/server';
 import { logAdminAuditEvent } from '@/lib/admin-audit-repo';
 import {
   getAdminUserById,
+  publicAdminUser,
   updateAdminUser,
   updateAdminUserPassword,
 } from '@/lib/admin-users-repo';
-import { getAdminSessionFromRequest } from '@/lib/server/admin-auth';
-import { verifyPassword } from '@/lib/server/password';
+import {
+  ADMIN_SESSION_COOKIE,
+  createAdminSessionToken,
+  getAdminSessionCookieOptions,
+  getAdminSessionFromRequest,
+} from '@/lib/server/admin-auth';
+import { validatePasswordPolicy, verifyPassword } from '@/lib/server/password';
 
 function requireSessionUser(request) {
   const session = getAdminSessionFromRequest(request);
@@ -77,9 +83,10 @@ export async function PUT(request) {
     );
   }
 
-  if (nextPassword.length < 8) {
+  const policy = validatePasswordPolicy(nextPassword);
+  if (!policy.ok) {
     return NextResponse.json(
-      { error: 'validation', message: 'Password must be at least 8 characters' },
+      { error: 'validation', message: policy.message },
       { status: 400 },
     );
   }
@@ -95,5 +102,12 @@ export async function PUT(request) {
     meta: { userId: session.user.id },
   });
 
-  return NextResponse.json({ ok: true });
+  const refreshed = publicAdminUser(getAdminUserById(session.user.id));
+  const response = NextResponse.json({ ok: true });
+  response.cookies.set(
+    ADMIN_SESSION_COOKIE,
+    createAdminSessionToken(refreshed),
+    getAdminSessionCookieOptions(),
+  );
+  return response;
 }

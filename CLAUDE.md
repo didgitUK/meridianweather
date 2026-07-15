@@ -1,1 +1,2 @@
+@SCOPE.md
 @AGENTS.md

@@ -1,23 +1,513 @@
 {
+  "Common": {
+    "loading": "読み込み中…",
+    "loadingLocations": "場所を読み込んでいます…",
+    "retry": "再試行",
+    "cancel": "キャンセル",
+    "done": "完了",
+    "check": "確認",
+    "search": "検索",
+    "open": "開く",
+    "backToDashboard": "ダッシュボードに戻る",
+    "unavailable": "利用不可",
+    "justNow": "たった今",
+    "minutesAgo": "{minutes}分前",
+    "hoursAgo": "{hours}時間前",
+    "near": "{label}の近く",
+    "basedOn": "{source}に基づく",
+    "nearYou": "現在地の近く",
+    "localWeather": "現在地の天気",
+    "currentWeather": "現在の天気",
+    "weatherIcon": "天気アイコン",
+    "feelsLike": "体感 {temp}",
+    "highLow": "最高 {high} · 最低 {low}",
+    "photoBy": "写真提供",
+    "onUnsplash": "（Unsplash）",
+    "onSource": "（{source}）",
+    "copyright": "© {year} Meridian",
+    "comingSoon": "近日公開",
+    "viewAll": "すべて表示",
+    "estimated": "推定",
+    "enableAdvertisingInSettings": "設定で広告を有効にする",
+    "openSettings": "設定を開く",
+    "skipToMainContent": "メインコンテンツへスキップ",
+    "toggleTheme": "テーマを切り替え",
+    "switchToCelsius": "摂氏に切り替え",
+    "switchToFahrenheit": "華氏に切り替え",
+    "pinned": "場所にピン留めしました",
+    "unpinned": "場所から外しました",
+    "alreadyPinned": "すでに場所にピン留めされています",
+    "cityRemoved": "{city}を削除しました",
+    "subscriptionsUpdated": "{city}の購読を更新しました",
+    "newsletterSubscribed": "meridianの最新情報を購読しました",
+    "newsletterUnsubscribed": "meridianニュースレターの購読を解除しました",
+    "reportSubmitted": "報告を送信しました。チームがこの場所を確認します。",
+    "reportReviewing": "チームがすでにこの場所を確認中です",
+    "selectAtLeastOneAlert": "少なくとも1つの天気予報アラートを選択するか、アラートをオフにしてください。",
+    "showPreviousArticles": "前の記事を表示",
+    "showNextArticles": "次の記事を表示"
+  },
+  "Brand": {
+    "tagline": "あなたの世界の天気を追跡",
+    "description": "大切な都市の現在の天気と予報を追跡 — 今日はブラウザで、明日はインストール可能なアプリとして。",
+    "heroEyebrow": "Meridian Weather",
+    "heroIntro": "どの都市でもすぐに確認し、追跡したい場所をピン留めして、条件が変わったときにアラートを受け取れます。"
+  },
+  "Header": {
+    "checkAction": "確認",
+    "language": {
+      "changeLanguage": "言語を変更",
+      "selectLanguage": "言語を選択",
+      "searchPlaceholder": "言語を検索…",
+      "searchLabel": "言語を検索",
+      "noMatch": "一致する言語がありません",
+      "footerNote": "これらの言語向けにUI文字列を用意しています。OpenWeatherの天気テキストも利用可能な場合は同じロケールに従います。"
+    }
+  },
+  "Search": {
+    "placeholder": "世界中の場所を検索",
+    "label": "場所を検索",
+    "dropdownLabel": "都市の検索結果",
+    "searching": "検索中…",
+    "noCitiesFound": "都市が見つかりませんでした。",
+    "archive": {
+      "title": "場所検索",
+      "description": "地図で一致する場所を比較し、該当する予報を開きます。",
+      "placeholder": "世界中の場所を検索",
+      "ariaLabel": "場所を検索",
+      "hintWithQuery": "都市・町・地名を入力して検索を押してください。",
+      "minChars": "検索には2文字以上入力してください。",
+      "noMatches": "その検索に一致する場所はありません。",
+      "openAction": "予報を開く",
+      "resultsLabel": "検索結果",
+      "resultsFor": "「{query}」の結果",
+      "mapAlt": "{name}を中心とした地図",
+      "osmAttribution": "場所の候補には OpenStreetMap のデータを含みます。"
+    },
+    "wrongLocation": {
+      "title": "場所を設定",
+      "description": "現在地に合う場所を検索してください。次回のためにこの端末に記憶します。",
+      "actionLabel": "この場所を使う"
+    },
+    "sources": {
+      "confirmed": "保存済みの自宅の場所",
+      "gps": "端末の精密な位置情報",
+      "history": "最近の確認履歴",
+      "ip": "おおよそのネットワーク位置"
+    }
+  },
+  "Dashboard": {
+    "hero": {
+      "shareLocationTitle": "位置情報を共有",
+      "shareLocationBody": "上で位置情報を許可すると、ここに現在地の天気が表示されます。",
+      "searchCardTitle": "場所を検索",
+      "allowLocation": "位置情報を許可",
+      "recentChecks": "最近の確認",
+      "yourLocations": "あなたの場所",
+      "nearbyCarouselTitle": "近くの場所",
+      "nearbyCarouselLabel": "近くの場所のカルーセル"
+    },
+    "localCard": {
+      "weatherLoadFailedNear": "{label}の近くですが、天気を読み込めませんでした。",
+      "weatherLoadFailed": "現在地の天気をまだ読み込めませんでした。",
+      "setLocation": "場所を設定",
+      "wrongLocation": "違いますか？"
+    },
+    "recentChecks": {
+      "title": "あなたの周り",
+      "description": "近くの場所と、このデバイスで検索した都市。",
+      "nearYouTitle": "近く",
+      "nearYouDescription": "ホーム天気地点に近い場所。",
+      "nearYouEmpty": "近くの場所は現在ありません。",
+      "nearYouNeedLocation": "位置情報を許可すると近くの天気を表示できます。",
+      "empty": "最近のプラットフォーム確認はまだありません。",
+      "carouselLabel": "最近の天気確認",
+      "popularSearchesTitle": "人気の検索",
+      "popularSearchesEmpty": "まだ人気の検索はありません。上で都市を検索すると、確認した場所がここに表示されます。",
+      "popularSearchesDescription": "meridian でよく検索される場所。",
+      "popularSearchesEmptyCta": "都市を検索"
+    },
+    "locations": {
+      "title": "あなたの場所",
+      "description": "確認後にピン留めした都市。",
+      "emptyTitle": "まだ場所がありません",
+      "emptyDescription": "場所を検索してここにピン留めすると、この端末で監視できます。",
+      "searchToggle": "場所を検索"
+    },
+    "blog": {
+      "title": "meridianジャーナルから",
+      "description": "予報・アラート・ダッシュボードの活用についての短い記事。",
+      "carouselLabel": "ブログ記事"
+    },
+    "weatherCard": {
+      "loadFailedTitle": "天気を読み込めませんでした",
+      "unpin": "ピンを外す",
+      "refresh": "{city}の天気を更新",
+      "updated": "更新 {age}",
+      "staleUpdated": "キャッシュ · 更新 {age}",
+      "sevenDayOutlook": "7日間の見通し",
+      "viewFullForecast": "詳細予報を見る",
+      "dailyUnavailable": "日別予報は利用できません。",
+      "humidity": "湿度",
+      "wind": "風"
+    }
+  },
+  "CityDetail": {
+    "loading": "読み込み中…",
+    "notFoundTitle": "都市が見つかりません",
+    "notFoundBody": "ダッシュボードの検索から都市を確認すると、ここで予報を表示できます。",
+    "loadFailedTitle": "天気を読み込めませんでした",
+    "tabs": {
+      "label": "予報ビュー",
+      "today": "今日",
+      "hourly": "時間別",
+      "daily": "10日間",
+      "history": "履歴"
+    },
+    "options": {
+      "menu": "オプション",
+      "menuLabel": "都市オプション",
+      "rerunCheck": "再確認",
+      "rerunCheckDescription": "この都市の最新天気を取得",
+      "reportInaccurate": "不正確を報告",
+      "reportInaccurateDescription": "誤っている天気・予報データを報告",
+      "reportInaccurateActive": "チームがすでにこの場所を確認中です",
+      "removeFromLocations": "場所から削除",
+      "removeFromLocationsDescription": "ダッシュボードからこの都市のピンを外す",
+      "pinToLocations": "場所にピン留め",
+      "pinToLocationsDescription": "この都市をダッシュボードに保存",
+      "emailOptions": "メールオプション",
+      "emailOptionsManage": "プラットフォーム全体の予報と天気アラートを管理",
+      "emailOptionsGet": "プラットフォーム全体の予報と天気アラートを受け取る"
+    },
+    "inaccurateBanner": "チームのメンバーが不正確なデータの報告を調査中です。表示される天気と予報の改善まで、しばらくお待ちください。",
+    "hero": {
+      "title": "{city}の今日の天気",
+      "titleFallback": "今日の天気",
+      "atAGlance": "一覧",
+      "currentConditions": "現在の状況"
+    },
+    "metrics": {
+      "humidity": "湿度",
+      "pressure": "気圧",
+      "visibility": "視程",
+      "cloudCover": "雲量",
+      "sunrise": "日の出",
+      "sunset": "日の入り",
+      "temperature": "気温",
+      "feelsLike": "体感",
+      "dewPoint": "露点",
+      "uvIndex": "UV指数",
+      "wind": "風",
+      "windGust": "突風",
+      "rain1h": "雨（1時間）",
+      "snow1h": "雪（1時間）"
+    },
+    "today": {
+      "next12HoursTitle": "今後12時間",
+      "next12HoursDescription": "直近の気温、降水確率、風。",
+      "next12HoursEmpty": "次の時間帯の時間別データはまだ読み込み中です。"
+    },
+    "hourly": {
+      "next12HoursTitle": "今後12時間",
+      "next12HoursDescription": "現在からこれから12時間までの1時間ごとのカード。",
+      "next12HoursEmpty": "次の時間帯の時間別データはまだ読み込み中です。",
+      "dayChartTitle": "日別チャート",
+      "dayChartDescription": "日を選んで気温、降水、風、湿度、UVをグラフ表示。"
+    },
+    "daily": {
+      "title": "10日間の見通し",
+      "description": "日をタップするとチャートが開きます。OpenWeather無料枠は約5〜6日分です。長期間コネクタがない場合、残りの日は「推定」と表示されます。",
+      "unavailable": "日別予報はまだ利用できません。"
+    },
+    "history": {
+      "title": "履歴",
+      "description": "この場所の過去日の保存された観測とアーカイブ済み時間別チャート。",
+      "loading": "保存された履歴を読み込み中…",
+      "noData": "予報データはまだ利用できません。",
+      "noEntries": "この場所の履歴はまだありません。実行した確認は時間とともにここに表示されます。"
+    },
+    "loadingDataFor": "{location} のデータを読み込み中",
+    "checkingAlerts": "警報を確認しています…",
+    "formulatingCharts": "チャートを準備しています…",
+    "preparingForecast": "予報を準備しています…",
+    "loadingLocation": "場所を読み込み中…"
+  },
+  "Forecast": {
+    "hourly": {
+      "title": "時間別予報",
+      "description": "時間ごとの気温、風、降水。",
+      "empty": "時間別予報はまだ利用できません。"
+    },
+    "minute": {
+      "title": "分単位予報",
+      "description": "今後60分間の降水強度。"
+    },
+    "range": {
+      "label": "予報期間",
+      "week": "週",
+      "month": "月"
+    },
+    "metrics": {
+      "temperature": "気温",
+      "precipitation": "降水",
+      "wind": "風",
+      "humidity": "湿度",
+      "uv": "UV",
+      "noChartData": "この日のチャートデータはありません。"
+    }
+  },
+  "Subscriptions": {
+    "emailMeUpdates": "更新をメールで受け取る",
+    "manageUpdates": "更新を管理",
+    "forecastsOn": "予報オン",
+    "alertsOn": "アラートオン",
+    "dialog": {
+      "title": "{city}のメール更新",
+      "description": "週間予報メール（最大{limit}地点）と、この場所の任意の天気アラートを受け取れます。",
+      "emailLabel": "メール",
+      "emailPlaceholder": "you@example.com",
+      "weeklyTitle": "週間予報メール",
+      "weeklyHint": "ほかの地点とあわせて、週間ダイジェストに{city}を含めます。",
+      "weeklyLimitHint": "週間予報の上限（{limit}地点）に達しています。",
+      "alertsTitle": "天気アラート",
+      "alertsHint": "この場所の条件が一致したときにメールします。",
+      "saveSubscriptions": "保存"
+    },
+    "alertPrefs": {
+      "title": "天気アラート",
+      "description": "条件が選択に一致したときの都市ごとの通知。",
+      "modeLabel": "アラート選択モード",
+      "allTitle": "すべてのアラート",
+      "allHint": "この場所で対応しているすべてのアラート種類を受け取ります。",
+      "customTitle": "種類を選ぶ",
+      "selectedCount": "{count} / {total} 選択中",
+      "selectGroup": "グループを選択",
+      "disabledHint": "天気アラートをオンにして、すべての種類にするか、この都市で受け取るものをカスタマイズしてください。"
+    },
+    "removeCity": {
+      "title": "{city}を削除しますか？",
+      "hasSubscriptions": "この都市のメール更新を受け取っています。それらも停止しますか？",
+      "noSubscriptions": "この都市はダッシュボードから削除されます。",
+      "stopForecasts": "プラットフォーム全体の予報を停止",
+      "stopAlerts": "天気アラートを停止",
+      "removeOnly": "都市のみ削除",
+      "removeAndUnsubscribe": "削除して購読解除"
+    },
+    "newsletter": {
+      "description": "meridianweather.co.ukの製品ニュースと予報機能について。",
+      "placeholder": "you@example.com",
+      "subscribe": "meridianを購読",
+      "subscribed": "meridianの最新情報を購読しました。",
+      "unsubscribe": "購読解除"
+    }
+  },
+  "Footer": {
+    "getTheApp": "アプリを入手",
+    "comingSoon": "近日公開",
+    "newsletterTitle": "ニュースレター",
+    "legalNavLabel": "法務",
+    "documentation": "ドキュメント",
+    "adminAccess": "管理アクセス",
+    "storeBadges": {
+      "appStore": "App Storeでダウンロード",
+      "googlePlay": "Google Playで入手"
+    }
+  },
+  "Cookie": {
+    "banner": {
+      "title": "都市と設定のためにブラウザのストレージを使用します",
+      "descriptionBefore": "meridianは必須データをローカルに保存します。任意機能には天気キャッシュ、精密な位置情報、広告が含まれます。詳しくは",
+      "cookiePolicy": "Cookieポリシー",
+      "descriptionAfter": "をご覧ください。",
+      "acceptAll": "すべて許可",
+      "acceptFunctional": "機能目的を許可",
+      "essentialOnly": "必須のみ",
+      "managePreferences": "設定を管理"
+    },
+    "preferences": {
+      "intro": "meridianが使用できる任意のストレージとスクリプトを選択してください。保存済み都市やテーマなどの必須機能は常に有効です。",
+      "essentialTitle": "必須",
+      "essentialDescription": "保存済み都市、クライアントID、テーマ、meridianの動作に必要な基本状態。",
+      "functionalTitle": "機能",
+      "functionalDescription": "読み込み高速化のための天気キャッシュと、検索順位のための任意の精密な端末位置情報。",
+      "analyticsTitle": "分析",
+      "analyticsDescription": "匿名の利用状況の洞察用に予約。オプトイン時のみ有効。",
+      "advertisingTitle": "広告",
+      "advertisingDescription": "無料枠のGoogle AdSense。有効時にGoogleがサードパーティCookieを設定する場合があります。",
+      "marketingTitle": "マーケティング",
+      "marketingDescription": "将来のプロモーション通信用に予約。v1では未使用。",
+      "cookiePolicy": "Cookieポリシー",
+      "privacyPolicy": "プライバシーポリシー",
+      "savePreferences": "Cookie設定を保存",
+      "acceptAll": "すべて許可",
+      "rejectNonEssential": "必須以外を拒否"
+    }
+  },
+  "Settings": {
+    "title": "設定",
+    "description": "この端末のmeridianのCookieとアクセシビリティを管理。",
+    "tabs": {
+      "label": "設定セクション",
+      "cookies": "Cookie",
+      "accessibility": "アクセシビリティ"
+    },
+    "accessibility": {
+      "intro": "この端末の表示と操作設定を調整します。変更はすぐに適用され、ブラウザに保存されます。",
+      "colourScheme": "カラースキーム",
+      "colourSchemeDescription": "ライト、ダーク、またはOSの設定に従うを選択。",
+      "motion": "モーション",
+      "motionDescription": "有効にするとアニメーションと自動送りカルーセルを減らします。",
+      "textSize": "文字サイズ",
+      "textSizeDescription": "サイト全体のインターフェース文字を拡大縮小。",
+      "highContrast": "ハイコントラスト",
+      "highContrastDescription": "テキスト、枠線、フォーカス状態のコントラストを上げます。",
+      "underlineLinks": "リンクに下線",
+      "underlineLinksDescription": "テキストリンクに常に下線を付けて見つけやすくします。",
+      "enhancedFocus": "強化フォーカス表示",
+      "enhancedFocusDescription": "キーボード操作時により強いフォーカスリングを表示。",
+      "readableFont": "読みやすいフォント",
+      "readableFontDescription": "読みやすさ向けに最適化されたシステムサンセリフを使用。",
+      "skipLink": "メインコンテンツへのスキップリンク",
+      "skipLinkDescription": "各ページ上部にキーボードで使えるスキップリンクを表示。",
+      "accessibilityStatement": "アクセシビリティ声明",
+      "save": "アクセシビリティ設定を保存",
+      "reset": "既定に戻す",
+      "colorScheme": {
+        "system": "システム既定",
+        "light": "ライト",
+        "dark": "ダーク"
+      },
+      "motionOptions": {
+        "system": "システム設定を使用",
+        "reduce": "モーションを減らす",
+        "full": "フルモーション"
+      },
+      "fontScale": {
+        "100": "標準（100%）",
+        "110": "大（110%）",
+        "125": "特大（125%）",
+        "150": "最大（150%）"
+      }
+    }
+  },
+  "Journal": {
+    "archive": {
+      "title": "Meridianジャーナル",
+      "description": "すべての投稿 — 予報、製品ノート、天気ダッシュボード活用ガイド。",
+      "backLink": "← すべてのジャーナル投稿",
+      "relatedTitle": "ジャーナルをもっと見る"
+    },
+    "post": {
+      "commentsTitle": "コメント",
+      "commentsDescription": "Share a note about this article. Comments stay on this device for the demo — they are not synced to a server.",
+      "commentsNameLabel": "Name",
+      "commentsNamePlaceholder": "Your name",
+      "commentsBodyLabel": "Comment",
+      "commentsBodyPlaceholder": "What stood out for you?",
+      "commentsSubmit": "コメントを投稿",
+      "commentsEmpty": "まだコメントはありません。最初のコメントをどうぞ。",
+      "commentsValidation": "Please add a name (2+ characters) and a short comment.",
+      "otherPostsTitle": "ほかの記事",
+      "bannerAdLabel": "Advertisement",
+      "sidebarLabel": "Journal sidebar",
+      "sidebarAdLabel": "Advertisement",
+      "schemaTitle": "サイト構成",
+      "schemaDescription": "Related pages in the meridian documentation and journal.",
+      "schemaJournal": "ジャーナル一覧",
+      "schemaDocs": "ドキュメント",
+      "schemaPrivacy": "プライバシー",
+      "localityTitle": "お近くの天気"
+    }
+  },
+  "Legal": {
+    "navLabel": "ポリシー案内",
+    "navTitle": "法務",
+    "tocLabel": "目次",
+    "tocTitle": "このページ内",
+    "lastUpdated": "最終更新 {date}",
+    "breadcrumb": "法務"
+  },
+  "Docs": {
+    "title": "meridianドキュメント",
+    "description": "ダッシュボード、購読、APIの動作に関するガイド。",
+    "navLabel": "ドキュメント",
+    "tocTitle": "このページ内",
+    "lastUpdated": "最終更新 {date}",
+    "breadcrumb": "ドキュメント",
+    "relatedTitle": "関連ドキュメント"
+  },
+  "Alerts": {
+    "groups": {
+      "standard": "標準アラート",
+      "severity": "深刻度レベル",
+      "hydrological": "水文",
+      "environment": "環境",
+      "us_severe": "米国の悪天候"
+    },
+    "types": {
+      "rain": "雨",
+      "wind": "風",
+      "thunderstorm": "雷雨",
+      "snow": "雪",
+      "ice": "氷",
+      "extreme_heat": "猛暑",
+      "fog": "霧",
+      "lightning": "雷",
+      "yellow_warning": "黄警告",
+      "amber_warning": "橙警告",
+      "red_warning": "赤警告",
+      "flood_alert": "洪水注意",
+      "flood_warning": "洪水警報",
+      "severe_flood_warning": "重大洪水警報",
+      "air_quality": "大気質",
+      "marine": "高波 / 海上",
+      "uv": "UV / 日差し",
+      "tornado_watch": "竜巻監視",
+      "tornado_warning": "竜巻警報",
+      "tornado_emergency": "竜巻緊急事態",
+      "severe_thunderstorm": "強い雷雨",
+      "hurricane": "ハリケーン / 熱帯"
+    }
+  },
+  "Monetization": {
+    "placeholderOverlay": "AdSense掲載枠：本番サイトではここに広告が表示されます。",
+    "enableAdvertisingCta": "設定で広告を有効にする"
+  },
   "Seo": {
     "homeTitle": "天気ダッシュボード",
-    "homeDescription": "大切な都市の現在の天気と予報をブラウザで確認できます。",
-    "homeIntro": "meridian は複数都市の天気を追跡できるダッシュボードです。",
+    "homeDescription": "大切な都市の現在の天気と予報を追跡 — 今日はブラウザで、明日はインストール可能なアプリとして。",
+    "homeIntro": "meridianは、大切な場所のライブ状況、短期予報、任意のメールアラートを追跡する複数都市天気ダッシュボードです。",
     "docsTitle": "ドキュメント",
-    "docsDescription": "ダッシュボード、予報、購読、API のガイド。",
+    "docsDescription": "meridianダッシュボード、予報、購読、APIの動作に関するガイド。",
     "cityForecastTitle": "{city}の天気予報",
-    "cityForecastDescription": "{city}（{country}）の{summary} — meridian で7日間の予報を確認。",
-    "cityForecastFallback": "{city}（{country}）の天気と予報を meridian で追跡。",
-    "dataSource": "天気データ提供: OpenWeather。",
+    "cityForecastDescription": "{city}、{country}の{summary} — meridianで7日間予報とライブ状況。",
+    "cityForecastFallback": "meridianで{city}、{country}の現在の状況と予報を追跡。",
+    "dataSource": "天気データソース：OpenWeather。",
     "notFoundTitle": "ページが見つかりません",
-    "notFoundDescription": "要求されたページは meridian に見つかりませんでした。"
+    "notFoundDescription": "リクエストしたページはmeridianに見つかりませんでした。",
+    "searchTitle": "場所検索",
+    "searchTitleWithQuery": "検索：{query}",
+    "searchDescription": "meridianで世界中の都市・場所を検索。",
+    "searchDescriptionWithQuery": "meridianで「{query}」に一致する場所。",
+    "journalTitle": "ジャーナル",
+    "journalDescription": "予報、アラート、meridianの使い方に関するガイドとノート。"
   },
   "Errors": {
     "notFoundHeading": "ページが見つかりません",
-    "notFoundBody": "お探しのページは存在しないか移動しました。",
-    "backHome": "ダッシュボードへ戻る",
+    "notFoundBody": "お探しのページは存在しないか、移動した可能性があります。",
+    "backHome": "ダッシュボードに戻る",
     "viewDocs": "ドキュメントを読む",
     "errorHeading": "問題が発生しました",
-    "errorBody": "meridian で予期しないエラーが発生しました。もう一度お試しください。"
+    "errorBody": "meridianで予期しないエラーが発生しました。再試行するかダッシュボードに戻ってください。",
+    "tryAgain": "再試行",
+    "geolocationUnavailable": "位置情報が利用できません",
+    "unableToLoadLocalWeather": "現在地の天気を読み込めません",
+    "unableToSubscribe": "購読できません",
+    "unableToUnsubscribe": "購読解除できません",
+    "unableToUpdateAlerts": "アラートを更新できません",
+    "unableToSubmitReport": "報告を送信できません",
+    "newsletterSaveFailed": "ニュースレターの購読を保存できません",
+    "newsletterUnsubscribeFailed": "購読解除できません"
   }
 }

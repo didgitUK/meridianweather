@@ -27,5 +27,12 @@ describe('weather-check-triggers', () => {
     expect(labelWeatherCheckTrigger(WEATHER_CHECK_TRIGGERS.dashboardRefresh)).toBe(
       'Dashboard refresh',
     );
+    expect(labelWeatherCheckTrigger(WEATHER_CHECK_TRIGGERS.cronAlerts)).toBe('Cron alerts');
+    expect(labelWeatherCheckTrigger(WEATHER_CHECK_TRIGGERS.legacyUntagged)).toBe(
+      'Legacy (pre-tagging)',
+    );
+    expect(labelWeatherCheckTrigger(WEATHER_CHECK_TRIGGERS.adminConnectionCheck)).toBe(
+      'Admin connection check',
+    );
   });
 });

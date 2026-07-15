@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { DEFAULT_ACCESSIBILITY_PREFERENCES } from '@/constants/accessibility';
 import {
   AccessibilityPreferencesPanel,
@@ -10,7 +11,6 @@ import {
   createAcceptedConsentDraft,
   createRejectedOptionalDraft,
 } from '@/components/layout/settings/CookiePreferencesPanel';
-import { WeatherPreferencesPanel } from '@/components/layout/settings/WeatherPreferencesPanel';
 import { SettingsSheetBrand } from '@/components/layout/settings/SettingsSheetBrand';
 import { SettingsTabList } from '@/components/layout/settings/SettingsTabList';
 import { Button } from '@/components/ui/button';
@@ -36,10 +36,6 @@ function SettingsPanel({ activeTab, cookieDraft, setCookieDraft, accessibilityDr
     );
   }
 
-  if (activeTab === 'weather') {
-    return <WeatherPreferencesPanel />;
-  }
-
   return (
     <AccessibilityPreferencesPanel
       draft={accessibilityDraft}
@@ -56,14 +52,16 @@ function SettingsFooterActions({
   accessibilityDraft,
   onSaveCookies,
   onSaveAccessibility,
-  onClose,
   onResetAccessibility,
 }) {
+  const tCookie = useTranslations('Cookie.preferences');
+  const tA11y = useTranslations('Settings.accessibility');
+
   if (activeTab === 'cookies') {
     return (
       <>
         <Button type="button" className="w-full sm:w-auto" onClick={() => onSaveCookies(cookieDraft)}>
-          Save cookie preferences
+          {tCookie('savePreferences')}
         </Button>
         <Button
           type="button"
@@ -71,7 +69,7 @@ function SettingsFooterActions({
           className="w-full sm:w-auto"
           onClick={() => onSaveCookies(createAcceptedConsentDraft({ advertising: true }))}
         >
-          Accept all
+          {tCookie('acceptAll')}
         </Button>
         <Button
           type="button"
@@ -79,17 +77,9 @@ function SettingsFooterActions({
           className="w-full sm:w-auto"
           onClick={() => onSaveCookies(createRejectedOptionalDraft())}
         >
-          Reject non-essential
+          {tCookie('rejectNonEssential')}
         </Button>
       </>
-    );
-  }
-
-  if (activeTab === 'weather') {
-    return (
-      <Button type="button" className="w-full sm:w-auto" onClick={onClose}>
-        Done
-      </Button>
     );
   }
 
@@ -100,7 +90,7 @@ function SettingsFooterActions({
         className="w-full sm:w-auto"
         onClick={() => onSaveAccessibility(accessibilityDraft)}
       >
-        Save accessibility settings
+        {tA11y('save')}
       </Button>
       <Button
         type="button"
@@ -108,13 +98,14 @@ function SettingsFooterActions({
         className="w-full sm:w-auto"
         onClick={onResetAccessibility}
       >
-        Reset to defaults
+        {tA11y('reset')}
       </Button>
     </>
   );
 }
 
 export function SettingsSheet({ open, onOpenChange, initialTab = 'cookies' }) {
+  const t = useTranslations('Settings');
   const { consent, setConsent, acknowledgeCookieConsent } = useConsent();
   const { preferences, setPreferences } = useAccessibility();
   const { setTheme } = useTheme();
@@ -140,12 +131,10 @@ export function SettingsSheet({ open, onOpenChange, initialTab = 'cookies' }) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="left" className="flex w-full max-w-full flex-col gap-0 sm:max-w-md">
-        <SheetHeader className="shrink-0 gap-2 border-b border-border/60 pb-4">
+        <SheetHeader className="shrink-0 items-start gap-2 border-b border-border/60 pb-4 text-left">
           <SettingsSheetBrand />
-          <SheetTitle className="font-heading">Settings</SheetTitle>
-          <SheetDescription>
-            Manage cookies, weather refresh, and accessibility options for meridian on this device.
-          </SheetDescription>
+          <SheetTitle className="font-heading text-left">{t('title')}</SheetTitle>
+          <SheetDescription className="text-left">{t('description')}</SheetDescription>
         </SheetHeader>
 
         <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -173,7 +162,6 @@ export function SettingsSheet({ open, onOpenChange, initialTab = 'cookies' }) {
             accessibilityDraft={accessibilityDraft}
             onSaveCookies={saveCookiePreferences}
             onSaveAccessibility={saveAccessibilityPreferences}
-            onClose={closeSheet}
             onResetAccessibility={() => {
               setTheme('system');
               saveAccessibilityPreferences(DEFAULT_ACCESSIBILITY_PREFERENCES);

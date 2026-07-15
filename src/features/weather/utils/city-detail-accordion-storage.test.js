@@ -24,15 +24,16 @@ describe('city-detail-accordion-storage', () => {
       CITY_DETAIL_ACCORDION_SUN_TIMES,
       CITY_DETAIL_ACCORDION_CONDITIONS,
     ]))).toEqual([
-      CITY_DETAIL_ACCORDION_LOCATION,
-      CITY_DETAIL_ACCORDION_SUN_TIMES,
       CITY_DETAIL_ACCORDION_CONDITIONS,
     ]);
   });
 
   it('serializes open sections', () => {
-    expect(serializeCityDetailAccordion([CITY_DETAIL_ACCORDION_LOCATION])).toBe(
-      JSON.stringify([CITY_DETAIL_ACCORDION_LOCATION]),
+    expect(serializeCityDetailAccordion([
+      CITY_DETAIL_ACCORDION_SUN_TIMES,
+      CITY_DETAIL_ACCORDION_CONDITIONS,
+    ])).toBe(
+      JSON.stringify([CITY_DETAIL_ACCORDION_CONDITIONS]),
     );
   });
 });

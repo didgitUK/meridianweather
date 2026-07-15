@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { getHeroSourceLabel } from '@/constants/hero-sources';
 
 /**
  * @typedef {{
@@ -7,6 +8,8 @@ import Image from 'next/image';
  *   photographer?: string | null;
  *   photographerUrl?: string | null;
  *   unsplashUrl?: string | null;
+ *   sourceUrl?: string | null;
+ *   sourceName?: string | null;
  * }} HeroVariant
  */
 
@@ -18,9 +21,15 @@ import Image from 'next/image';
  *     photographer?: string | null;
  *     photographerUrl?: string | null;
  *     unsplashUrl?: string | null;
+ *     sourceUrl?: string | null;
+ *     sourceName?: string | null;
  *   } | null;
  * }} props
  */
+function heroImageNeedsUnoptimized(src) {
+  return typeof src === 'string' && (src.endsWith('.svg') || src.startsWith('/hero/'));
+}
+
 export function DashboardHeroBackdrop({ heroImage = null }) {
   const landscape = heroImage?.landscape ?? null;
   const portrait = heroImage?.portrait ?? null;
@@ -38,6 +47,7 @@ export function DashboardHeroBackdrop({ heroImage = null }) {
                 fill
                 priority
                 sizes="100vw"
+                unoptimized={heroImageNeedsUnoptimized(portrait.imageUrl)}
                 className="dashboard-hero__photo object-cover sm:hidden"
               />
             ) : null}
@@ -48,6 +58,7 @@ export function DashboardHeroBackdrop({ heroImage = null }) {
                 fill
                 priority
                 sizes="100vw"
+                unoptimized={heroImageNeedsUnoptimized(landscape.imageUrl)}
                 className={
                   portrait?.imageUrl
                     ? 'dashboard-hero__photo hidden object-cover sm:block'
@@ -61,6 +72,7 @@ export function DashboardHeroBackdrop({ heroImage = null }) {
                 fill
                 priority
                 sizes="100vw"
+                unoptimized={heroImageNeedsUnoptimized(portrait.imageUrl)}
                 className="dashboard-hero__photo hidden object-cover sm:block"
               />
             ) : null}
@@ -83,13 +95,21 @@ export function DashboardHeroBackdrop({ heroImage = null }) {
  * @param {{
  *   photographer?: string | null;
  *   photographerUrl?: string | null;
+ *   sourceUrl?: string | null;
  *   unsplashUrl?: string | null;
+ *   sourceName?: string | null;
  * }} credit
  */
-function AttributionCredit({ photographer, photographerUrl, unsplashUrl }) {
-  if (!photographer || !unsplashUrl) {
+function AttributionCredit({ photographer, photographerUrl, sourceUrl, unsplashUrl, sourceName }) {
+  const href = sourceUrl ?? unsplashUrl;
+  if (!photographer || !href) {
     return null;
   }
+
+  const label = getHeroSourceLabel(sourceName);
+  const creditHref = href.includes('?')
+    ? `${href}&utm_source=meridian_weather&utm_medium=referral`
+    : `${href}?utm_source=meridian_weather&utm_medium=referral`;
 
   return (
     <>
@@ -100,11 +120,15 @@ function AttributionCredit({ photographer, photographerUrl, unsplashUrl }) {
         photographer
       )}{' '}
       on{' '}
-      <a href={`${unsplashUrl}?utm_source=meridian_weather&utm_medium=referral`}>
-        Unsplash
+      <a href={creditHref}>
+        {label}
       </a>
     </>
   );
+}
+
+function creditSourceUrl(credit) {
+  return credit?.sourceUrl ?? credit?.unsplashUrl ?? null;
 }
 
 /**
@@ -115,6 +139,8 @@ function AttributionCredit({ photographer, photographerUrl, unsplashUrl }) {
  *     photographer?: string | null;
  *     photographerUrl?: string | null;
  *     unsplashUrl?: string | null;
+ *     sourceUrl?: string | null;
+ *     sourceName?: string | null;
  *   } | null;
  * }} props
  */
@@ -125,12 +151,12 @@ export function DashboardHeroAttribution({ heroImage = null }) {
     landscape?.photographer
     && portrait?.photographer
     && landscape.photographer === portrait.photographer
-    && landscape.unsplashUrl === portrait.unsplashUrl,
+    && creditSourceUrl(landscape) === creditSourceUrl(portrait),
   );
 
   if (sameCredit || (!landscape?.photographer && !portrait?.photographer)) {
     const credit = landscape ?? portrait ?? heroImage;
-    if (!credit?.photographer || !credit?.unsplashUrl) {
+    if (!credit?.photographer || !creditSourceUrl(credit)) {
       return null;
     }
 
@@ -139,7 +165,8 @@ export function DashboardHeroAttribution({ heroImage = null }) {
         <AttributionCredit
           photographer={credit.photographer}
           photographerUrl={credit.photographerUrl}
-          unsplashUrl={credit.unsplashUrl}
+          sourceUrl={creditSourceUrl(credit)}
+          sourceName={credit.sourceName}
         />
       </p>
     );
@@ -147,24 +174,26 @@ export function DashboardHeroAttribution({ heroImage = null }) {
 
   return (
     <p className="sr-only">
-      {portrait?.photographer && portrait?.unsplashUrl ? (
+      {portrait?.photographer && creditSourceUrl(portrait) ? (
         <>
           Mobile:{' '}
           <AttributionCredit
             photographer={portrait.photographer}
             photographerUrl={portrait.photographerUrl}
-            unsplashUrl={portrait.unsplashUrl}
+            sourceUrl={creditSourceUrl(portrait)}
+            sourceName={portrait.sourceName}
           />
-          {landscape?.photographer && landscape?.unsplashUrl ? '. ' : null}
+          {landscape?.photographer && creditSourceUrl(landscape) ? '. ' : null}
         </>
       ) : null}
-      {landscape?.photographer && landscape?.unsplashUrl ? (
+      {landscape?.photographer && creditSourceUrl(landscape) ? (
         <>
           Desktop:{' '}
           <AttributionCredit
             photographer={landscape.photographer}
             photographerUrl={landscape.photographerUrl}
-            unsplashUrl={landscape.unsplashUrl}
+            sourceUrl={creditSourceUrl(landscape)}
+            sourceName={landscape.sourceName}
           />
         </>
       ) : null}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { useClientId } from '@/features/cities/hooks/useClientId';
 import { useLocalSubscriptions } from '@/features/subscriptions/hooks/useLocalSubscriptions';
@@ -18,9 +19,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
 
 export function RemoveCityDialog({ city, open, onOpenChange, onRemoved }) {
+  const t = useTranslations('Subscriptions.removeCity');
+  const tCommon = useTranslations('Common');
   const clientId = useClientId();
   const { registry, clearCity } = useLocalSubscriptions();
   const activeTypes = city ? getActiveTypesForCity(registry, city.id) : [];
@@ -34,7 +36,7 @@ export function RemoveCityDialog({ city, open, onOpenChange, onRemoved }) {
     clearWeatherCacheForCity(city.id);
     onRemoved(city.id);
     onOpenChange(false);
-    toast.message(`${city.name} removed`);
+    toast.message(tCommon('cityRemoved', { city: city.name }));
   }
 
   async function removeWithUnsubscribe() {
@@ -73,11 +75,11 @@ export function RemoveCityDialog({ city, open, onOpenChange, onRemoved }) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-heading">Remove {city.name}?</DialogTitle>
+          <DialogTitle className="font-heading">{t('title', { city: city.name })}</DialogTitle>
           <DialogDescription>
             {activeTypes.length > 0
-              ? 'You receive email updates for this city. Do you also want to stop them?'
-              : 'This city will be removed from your dashboard.'}
+              ? t('hasSubscriptions')
+              : t('noSubscriptions')}
           </DialogDescription>
         </DialogHeader>
 
@@ -86,13 +88,13 @@ export function RemoveCityDialog({ city, open, onOpenChange, onRemoved }) {
             {activeTypes.includes('weekly') ? (
               <label className="flex items-center gap-2 text-sm">
                 <input type="checkbox" checked={weekly} onChange={(e) => setWeekly(e.target.checked)} />
-                Stop platform-wide forecasts
+                {t('stopForecasts')}
               </label>
             ) : null}
             {activeTypes.includes('alerts') ? (
               <label className="flex items-center gap-2 text-sm">
                 <input type="checkbox" checked={alerts} onChange={(e) => setAlerts(e.target.checked)} />
-                Stop weather alerts
+                {t('stopAlerts')}
               </label>
             ) : null}
           </div>
@@ -100,14 +102,14 @@ export function RemoveCityDialog({ city, open, onOpenChange, onRemoved }) {
 
         <DialogFooter className="flex-col gap-2 sm:flex-row">
           <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
-            Cancel
+            {tCommon('cancel')}
           </Button>
           <Button variant="outline" onClick={removeCityOnly} disabled={isSubmitting}>
-            Remove city only
+            {t('removeOnly')}
           </Button>
           {activeTypes.length > 0 ? (
             <Button onClick={removeWithUnsubscribe} disabled={isSubmitting}>
-              Remove and unsubscribe
+              {t('removeAndUnsubscribe')}
             </Button>
           ) : null}
         </DialogFooter>

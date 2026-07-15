@@ -1,11 +1,16 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { PageSection } from '@/components/layout/PageSection';
 
-export default function ErrorPage({ reset }) {
+export default function ErrorPage({ error, reset }) {
   const t = useTranslations('Errors');
+
+  useEffect(() => {
+    console.error('[locale-error]', error);
+  }, [error]);
 
   return (
     <PageSection>
@@ -18,7 +23,7 @@ export default function ErrorPage({ reset }) {
             onClick={reset}
             className="rounded-lg border px-4 py-2 text-sm hover:bg-muted"
           >
-            Try again
+            {t('tryAgain')}
           </button>
           <Link href="/" className="rounded-lg border px-4 py-2 text-sm hover:bg-muted">
             {t('backHome')}

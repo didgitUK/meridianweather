@@ -9,6 +9,10 @@ export function normalizeTemperatureUnit(unit) {
     : TEMPERATURE_UNIT.CELSIUS;
 }
 
+export function temperatureUnitSuffix(unit = TEMPERATURE_UNIT.CELSIUS) {
+  return normalizeTemperatureUnit(unit) === TEMPERATURE_UNIT.FAHRENHEIT ? '°F' : '°C';
+}
+
 export function celsiusToFahrenheit(value) {
   return (value * 9) / 5 + 32;
 }
@@ -25,4 +29,13 @@ export function convertTemperatureFromCelsius(value, unit = TEMPERATURE_UNIT.CEL
   }
 
   return value;
+}
+
+/** Map a UI locale to the usual temperature unit for that region. */
+export function temperatureUnitForLocale(locale) {
+  if (locale === 'en') {
+    return TEMPERATURE_UNIT.FAHRENHEIT;
+  }
+
+  return TEMPERATURE_UNIT.CELSIUS;
 }

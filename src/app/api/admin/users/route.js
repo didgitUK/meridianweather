@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { logAdminAuditEvent } from '@/lib/admin-audit-repo';
 import {
   countAdminUsers,
-  createAdminUser,
   deleteAdminUser,
   getAdminUserById,
   listAdminUsers,
@@ -10,6 +9,7 @@ import {
   updateAdminUserPassword,
 } from '@/lib/admin-users-repo';
 import { getAdminSessionFromRequest } from '@/lib/server/admin-auth';
+import { validatePasswordPolicy } from '@/lib/server/password';
 
 function requireAdmin(request) {
   const session = getAdminSessionFromRequest(request);
@@ -28,51 +28,14 @@ export async function GET(request) {
   return NextResponse.json({ users: listAdminUsers() });
 }
 
-export async function POST(request) {
-  const { error, session } = requireAdmin(request);
-  if (error) {
-    return error;
-  }
-
-  const body = await request.json();
-  const email = body.email?.trim() ?? '';
-  const displayName = body.displayName?.trim() ?? '';
-  const password = body.password?.trim() ?? '';
-
-  if (!email || !displayName || !password) {
-    return NextResponse.json(
-      { error: 'validation', message: 'Email, display name, and password are required' },
-      { status: 400 },
-    );
-  }
-
-  if (password.length < 8) {
-    return NextResponse.json(
-      { error: 'validation', message: 'Password must be at least 8 characters' },
-      { status: 400 },
-    );
-  }
-
-  try {
-    const user = createAdminUser({
-      email,
-      displayName,
-      password,
-      active: body.active !== false,
-    });
-
-    logAdminAuditEvent({
-      action: 'admin_user_created',
-      meta: { actorId: session.user?.id ?? null, userId: user.id, email: user.email },
-    });
-
-    return NextResponse.json({ user }, { status: 201 });
-  } catch (createError) {
-    if (String(createError.message).includes('UNIQUE')) {
-      return NextResponse.json({ error: 'conflict', message: 'Email is already in use' }, { status: 409 });
-    }
-    throw createError;
-  }
+export async function POST() {
+  return NextResponse.json(
+    {
+      error: 'deprecated',
+      message: 'Create admins by sending an invite from Account → Users.',
+    },
+    { status: 405 },
+  );
 }
 
 export async function PATCH(request) {
@@ -110,9 +73,10 @@ export async function PATCH(request) {
     });
 
     if (typeof body.password === 'string' && body.password.trim()) {
-      if (body.password.trim().length < 8) {
+      const policy = validatePasswordPolicy(body.password.trim());
+      if (!policy.ok) {
         return NextResponse.json(
-          { error: 'validation', message: 'Password must be at least 8 characters' },
+          { error: 'validation', message: policy.message },
           { status: 400 },
         );
       }

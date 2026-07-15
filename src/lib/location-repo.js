@@ -516,7 +516,11 @@ export function listInaccurateReports({ limit = 200 } = {}) {
   return rows.map((row) => mapLocationRow(row));
 }
 
-export function listRecentLocationChecks(limit = 20) {
+export function listRecentLocationChecks(limit = 20, { triggers = null } = {}) {
+  const triggerFilter = Array.isArray(triggers) && triggers.length > 0
+    ? new Set(triggers)
+    : null;
+
   const rows = getDb()
     .prepare(
       `SELECT l.id, l.lat, l.lon, l.name, l.country, l.state, l.label, l.city_slug,
@@ -525,7 +529,7 @@ export function listRecentLocationChecks(limit = 20) {
        FROM locations l
        INNER JOIN location_weather_checks c ON c.location_id = l.id AND c.scope = 'current'
        ORDER BY c.recorded_at DESC
-       LIMIT 100`,
+       LIMIT 200`,
     )
     .all();
 
@@ -533,6 +537,11 @@ export function listRecentLocationChecks(limit = 20) {
   const checks = [];
 
   for (const row of rows) {
+    const trigger = row.trigger ?? WEATHER_CHECK_TRIGGERS.unknown;
+    if (triggerFilter && !triggerFilter.has(trigger)) {
+      continue;
+    }
+
     const key = buildLocationKey(row.lat, row.lon);
     if (seen.has(key)) {
       continue;
@@ -548,7 +557,7 @@ export function listRecentLocationChecks(limit = 20) {
       fetchedAt: row.observed_at,
       recordedAt: row.recorded_at,
       source: row.source,
-      trigger: row.trigger ?? WEATHER_CHECK_TRIGGERS.unknown,
+      trigger,
       cacheOutcome: row.cache_outcome ?? WEATHER_CHECK_CACHE_OUTCOMES.upstream,
       tokensUsed: row.tokens_used ?? 0,
       temperature: payload.temperature,
@@ -567,4 +576,81 @@ export function listRecentLocationChecks(limit = 20) {
   }
 
   return checks;
+}
+
+/**
+ * Locations ranked by how often users searched them (search_select / search_preview).
+ */
+export function listPopularSearchChecks(limit = 20, { triggers = null } = {}) {
+  const triggerList = Array.isArray(triggers) && triggers.length > 0
+    ? triggers
+    : [
+        WEATHER_CHECK_TRIGGERS.searchSelect,
+        WEATHER_CHECK_TRIGGERS.searchPreview,
+      ];
+
+  const placeholders = triggerList.map(() => '?').join(', ');
+  const rows = getDb()
+    .prepare(
+      `SELECT l.id, l.lat, l.lon, l.name, l.country, l.state, l.label, l.city_slug,
+              COUNT(c.id) AS search_count,
+              MAX(c.recorded_at) AS last_searched_at,
+              (
+                SELECT c2.payload_json
+                FROM location_weather_checks c2
+                WHERE c2.location_id = l.id AND c2.scope = 'current'
+                ORDER BY c2.recorded_at DESC
+                LIMIT 1
+              ) AS payload_json,
+              (
+                SELECT c3.source
+                FROM location_weather_checks c3
+                WHERE c3.location_id = l.id AND c3.scope = 'current'
+                ORDER BY c3.recorded_at DESC
+                LIMIT 1
+              ) AS source,
+              (
+                SELECT c4.observed_at
+                FROM location_weather_checks c4
+                WHERE c4.location_id = l.id AND c4.scope = 'current'
+                ORDER BY c4.recorded_at DESC
+                LIMIT 1
+              ) AS observed_at
+       FROM locations l
+       INNER JOIN location_weather_checks c
+         ON c.location_id = l.id
+         AND c.scope = 'current'
+         AND c."trigger" IN (${placeholders})
+       GROUP BY l.id
+       ORDER BY search_count DESC, last_searched_at DESC
+       LIMIT ?`,
+    )
+    .all(...triggerList, limit);
+
+  return rows.map((row) => {
+    let payload = {};
+    try {
+      payload = row.payload_json ? JSON.parse(row.payload_json) : {};
+    } catch {
+      payload = {};
+    }
+
+    return {
+      locationId: row.id,
+      lat: row.lat,
+      lon: row.lon,
+      fetchedAt: row.observed_at ?? row.last_searched_at,
+      recordedAt: row.last_searched_at,
+      source: row.source ?? 'unknown',
+      searchCount: Number(row.search_count) || 0,
+      temperature: payload.temperature ?? null,
+      description: payload.description ?? null,
+      condition: payload.condition ?? null,
+      icon: payload.icon ?? null,
+      cityName: row.name ?? payload.city ?? null,
+      country: row.country ?? payload.country ?? null,
+      label: row.label,
+      citySlug: row.city_slug,
+    };
+  });
 }

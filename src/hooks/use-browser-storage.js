@@ -32,6 +32,15 @@ export function useLocalStorageValue(key, serverFallback = '') {
 }
 
 export function writeLocalStorageValue(key, value) {
+  try {
+    if (window.localStorage.getItem(key) === value) {
+      return;
+    }
+  } catch {
+    // Fall through and attempt the write.
+  }
+
+
   window.localStorage.setItem(key, value);
   window.dispatchEvent(new Event('meridian:storage'));
 }

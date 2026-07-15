@@ -7,6 +7,7 @@ import {
 import { fetchNwsActiveAlerts } from '@/lib/alerts/fetch-nws-alerts';
 import { fetchOpenMeteoWarnings } from '@/lib/alerts/fetch-open-meteo-warnings';
 import { ALL_ALERT_TYPES } from '@/constants/alert-types';
+import { WEATHER_CHECK_TRIGGERS } from '@/constants/weather-check-triggers';
 import { fetchWeatherForScope } from '@/lib/weather-fetch-orchestrator';
 import {
   getLastSendCondition,
@@ -19,8 +20,12 @@ import { apiError } from '@/lib/server/api-response';
 import { isCronRequestAuthorized } from '@/lib/server/cron-auth';
 
 async function getCityAlertContext(lat, lon, settings) {
-  const weatherResponse = await fetchWeatherForScope(lat, lon, 'current');
+  const [weatherResponse, dailyResponse] = await Promise.all([
+    fetchWeatherForScope(lat, lon, 'current', { trigger: WEATHER_CHECK_TRIGGERS.cronAlerts }),
+    fetchWeatherForScope(lat, lon, 'daily', { trigger: WEATHER_CHECK_TRIGGERS.cronAlerts }).catch(() => null),
+  ]);
   const weather = weatherResponse.data;
+  const dailyForecast = dailyResponse?.data ?? null;
   const openWeatherMatches = evaluateOpenWeatherAlertMatches(
     weather,
     settings.windAlertThresholdMs ?? 15,
@@ -47,7 +52,7 @@ async function getCityAlertContext(lat, lon, settings) {
   const officialMatches = evaluateOfficialAlertMatches(officialEvents);
   const matches = mergeAlertMatches(openWeatherMatches, officialMatches);
 
-  return { weather, matches };
+  return { weather, dailyForecast, matches };
 }
 
 export async function GET(request) {
@@ -91,6 +96,24 @@ export async function GET(request) {
       const last = getLastSendCondition(sub.id, type.id);
       if (last === conditionKey) continue;
 
+      const result = await sendWeatherAlertEmail({
+        email: sub.email,
+        cityName: sub.cityName,
+        condition: `${type.label}: ${match.label}`,
+        matchLabel: match.label,
+        unsubscribeToken: sub.unsubscribeToken,
+        alertTypeId: type.id,
+        alertLabel: type.label,
+        weather: context.weather,
+        dailyForecast: context.dailyForecast,
+      });
+
+      // Only record after a successful send — otherwise a failed/no-op send would
+      // permanently suppress retries for this condition via getLastSendCondition.
+      if (!result?.sent) {
+        continue;
+      }
+
       logSubscriptionSend({
         subscriptionId: sub.id,
         cityLat: sub.cityLat,
@@ -98,14 +121,7 @@ export async function GET(request) {
         condition: conditionKey,
       });
 
-      const result = await sendWeatherAlertEmail({
-        email: sub.email,
-        cityName: sub.cityName,
-        condition: `${type.label}: ${match.label}`,
-        unsubscribeToken: sub.unsubscribeToken,
-      });
-
-      if (result.sent) sent += 1;
+      sent += 1;
     }
   }
 

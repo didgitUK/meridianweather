@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { History, MapPin, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ICONS, TOUCH } from '@/constants/design-tokens';
@@ -46,6 +47,8 @@ function requestBrowserLocation() {
 }
 
 export function DashboardHeroActions() {
+  const t = useTranslations('Dashboard.hero');
+  const tCommon = useTranslations('Common');
   const { consent, setConsent } = useConsent();
   const [hasLocation, setHasLocation] = useState(false);
   const [isRequesting, setIsRequesting] = useState(false);
@@ -106,18 +109,24 @@ export function DashboardHeroActions() {
           type="button"
           variant="outline"
           size="lg"
-          className={cn(TOUCH.minH, 'gap-2 bg-background px-4 text-base')}
+          className={cn(
+            TOUCH.minH,
+            'gap-2 border-border bg-white px-4 text-base text-neutral-950 hover:bg-white hover:text-neutral-950 dark:bg-white dark:text-neutral-950 dark:hover:bg-white',
+          )}
           onClick={() => scrollToSection(DASHBOARD_RECENT_CHECKS_SECTION_ID)}
         >
           <History className={ICONS.sm} aria-hidden />
-          Recent Checks
+          {t('recentChecks')}
         </Button>
       ) : (
         <Button
           type="button"
           variant="outline"
           size="lg"
-          className={cn(TOUCH.minH, 'gap-2 bg-background px-4 text-base')}
+          className={cn(
+            TOUCH.minH,
+            'gap-2 border-border bg-white px-4 text-base text-neutral-950 hover:bg-white hover:text-neutral-950 dark:bg-white dark:text-neutral-950 dark:hover:bg-white',
+          )}
           disabled={isRequesting}
           aria-busy={isRequesting}
           onClick={() => {
@@ -125,7 +134,7 @@ export function DashboardHeroActions() {
           }}
         >
           <MapPin className={ICONS.sm} aria-hidden />
-          {isRequesting ? 'Locating…' : 'Allow Location'}
+          {isRequesting ? tCommon('loading') : t('allowLocation')}
         </Button>
       )}
       <Button
@@ -136,7 +145,7 @@ export function DashboardHeroActions() {
         onClick={() => scrollToSection(DASHBOARD_LOCATIONS_SECTION_ID)}
       >
         <Navigation className={cn(ICONS.sm, 'rotate-90')} aria-hidden />
-        Your Locations
+        {t('yourLocations')}
       </Button>
     </div>
   );

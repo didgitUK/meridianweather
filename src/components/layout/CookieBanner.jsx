@@ -1,6 +1,7 @@
 'use client';
 
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { STORAGE_KEYS } from '@/constants/storage-keys';
 import { useHasMounted, useLocalStorageValue } from '@/hooks/use-browser-storage';
@@ -14,6 +15,7 @@ import { SAFE_AREA, TOUCH } from '@/constants/design-tokens';
 import { cn } from '@/lib/utils';
 
 export function CookieBanner() {
+  const t = useTranslations('Cookie.banner');
   const isMounted = useHasMounted();
   const cookieConsent = useLocalStorageValue(STORAGE_KEYS.cookieConsent);
   const { setConsent, acknowledgeCookieConsent } = useConsent();
@@ -50,26 +52,25 @@ export function CookieBanner() {
       )}
     >
       <p id="cookie-banner-title" className="text-sm font-medium">
-        We use browser storage for your cities and preferences
+        {t('title')}
       </p>
       <p id="cookie-banner-description" className="mt-2 text-sm text-muted-foreground">
-        meridian stores essential data locally. Optional features include weather caching, precise
-        location, and advertising. Read our{' '}
+        {t('descriptionBefore')}{' '}
         <Link href="/legal/cookies" className="underline">
-          Cookie Policy
+          {t('cookiePolicy')}
         </Link>
-        .
+        {t('descriptionAfter')}
       </p>
       <div className="mt-4 flex flex-col gap-2">
-        <Button className={TOUCH.minH} onClick={acceptAll}>Accept all</Button>
+        <Button className={TOUCH.minH} onClick={acceptAll}>{t('acceptAll')}</Button>
         <Button className={TOUCH.minH} variant="outline" onClick={acceptFunctionalOnly}>
-          Accept functional
+          {t('acceptFunctional')}
         </Button>
         <Button className={TOUCH.minH} variant="outline" onClick={acceptNecessary}>
-          Essential only
+          {t('essentialOnly')}
         </Button>
         <Button className={TOUCH.minH} variant="ghost" onClick={() => openSettings('cookies')}>
-          Manage preferences
+          {t('managePreferences')}
         </Button>
       </div>
     </div>

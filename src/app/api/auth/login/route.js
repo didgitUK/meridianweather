@@ -6,13 +6,19 @@ import {
   isAdminLoginConfigured,
   loginAdminUser,
 } from '@/lib/server/admin-auth';
+import { enforceRateLimit } from '@/lib/server/rate-limit';
 
 export async function POST(request) {
+  const limited = enforceRateLimit(request, { bucket: 'auth-login', limit: 10, windowMs: 60_000 });
+  if (limited) {
+    return limited;
+  }
+
   if (!isAdminLoginConfigured()) {
     return NextResponse.json(
       {
         error: 'not_configured',
-        message: 'Set ADMIN_PASSWORD (and optionally ADMIN_EMAIL) in the server environment.',
+        message: 'Set ADMIN_SECRET and ADMIN_PASSWORD (and optionally ADMIN_EMAIL) in the server environment.',
       },
       { status: 503 },
     );

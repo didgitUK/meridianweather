@@ -19,4 +19,10 @@ describe('secret-crypto', () => {
     expect(encrypted).toBe('plain:plain-token');
     expect(decryptSecret(encrypted)).toBe('plain-token');
   });
+
+  it('does not use ADMIN_PASSWORD as encryption key', () => {
+    process.env.ADMIN_PASSWORD = 'login-password-only';
+    const encrypted = encryptSecret('token');
+    expect(encrypted).toBe('plain:token');
+  });
 });

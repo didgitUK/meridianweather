@@ -31,11 +31,15 @@ export function normalizeCheckedCity(city) {
     lat: city.lat,
     lon: city.lon,
     label: city.label ?? [city.name, city.state, city.country].filter(Boolean).join(', '),
+    checkedAt: city.checkedAt ?? null,
   };
 }
 
 export function stashCheckedCity(city) {
-  const normalized = normalizeCheckedCity(city);
+  const normalized = normalizeCheckedCity({
+    ...city,
+    checkedAt: new Date().toISOString(),
+  });
   const map = readCheckedCitiesMap();
   map[normalized.id] = normalized;
   writeCheckedCitiesMap(map);
@@ -45,4 +49,27 @@ export function stashCheckedCity(city) {
 
 export function readCheckedCity(cityId) {
   return readCheckedCitiesMap()[cityId] ?? null;
+}
+
+/**
+ * Cities this device searched / opened, newest first.
+ *
+ * @param {number} [limit]
+ * @returns {Array<object>}
+ */
+export function listRecentCheckedCities(limit = 5) {
+  const entries = Object.values(readCheckedCitiesMap()).filter(
+    (city) =>
+      city?.name
+      && Number.isFinite(Number(city.lat))
+      && Number.isFinite(Number(city.lon)),
+  );
+
+  entries.sort((left, right) => {
+    const leftAt = Date.parse(left.checkedAt ?? '') || 0;
+    const rightAt = Date.parse(right.checkedAt ?? '') || 0;
+    return rightAt - leftAt;
+  });
+
+  return entries.slice(0, limit);
 }

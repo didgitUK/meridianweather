@@ -5,7 +5,8 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
 
-const ICON_NAMES = [
+/** Condition icons mapped from OpenWeather codes. */
+const CONDITION_ICON_NAMES = [
   'clear-day',
   'clear-night',
   'partly-cloudy-day',
@@ -24,6 +25,28 @@ const ICON_NAMES = [
   'fog-day',
   'fog-night',
 ];
+
+/** Colored fill icons used for metric / detail tiles. */
+const METRIC_ICON_NAMES = [
+  'thermometer',
+  'thermometer-sun',
+  'thermometer-water',
+  'thermometer-raindrop',
+  'humidity',
+  'barometer',
+  'uv-index',
+  'fog',
+  'wind',
+  'windsock',
+  'raindrop',
+  'snowflake',
+  'clear-day',
+  'starry-night',
+  'compass',
+  'time-afternoon',
+];
+
+const ICON_NAMES = [...new Set([...CONDITION_ICON_NAMES, ...METRIC_ICON_NAMES])];
 
 const sourceDir = path.join(root, 'node_modules/@meteocons/svg-static/fill');
 const targetDir = path.join(root, 'public/weather-icons');
@@ -52,6 +75,8 @@ Copyright (c) Bas Milius
 https://github.com/basmilius/meteocons
 
 MIT License — icons copied from @meteocons/svg-static (fill style).
+Includes condition icons for OpenWeather mapping and metric tiles
+(humidity, barometer, wind, UV, sunrise/sunset, etc.).
 `;
 
 fs.writeFileSync(path.join(targetDir, 'ATTRIBUTION.txt'), attribution);

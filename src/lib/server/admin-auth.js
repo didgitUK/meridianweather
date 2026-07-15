@@ -5,16 +5,21 @@ import {
   bootstrapAdminUsersFromEnv,
   countAdminUsers,
   getAdminUserById,
-  listAdminUsers,
   publicAdminUser,
   updateAdminUserPassword,
 } from '@/lib/admin-users-repo';
+import { verifyPassword } from '@/lib/server/password';
 
 export const ADMIN_SESSION_COOKIE = 'meridian_admin_session';
 const SESSION_MAX_AGE_SECONDS = 7 * 24 * 60 * 60;
 
+/** HMAC / AES key material — never reuse ADMIN_PASSWORD for this. */
 function getSigningSecret() {
-  return process.env.ADMIN_PASSWORD ?? process.env.ADMIN_SECRET ?? '';
+  return (process.env.ADMIN_SECRET ?? '').trim();
+}
+
+function getRootPassword() {
+  return (process.env.ADMIN_PASSWORD ?? '').trim();
 }
 
 export function ensureAdminAuthReady() {
@@ -23,11 +28,12 @@ export function ensureAdminAuthReady() {
 
 export function isAdminLoginConfigured() {
   ensureAdminAuthReady();
-  return Boolean(getSigningSecret()) || countAdminUsers() > 0;
+  return Boolean(getSigningSecret()) && (countAdminUsers() > 0 || Boolean(getRootPassword()));
 }
 
+/** Env root unlock only — ADMIN_PASSWORD, not ADMIN_SECRET. */
 export function verifyAdminPassword(password) {
-  const secret = getSigningSecret();
+  const secret = getRootPassword();
   if (!secret || !password) {
     return false;
   }
@@ -54,6 +60,7 @@ export function createAdminSessionToken(user) {
       sub: user?.id ?? null,
       email: user?.email ?? null,
       name: user?.displayName ?? null,
+      sv: user?.sessionVersion ?? 0,
       exp: expiresAt,
     }),
   ).toString('base64url');
@@ -107,39 +114,26 @@ export function getAdminSessionCookieOptions() {
 }
 
 function isDevBypassEnabled() {
-  return process.env.NODE_ENV === 'development' && !getSigningSecret();
+  return (
+    process.env.NODE_ENV === 'development' &&
+    process.env.ALLOW_DEV_ADMIN_BYPASS === '1' &&
+    !getSigningSecret()
+  );
 }
 
-export function getAdminSessionFromRequest(request) {
-  ensureAdminAuthReady();
-
-  if (isDevBypassEnabled()) {
-    return {
-      authenticated: true,
-      user: {
-        id: 'dev-admin',
-        email: 'admin@localhost',
-        displayName: 'Dev Admin',
-        active: true,
-        createdAt: null,
-        updatedAt: null,
-        lastLoginAt: null,
-      },
-    };
-  }
-
-  const cookieValue = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
-  const parsed = parseAdminSessionToken(cookieValue);
-  if (!parsed) {
-    return { authenticated: false, user: null };
-  }
-
+function sessionFromParsed(parsed) {
   if (parsed.sub) {
     const row = getAdminUserById(parsed.sub);
     if (!row || !row.active) {
       return { authenticated: false, user: null };
     }
-    return { authenticated: true, user: publicAdminUser(row) };
+    const user = publicAdminUser(row);
+    const tokenSv = typeof parsed.sv === 'number' ? parsed.sv : 0;
+    const userSv = typeof user.sessionVersion === 'number' ? user.sessionVersion : 0;
+    if (tokenSv !== userSv) {
+      return { authenticated: false, user: null };
+    }
+    return { authenticated: true, user };
   }
 
   return {
@@ -152,26 +146,43 @@ export function getAdminSessionFromRequest(request) {
       createdAt: null,
       updatedAt: null,
       lastLoginAt: null,
+      sessionVersion: 0,
     },
   };
+}
+
+const DEV_ADMIN_USER = {
+  id: 'dev-admin',
+  email: 'admin@localhost',
+  displayName: 'Dev Admin',
+  active: true,
+  createdAt: null,
+  updatedAt: null,
+  lastLoginAt: null,
+  sessionVersion: 0,
+};
+
+export function getAdminSessionFromRequest(request) {
+  ensureAdminAuthReady();
+
+  if (isDevBypassEnabled()) {
+    return { authenticated: true, user: DEV_ADMIN_USER };
+  }
+
+  const cookieValue = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+  const parsed = parseAdminSessionToken(cookieValue);
+  if (!parsed) {
+    return { authenticated: false, user: null };
+  }
+
+  return sessionFromParsed(parsed);
 }
 
 export async function getAdminSession() {
   ensureAdminAuthReady();
 
   if (isDevBypassEnabled()) {
-    return {
-      authenticated: true,
-      user: {
-        id: 'dev-admin',
-        email: 'admin@localhost',
-        displayName: 'Dev Admin',
-        active: true,
-        createdAt: null,
-        updatedAt: null,
-        lastLoginAt: null,
-      },
-    };
+    return { authenticated: true, user: DEV_ADMIN_USER };
   }
 
   const cookieStore = await cookies();
@@ -181,26 +192,7 @@ export async function getAdminSession() {
     return { authenticated: false, user: null };
   }
 
-  if (parsed.sub) {
-    const row = getAdminUserById(parsed.sub);
-    if (!row || !row.active) {
-      return { authenticated: false, user: null };
-    }
-    return { authenticated: true, user: publicAdminUser(row) };
-  }
-
-  return {
-    authenticated: true,
-    user: {
-      id: null,
-      email: parsed.email ?? null,
-      displayName: parsed.name ?? 'Admin',
-      active: true,
-      createdAt: null,
-      updatedAt: null,
-      lastLoginAt: null,
-    },
-  };
+  return sessionFromParsed(parsed);
 }
 
 export function isAdminRequestAuthorized(request) {
@@ -214,7 +206,7 @@ export async function isAdminSessionActive() {
 
 /**
  * Authenticate by email+password against admin_users.
- * ADMIN_PASSWORD remains a master unlock for ADMIN_EMAIL (root), even if the DB hash differs.
+ * ADMIN_PASSWORD unlocks only ADMIN_EMAIL (root bootstrap), never arbitrary admins.
  */
 export function loginAdminUser({ email, password }) {
   ensureAdminAuthReady();
@@ -238,29 +230,23 @@ export function loginAdminUser({ email, password }) {
   }
 
   const rootEmail = (process.env.ADMIN_EMAIL ?? 'admin@localhost').trim().toLowerCase();
-  const activeUsers = listAdminUsers().filter((user) => user.active);
-
-  if (trimmedEmail) {
-    const matched = activeUsers.find((user) => user.email === trimmedEmail);
-    if (matched) {
-      // Keep DB hash aligned with env master password for the root account.
-      if (trimmedEmail === rootEmail) {
-        updateAdminUserPassword(matched.id, trimmedPassword);
-      }
-      return matched;
-    }
-
-    // Master password + root email → ensure buried root account exists.
-    if (trimmedEmail === rootEmail) {
-      return bootstrapAdminUsersFromEnv();
-    }
-
+  if (trimmedEmail && trimmedEmail !== rootEmail) {
     return null;
   }
 
-  if (activeUsers[0]) {
-    return activeUsers[0];
+  const root = bootstrapAdminUsersFromEnv();
+  if (!root) {
+    return null;
   }
 
-  return bootstrapAdminUsersFromEnv();
+  const row = getAdminUserById(root.id);
+  if (!row) {
+    return null;
+  }
+
+  if (!verifyPassword(trimmedPassword, row.password_hash)) {
+    updateAdminUserPassword(root.id, trimmedPassword);
+  }
+
+  return publicAdminUser(getAdminUserById(root.id));
 }

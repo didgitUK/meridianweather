@@ -53,7 +53,7 @@ export function evaluateOpenWeatherAlertMatches(weather, windThresholdMs = 15) {
     },
     extreme_heat: {
       active: Number.isFinite(temp) && temp >= 35,
-      label: Number.isFinite(temp) ? `Heat ${temp}°` : 'Extreme heat',
+      label: Number.isFinite(temp) ? `Heat ${temp}°C` : 'Extreme heat',
     },
     lightning: {
       active: isStormAlertWeather(weatherId, icon),

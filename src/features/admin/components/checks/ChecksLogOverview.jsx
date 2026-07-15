@@ -16,6 +16,7 @@ import {
 } from 'recharts';
 import { AdminPanel } from '@/features/admin/components/AdminPanel';
 import { AdminMetricCard } from '@/features/admin/components/AdminMetricCard';
+import { labelWeatherCheckTrigger } from '@/constants/weather-check-triggers';
 
 const CHART_STROKE = 'var(--color-text-primary)';
 const MUTED_STROKE = 'var(--color-text-muted)';
@@ -137,7 +138,7 @@ export function ChecksLogOverview() {
                   <YAxis
                     type="category"
                     dataKey="label"
-                    width={110}
+                    width={130}
                     tick={{ fontSize: 11, fill: MUTED_STROKE }}
                   />
                   <Tooltip />
@@ -233,7 +234,13 @@ export function ChecksLogOverview() {
                     </td>
                     <td className="py-3 pr-4">{call.endpoint}</td>
                     <td className="py-3 pr-4">{call.status}</td>
-                    <td className="py-3 pr-4">{call.meta?.trigger ?? '—'}</td>
+                    <td className="py-3 pr-4">
+                      {call.meta?.trigger
+                        ? labelWeatherCheckTrigger(call.meta.trigger)
+                        : call.meta?.reason
+                          ? call.meta.reason
+                          : '—'}
+                    </td>
                     <td className="py-3">{call.cacheHit ? 'hit' : 'miss'}</td>
                   </tr>
                 ))}

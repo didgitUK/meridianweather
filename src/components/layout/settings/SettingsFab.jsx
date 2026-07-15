@@ -1,17 +1,20 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TOUCH } from '@/constants/design-tokens';
 import { cn } from '@/lib/utils';
 
 export function SettingsFab({ onOpen, className }) {
+  const t = useTranslations('Common');
+
   return (
     <Button
       type="button"
       variant="outline"
       size="icon"
-      aria-label="Open settings"
+      aria-label={t('openSettings')}
       aria-haspopup="dialog"
       onClick={onOpen}
       className={cn(

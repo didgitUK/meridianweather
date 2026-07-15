@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import { DEBOUNCE_MS } from '@/constants/weather';
 import { fetchJson } from '@/lib/client/fetch-json';
+import { singleFlight } from '@/lib/client/single-flight';
 
-function buildGeocodeUrl(query, context) {
+export function buildGeocodeUrl(query, context) {
   const params = new URLSearchParams({ q: query });
 
   if (context?.country) {
@@ -19,12 +20,20 @@ function buildGeocodeUrl(query, context) {
   return `/api/geocode?${params.toString()}`;
 }
 
+function fetchGeocodeOnce(url) {
+  return singleFlight(`geocode:${url}`, () => fetchJson(url));
+}
+
 export function useCitySearch(geocodeContext) {
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const contextCountry = geocodeContext?.country ?? null;
+  const contextLat = geocodeContext?.lat ?? null;
+  const contextLon = geocodeContext?.lon ?? null;
 
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedQuery(query.trim()), DEBOUNCE_MS);
@@ -37,13 +46,18 @@ export function useCitySearch(geocodeContext) {
     }
 
     let cancelled = false;
+    const context = {
+      country: contextCountry,
+      lat: contextLat,
+      lon: contextLon,
+    };
 
     async function runSearch() {
       setIsLoading(true);
       setError('');
 
       try {
-        const payload = await fetchJson(buildGeocodeUrl(debouncedQuery, geocodeContext));
+        const payload = await fetchGeocodeOnce(buildGeocodeUrl(debouncedQuery, context));
 
         if (!cancelled) {
           setResults(payload.results ?? []);
@@ -62,7 +76,7 @@ export function useCitySearch(geocodeContext) {
     return () => {
       cancelled = true;
     };
-  }, [debouncedQuery, geocodeContext]);
+  }, [debouncedQuery, contextCountry, contextLat, contextLon]);
 
   const shouldSearch = debouncedQuery.length >= 2;
 

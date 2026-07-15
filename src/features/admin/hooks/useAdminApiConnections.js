@@ -2,11 +2,38 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import {
+  ADMIN_ALERT_FEED_CONNECTIONS,
   ADMIN_CONNECTIONS,
   ADMIN_CONNECTION_KIND,
   ADMIN_CONNECTION_STATUS,
 } from '@/constants/admin-connections';
 import { EMAIL_PROVIDER_OPTIONS } from '@/constants/email-providers';
+
+function buildGroupChildren(definition) {
+  if (definition.id === 'email') {
+    return EMAIL_PROVIDER_OPTIONS.map((option) => ({
+      id: `email-${option.id}`,
+      providerId: option.id,
+      label: option.label,
+      active: false,
+      status: ADMIN_CONNECTION_STATUS.CHECKING,
+      message: '',
+      checkedAt: null,
+    }));
+  }
+
+  if (definition.id === 'alert-feeds') {
+    return ADMIN_ALERT_FEED_CONNECTIONS.map((feed) => ({
+      id: feed.id,
+      label: feed.label,
+      status: ADMIN_CONNECTION_STATUS.CHECKING,
+      message: '',
+      checkedAt: null,
+    }));
+  }
+
+  return [];
+}
 
 function buildCheckingPlaceholders() {
   return ADMIN_CONNECTIONS.map((definition) => {
@@ -20,15 +47,7 @@ function buildCheckingPlaceholders() {
         status: ADMIN_CONNECTION_STATUS.CHECKING,
         message: '',
         checkedAt: null,
-        children: EMAIL_PROVIDER_OPTIONS.map((option) => ({
-          id: `email-${option.id}`,
-          providerId: option.id,
-          label: option.label,
-          active: false,
-          status: ADMIN_CONNECTION_STATUS.CHECKING,
-          message: '',
-          checkedAt: null,
-        })),
+        children: buildGroupChildren(definition),
       };
     }
 

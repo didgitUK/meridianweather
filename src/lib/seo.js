@@ -191,6 +191,48 @@ export function buildBreadcrumbSchema(items) {
   };
 }
 
+/**
+ * @param {{
+ *   title: string,
+ *   description: string,
+ *   path: string,
+ *   dateIso?: string | null,
+ *   imageUrl?: string | null,
+ *   category?: string | null,
+ * }} post
+ */
+export function buildArticleSchema(post) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.description,
+    url: absoluteUrl(post.path),
+    datePublished: post.dateIso || undefined,
+    dateModified: post.dateIso || undefined,
+    image: post.imageUrl ? [post.imageUrl] : undefined,
+    articleSection: post.category || undefined,
+    author: {
+      '@type': 'Organization',
+      name: BRAND.name,
+      url: getSiteUrl(),
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: BRAND.name,
+      url: getSiteUrl(),
+      logo: {
+        '@type': 'ImageObject',
+        url: absoluteUrl('/brand/favicon.png'),
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': absoluteUrl(post.path),
+    },
+  };
+}
+
 export function buildFaqSchema(faqItems) {
   return {
     '@context': 'https://schema.org',

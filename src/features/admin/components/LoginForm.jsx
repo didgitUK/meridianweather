@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Link } from '@/i18n/navigation';
 
 export function LoginForm() {
   const router = useRouter();
@@ -73,6 +74,12 @@ export function LoginForm() {
       <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? 'Signing in…' : 'Sign in'}
       </Button>
+
+      <p className="text-sm text-muted-foreground">
+        <Link href="/forgot-password" className="underline underline-offset-2 hover:text-foreground">
+          Forgot password?
+        </Link>
+      </p>
     </form>
   );
 }

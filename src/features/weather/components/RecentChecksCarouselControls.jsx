@@ -9,6 +9,8 @@ export function RecentChecksCarouselControls({
   onPrevious,
   onNext,
   disabled = false,
+  previousLabel = 'Show previous recent checks',
+  nextLabel = 'Show next recent checks',
 }) {
   return (
     <div className="flex items-center gap-1">
@@ -16,7 +18,7 @@ export function RecentChecksCarouselControls({
         type="button"
         variant="outline"
         size="icon"
-        aria-label="Show previous recent checks"
+        aria-label={previousLabel}
         onClick={onPrevious}
         disabled={disabled}
         className={cn(TOUCH.target, 'sm:size-8')}
@@ -27,7 +29,7 @@ export function RecentChecksCarouselControls({
         type="button"
         variant="outline"
         size="icon"
-        aria-label="Show next recent checks"
+        aria-label={nextLabel}
         onClick={onNext}
         disabled={disabled}
         className={cn(TOUCH.target, 'sm:size-8')}

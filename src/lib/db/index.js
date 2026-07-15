@@ -165,6 +165,22 @@ CREATE TABLE IF NOT EXISTS adsense_report_snapshots (
   UNIQUE(range_key, kind)
 );
 
+CREATE TABLE IF NOT EXISTS site_analytics_events (
+  id TEXT PRIMARY KEY,
+  event_type TEXT NOT NULL,
+  path TEXT NOT NULL DEFAULT '',
+  session_id TEXT NOT NULL,
+  slot_id TEXT NOT NULL DEFAULT '',
+  value REAL NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_site_analytics_created
+  ON site_analytics_events(created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_site_analytics_type_created
+  ON site_analytics_events(event_type, created_at DESC);
+
 CREATE TABLE IF NOT EXISTS email_templates (
   slug TEXT PRIMARY KEY,
   subject TEXT NOT NULL,
@@ -188,10 +204,37 @@ CREATE TABLE IF NOT EXISTS admin_users (
   display_name TEXT NOT NULL,
   password_hash TEXT NOT NULL,
   active INTEGER NOT NULL DEFAULT 1,
+  session_version INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL,
   last_login_at TEXT
 );
+
+CREATE TABLE IF NOT EXISTS admin_invites (
+  id TEXT PRIMARY KEY,
+  email TEXT NOT NULL,
+  display_name TEXT NOT NULL,
+  token_hash TEXT NOT NULL UNIQUE,
+  invited_by TEXT,
+  expires_at TEXT NOT NULL,
+  accepted_at TEXT,
+  created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_admin_invites_email
+  ON admin_invites(email);
+
+CREATE TABLE IF NOT EXISTS admin_password_resets (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  token_hash TEXT NOT NULL UNIQUE,
+  expires_at TEXT NOT NULL,
+  used_at TEXT,
+  created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_admin_password_resets_user
+  ON admin_password_resets(user_id);
 
 CREATE INDEX IF NOT EXISTS idx_admin_audit_log_action
   ON admin_audit_log(action, timestamp DESC);
@@ -222,7 +265,7 @@ const PLATFORM_SETTING_MIGRATIONS = [
   'ALTER TABLE platform_settings ADD COLUMN openweather_api_key TEXT NOT NULL DEFAULT \'\'',
   'ALTER TABLE platform_settings ADD COLUMN inaccuracy_auto_dismiss_enabled INTEGER NOT NULL DEFAULT 0',
   'ALTER TABLE platform_settings ADD COLUMN inaccuracy_auto_dismiss_days INTEGER NOT NULL DEFAULT 7',
-  'ALTER TABLE platform_settings ADD COLUMN email_provider TEXT NOT NULL DEFAULT \'resend\'',
+  'ALTER TABLE platform_settings ADD COLUMN email_provider TEXT NOT NULL DEFAULT \'none\'',
   'ALTER TABLE platform_settings ADD COLUMN resend_api_key TEXT NOT NULL DEFAULT \'\'',
   'ALTER TABLE platform_settings ADD COLUMN resend_from_email TEXT NOT NULL DEFAULT \'\'',
   'ALTER TABLE platform_settings ADD COLUMN resend_audience_id TEXT NOT NULL DEFAULT \'\'',
@@ -234,6 +277,12 @@ const PLATFORM_SETTING_MIGRATIONS = [
   'ALTER TABLE platform_settings ADD COLUMN ses_secret_access_key TEXT NOT NULL DEFAULT \'\'',
   'ALTER TABLE platform_settings ADD COLUMN ses_region TEXT NOT NULL DEFAULT \'eu-west-1\'',
   'ALTER TABLE platform_settings ADD COLUMN ses_from_email TEXT NOT NULL DEFAULT \'\'',
+  'ALTER TABLE platform_settings ADD COLUMN smtp_host TEXT NOT NULL DEFAULT \'\'',
+  'ALTER TABLE platform_settings ADD COLUMN smtp_port INTEGER NOT NULL DEFAULT 587',
+  'ALTER TABLE platform_settings ADD COLUMN smtp_user TEXT NOT NULL DEFAULT \'\'',
+  'ALTER TABLE platform_settings ADD COLUMN smtp_password TEXT NOT NULL DEFAULT \'\'',
+  'ALTER TABLE platform_settings ADD COLUMN smtp_from_email TEXT NOT NULL DEFAULT \'\'',
+  'ALTER TABLE platform_settings ADD COLUMN smtp_secure INTEGER NOT NULL DEFAULT 0',
   'ALTER TABLE platform_settings ADD COLUMN adsense_oauth_refresh_token TEXT NOT NULL DEFAULT \'\'',
   'ALTER TABLE platform_settings ADD COLUMN adsense_account_name TEXT NOT NULL DEFAULT \'\'',
   'ALTER TABLE platform_settings ADD COLUMN adsense_account_display_name TEXT NOT NULL DEFAULT \'\'',
@@ -242,10 +291,16 @@ const PLATFORM_SETTING_MIGRATIONS = [
   'ALTER TABLE platform_settings ADD COLUMN open_meteo_alerts_enabled INTEGER NOT NULL DEFAULT 1',
   'ALTER TABLE platform_settings ADD COLUMN nws_alerts_enabled INTEGER NOT NULL DEFAULT 1',
   'ALTER TABLE platform_settings ADD COLUMN wind_alert_threshold_ms INTEGER NOT NULL DEFAULT 15',
+  'ALTER TABLE platform_settings ADD COLUMN weekly_digest_frequency_default TEXT NOT NULL DEFAULT \'weekly\'',
+  'ALTER TABLE platform_settings ADD COLUMN weekly_digest_day_of_week INTEGER NOT NULL DEFAULT 1',
 ];
 
 const SUBSCRIPTION_MIGRATIONS = [
   'ALTER TABLE subscriptions ADD COLUMN alert_prefs_json TEXT NOT NULL DEFAULT \'{}\'',
+];
+
+const ADMIN_USER_MIGRATIONS = [
+  'ALTER TABLE admin_users ADD COLUMN session_version INTEGER NOT NULL DEFAULT 0',
 ];
 
 const LOCATION_MIGRATIONS = [
@@ -283,6 +338,32 @@ const LOCATION_CHECK_INDEX_MIGRATIONS = [
 
 function migratePlatformSettings(database) {
   for (const statement of PLATFORM_SETTING_MIGRATIONS) {
+    try {
+      database.exec(statement);
+    } catch {
+      // Column already exists.
+    }
+  }
+
+  // Historical default was `resend` even when unused. Treat that as disconnected
+  // so the picker shows until a connector is explicitly activated.
+  try {
+    database
+      .prepare(
+        `UPDATE platform_settings
+         SET email_provider = 'none'
+         WHERE id = 1
+           AND email_provider = 'resend'
+           AND TRIM(COALESCE(resend_api_key, '')) = ''`,
+      )
+      .run();
+  } catch {
+    // Column unavailable on very early schemas.
+  }
+}
+
+function migrateAdminUsers(database) {
+  for (const statement of ADMIN_USER_MIGRATIONS) {
     try {
       database.exec(statement);
     } catch {
@@ -469,6 +550,23 @@ function migrateHeroImageCache(database) {
   }
 }
 
+/**
+ * Reclassify historic untagged checks so analytics never shows a vague "Unknown" spend bucket.
+ */
+function migrateWeatherCheckTriggers(database) {
+  try {
+    database
+      .prepare(
+        `UPDATE location_weather_checks
+         SET "trigger" = 'legacy_untagged'
+         WHERE "trigger" IS NULL OR "trigger" = '' OR "trigger" = 'unknown'`,
+      )
+      .run();
+  } catch {
+    // Table may not exist yet on brand-new installs.
+  }
+}
+
 export function getDb() {
   if (db) return db;
 
@@ -480,11 +578,16 @@ export function getDb() {
 
   fs.mkdirSync(path.dirname(absolutePath), { recursive: true });
   db = new Database(absolutePath);
+  // Concurrent readers/writers (dev + tests + build) need WAL + wait instead of SQLITE_BUSY.
+  db.pragma('journal_mode = WAL');
+  db.pragma('busy_timeout = 5000');
   db.exec(SCHEMA);
   migratePlatformSettings(db);
+  migrateAdminUsers(db);
   migrateSubscriptions(db);
   migrateLocations(db);
   migrateHeroImageCache(db);
+  migrateWeatherCheckTriggers(db);
 
   const existing = db.prepare('SELECT id FROM platform_settings WHERE id = 1').get();
   if (!existing) {

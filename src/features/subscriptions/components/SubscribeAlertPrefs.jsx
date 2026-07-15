@@ -1,11 +1,18 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import {
   ALERT_TYPE_GROUPS,
   ALL_ALERT_TYPES,
   createAllAlertPrefs,
   createDefaultAlertPrefs,
 } from '@/constants/alert-types';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { cn } from '@/lib/utils';
 
 export const ALERT_PREF_MODES = {
@@ -24,13 +31,13 @@ export function buildInitialAlertPrefs(existingPrefs) {
 }
 
 export function SubscribeAlertPrefs({
-  enabled,
   mode,
   prefs,
-  onEnabledChange,
   onModeChange,
   onPrefsChange,
 }) {
+  const t = useTranslations('Subscriptions.alertPrefs');
+
   function setMode(nextMode) {
     onModeChange(nextMode);
     if (nextMode === ALERT_PREF_MODES.all) {
@@ -58,99 +65,93 @@ export function SubscribeAlertPrefs({
   const enabledCount = ALL_ALERT_TYPES.filter((type) => Boolean(prefs[type.id])).length;
 
   return (
-    <div className="flex h-full flex-col gap-3">
-      <label className="flex items-start gap-2 text-sm font-medium">
-        <input
-          type="checkbox"
-          className="mt-0.5"
-          checked={enabled}
-          onChange={(event) => onEnabledChange(event.target.checked)}
+    <div className="flex flex-col gap-3">
+      <div
+        className="grid grid-cols-2 gap-1 rounded-lg border border-border/70 bg-muted/20 p-1"
+        role="radiogroup"
+        aria-label={t('modeLabel')}
+      >
+        <ModeButton
+          pressed={mode === ALERT_PREF_MODES.all}
+          onClick={() => setMode(ALERT_PREF_MODES.all)}
+          title={t('allTitle')}
         />
-        <span>
-          Weather alerts
-          <span className="mt-0.5 block text-xs font-normal text-muted-foreground">
-            Per-city notifications when conditions match your choices.
-          </span>
-        </span>
-      </label>
+        <ModeButton
+          pressed={mode === ALERT_PREF_MODES.custom}
+          onClick={() => setMode(ALERT_PREF_MODES.custom)}
+          title={t('customTitle')}
+          hint={
+            mode === ALERT_PREF_MODES.custom
+              ? t('selectedCount', {
+                  count: enabledCount,
+                  total: ALL_ALERT_TYPES.length,
+                })
+              : undefined
+          }
+        />
+      </div>
 
-      {enabled ? (
-        <>
-          <div
-            className="grid grid-cols-2 gap-2"
-            role="radiogroup"
-            aria-label="Alert selection mode"
-          >
-            <ModeButton
-              pressed={mode === ALERT_PREF_MODES.all}
-              onClick={() => setMode(ALERT_PREF_MODES.all)}
-              title="All weather alerts"
-              hint="Every alert type"
-            />
-            <ModeButton
-              pressed={mode === ALERT_PREF_MODES.custom}
-              onClick={() => setMode(ALERT_PREF_MODES.custom)}
-              title="Customise"
-              hint={`${enabledCount} of ${ALL_ALERT_TYPES.length} selected`}
-            />
-          </div>
-
-          <div
-            className={cn(
-              'min-h-0 flex-1 space-y-3 overflow-y-auto rounded-lg border border-border/70 bg-muted/20 p-3',
-              mode === ALERT_PREF_MODES.all && 'opacity-80',
-            )}
-          >
-            {ALERT_TYPE_GROUPS.map((group) => (
-              <div key={group.id} className="space-y-2">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
-                    {group.label}
-                  </p>
-                  {mode === ALERT_PREF_MODES.custom ? (
-                    <button
-                      type="button"
-                      className="text-[11px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
-                      onClick={() => selectAllInGroup(group)}
-                    >
-                      Select group
-                    </button>
-                  ) : null}
-                </div>
-                <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-                  {group.types.map((type) => {
-                    const checked = Boolean(prefs[type.id]);
-                    return (
-                      <label
-                        key={type.id}
-                        className={cn(
-                          'flex cursor-pointer items-center gap-2 rounded-md border px-2.5 py-1.5 text-sm transition-colors',
-                          checked
-                            ? 'border-emerald-600/35 bg-emerald-500/10'
-                            : 'border-transparent bg-background/60 hover:border-border',
-                          mode === ALERT_PREF_MODES.all && 'pointer-events-none',
-                        )}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          disabled={mode === ALERT_PREF_MODES.all}
-                          onChange={() => toggleType(type.id)}
-                        />
-                        <span className="leading-tight">{type.label}</span>
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-        </>
-      ) : (
-        <p className="rounded-lg border border-dashed border-border/70 bg-muted/10 px-3 py-6 text-sm text-muted-foreground">
-          Turn on weather alerts to choose all types or customise which ones you receive for this
-          city.
+      {mode === ALERT_PREF_MODES.all ? (
+        <p className="rounded-lg bg-muted/20 px-3 py-2.5 text-xs text-muted-foreground">
+          {t('allHint')}
         </p>
+      ) : (
+        <div className="max-h-[min(18rem,40vh)] overflow-y-auto rounded-lg border border-border/70">
+          <Accordion className="px-1" multiple>
+            {ALERT_TYPE_GROUPS.map((group) => {
+              const groupEnabled = group.types.filter((type) => Boolean(prefs[type.id])).length;
+              return (
+                <AccordionItem key={group.id} value={group.id}>
+                  <AccordionTrigger className="px-2 py-2.5 text-sm font-medium hover:no-underline">
+                    <span className="flex min-w-0 flex-1 items-center justify-between gap-2 pr-2">
+                      <span className="truncate">{group.label}</span>
+                      <span className="shrink-0 text-xs font-normal text-muted-foreground">
+                        {groupEnabled}/{group.types.length}
+                      </span>
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-2 pb-3 pt-0">
+                    <div className="mb-2 flex justify-end">
+                      <button
+                        type="button"
+                        className="text-[11px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+                        onClick={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          selectAllInGroup(group);
+                        }}
+                      >
+                        {t('selectGroup')}
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {group.types.map((type) => {
+                        const pressed = Boolean(prefs[type.id]);
+                        return (
+                          <button
+                            key={type.id}
+                            type="button"
+                            aria-pressed={pressed}
+                            onClick={() => toggleType(type.id)}
+                            className={cn(
+                              'rounded-full border px-2.5 py-1 text-xs transition-colors',
+                              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                              pressed
+                                ? 'border-foreground/20 bg-foreground text-background'
+                                : 'border-border/70 bg-background text-muted-foreground hover:border-border hover:text-foreground',
+                            )}
+                          >
+                            {type.shortLabel ?? type.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
+        </div>
       )}
     </div>
   );
@@ -164,15 +165,17 @@ function ModeButton({ pressed, onClick, title, hint }) {
       aria-checked={pressed}
       onClick={onClick}
       className={cn(
-        'rounded-lg border px-3 py-2 text-left transition-colors',
+        'rounded-md px-2.5 py-2 text-center transition-colors',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
         pressed
-          ? 'border-foreground/25 bg-background shadow-sm'
-          : 'border-border/70 bg-muted/30 text-muted-foreground hover:bg-muted/50 hover:text-foreground',
+          ? 'bg-background text-foreground shadow-sm'
+          : 'text-muted-foreground hover:text-foreground',
       )}
     >
-      <span className="block text-sm font-medium text-foreground">{title}</span>
-      <span className="mt-0.5 block text-[11px] text-muted-foreground">{hint}</span>
+      <span className="block text-sm font-medium">{title}</span>
+      {hint ? (
+        <span className="mt-0.5 block text-[11px] text-muted-foreground">{hint}</span>
+      ) : null}
     </button>
   );
 }

@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildSearchResultKey,
+  buildStreetMapPreviewUrl,
   countryCodeToFlagEmoji,
   formatCityResultLabel,
   formatCitySubtitle,
+  formatCoordinates,
 } from '@/features/cities/utils/city-search';
 
 describe('city-search utils', () => {
@@ -12,7 +14,7 @@ describe('city-search utils', () => {
     expect(countryCodeToFlagEmoji('')).toBe('🌍');
   });
 
-  it('formats subtitle with county and full country name', () => {
+  it('formats subtitle with county, state, and full country name', () => {
     const result = {
       name: 'Blackpool',
       county: 'South Hams',
@@ -22,9 +24,16 @@ describe('city-search utils', () => {
       lon: -3.6,
     };
 
-    expect(formatCitySubtitle(result)).toBe('South Hams, United Kingdom');
-    expect(formatCityResultLabel(result)).toBe('Blackpool, South Hams, United Kingdom');
+    expect(formatCitySubtitle(result)).toBe('South Hams, England, United Kingdom');
+    expect(formatCityResultLabel(result)).toBe('Blackpool, South Hams, England, United Kingdom');
     expect(buildSearchResultKey(result)).toBe('50.3,-3.6');
+  });
+
+  it('formats coordinates and static map preview urls', () => {
+    expect(formatCoordinates(50.3, -3.6)).toBe('50.30°N, 3.60°W');
+    const url = buildStreetMapPreviewUrl(50.3, -3.6, { width: 400, height: 200 });
+    expect(url).toContain('World_Street_Map/MapServer/export');
+    expect(url).toContain('size=400%2C200');
   });
 
   it('includes distance from the user when location is known', () => {

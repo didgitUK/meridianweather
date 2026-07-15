@@ -2,7 +2,9 @@ import {
   DEFAULT_EMAIL_TEMPLATES,
   EMAIL_TEMPLATE_DEFINITIONS,
   EMAIL_TEMPLATE_PREVIEW_VARS,
+  EMAIL_TEMPLATE_SLUGS,
 } from '@/constants/email-templates';
+import { EMAIL_LAYOUT_MARKER } from '@/constants/email-template-themes';
 import { getDb } from '@/lib/db';
 
 function mapRow(row) {
@@ -13,6 +15,53 @@ function mapRow(row) {
     updatedAt: row.updated_at,
     isCustom: true,
   };
+}
+
+function htmlNeedsLayoutUpgrade(html) {
+  const value = String(html ?? '');
+  if (!value.includes(EMAIL_LAYOUT_MARKER)) {
+    return true;
+  }
+  if (!value.includes('{{logoUrl}}')) {
+    return true;
+  }
+  if (!value.includes('background-color:#000000')) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Upgrade legacy email HTML to Meridian branded layout v2 (all categories).
+ */
+export function ensureEmailTemplatesUseBrandedLayout() {
+  const db = getDb();
+  const now = new Date().toISOString();
+  const upsert = db.prepare(
+    `INSERT INTO email_templates (slug, subject, html, updated_at)
+     VALUES (?, ?, ?, ?)
+     ON CONFLICT(slug) DO UPDATE SET
+       subject = excluded.subject,
+       html = excluded.html,
+       updated_at = excluded.updated_at`,
+  );
+
+  for (const definition of EMAIL_TEMPLATE_DEFINITIONS) {
+    const defaults = DEFAULT_EMAIL_TEMPLATES[definition.slug];
+    if (!defaults) continue;
+
+    const row = db.prepare('SELECT html FROM email_templates WHERE slug = ?').get(definition.slug);
+    if (row && !htmlNeedsLayoutUpgrade(row.html)) {
+      continue;
+    }
+
+    upsert.run(defaults.slug, defaults.subject, defaults.html, now);
+  }
+}
+
+/** @deprecated Use ensureEmailTemplatesUseBrandedLayout */
+export function ensureWeatherAlertTemplatesUseRichLayout() {
+  ensureEmailTemplatesUseBrandedLayout();
 }
 
 export function ensureEmailTemplatesSeeded() {
@@ -28,6 +77,8 @@ export function ensureEmailTemplatesSeeded() {
     const defaults = DEFAULT_EMAIL_TEMPLATES[definition.slug];
     insert.run(defaults.slug, defaults.subject, defaults.html, now);
   }
+
+  ensureEmailTemplatesUseBrandedLayout();
 }
 
 export function listEmailTemplates() {

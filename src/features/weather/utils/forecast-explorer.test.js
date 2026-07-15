@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { toDateInputValue } from '@/features/weather/utils/forecast-formatters';
 import {
   buildChartAxisLabels,
@@ -9,6 +9,7 @@ import {
   expandDayEntriesForCalendarMonth,
   filterDayEntriesByRange,
 } from '@/features/weather/utils/forecast-explorer';
+import { selectNextHours } from '@/features/weather/utils/forecast-chart-series';
 
 describe('forecast explorer utils', () => {
   it('builds carousel days from daily forecast and stored history', () => {
@@ -130,6 +131,31 @@ describe('forecast explorer utils', () => {
 
     expect(points).toHaveLength(7);
     expect(points[3].temp).toBe(13);
+  });
+
+  it('selects the next twelve densified hours from now', () => {
+    const nowMs = Date.UTC(2026, 6, 14, 12, 0, 0);
+    vi.useFakeTimers();
+    vi.setSystemTime(nowMs);
+
+    const nowSec = Math.floor(nowMs / 1000);
+    const points = selectNextHours(
+      [
+        { dt: nowSec - 7200, temp: 10 },
+        { dt: nowSec, temp: 12 },
+        { dt: nowSec + 3 * 3600, temp: 15 },
+        { dt: nowSec + 6 * 3600, temp: 18 },
+        { dt: nowSec + 12 * 3600, temp: 14 },
+        { dt: nowSec + 24 * 3600, temp: 11 },
+      ],
+      12,
+    );
+
+    expect(points).toHaveLength(12);
+    expect(points[0].dt).toBe(nowSec);
+    expect(points[11].dt).toBe(nowSec + 11 * 3600);
+
+    vi.useRealTimers();
   });
 
   it('builds day chart points from live, archived, and stored observations', () => {

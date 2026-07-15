@@ -1,3 +1,8 @@
+export const MAX_WEATHER_BATCH_CITIES = 20;
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ALERT_ID_RE = /^[A-Za-z0-9._-]{1,128}$/;
+
 export function parseGeocodeQuery(raw) {
   const query = raw?.trim() ?? '';
   if (query.length < 2) {
@@ -7,6 +12,22 @@ export function parseGeocodeQuery(raw) {
     throw new Error('Search query is too long');
   }
   return query;
+}
+
+export function parseEmail(raw) {
+  const email = raw?.trim()?.toLowerCase() ?? '';
+  if (!email || email.length > 254 || !EMAIL_RE.test(email)) {
+    throw new Error('Invalid email');
+  }
+  return email;
+}
+
+export function parseAlertId(raw) {
+  const alertId = typeof raw === 'string' ? raw.trim() : '';
+  if (!ALERT_ID_RE.test(alertId)) {
+    throw new Error('Invalid alert id');
+  }
+  return alertId;
 }
 
 export function parseLatLon(latRaw, lonRaw) {

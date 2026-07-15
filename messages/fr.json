@@ -1,23 +1,513 @@
 {
+  "Common": {
+    "loading": "Chargement…",
+    "loadingLocations": "Chargement de vos lieux…",
+    "retry": "Réessayer",
+    "cancel": "Annuler",
+    "done": "Terminé",
+    "check": "Vérifier",
+    "search": "Rechercher",
+    "open": "Ouvrir",
+    "backToDashboard": "Retour au tableau de bord",
+    "unavailable": "Indisponible",
+    "justNow": "à l’instant",
+    "minutesAgo": "il y a {minutes} min",
+    "hoursAgo": "il y a {hours} h",
+    "near": "Près de {label}",
+    "basedOn": "Basé sur {source}",
+    "nearYou": "Près de vous",
+    "localWeather": "Météo locale",
+    "currentWeather": "Météo actuelle",
+    "weatherIcon": "Icône météo",
+    "feelsLike": "Ressenti {temp}",
+    "highLow": "Max {high} · Min {low}",
+    "photoBy": "Photo par",
+    "onUnsplash": "sur Unsplash",
+    "onSource": "sur {source}",
+    "copyright": "© {year} Meridian",
+    "comingSoon": "Bientôt disponible",
+    "viewAll": "Tout voir",
+    "estimated": "Estimé",
+    "enableAdvertisingInSettings": "Activer la publicité dans les paramètres",
+    "openSettings": "Ouvrir les paramètres",
+    "skipToMainContent": "Aller au contenu principal",
+    "toggleTheme": "Changer le thème",
+    "switchToCelsius": "Passer en Celsius",
+    "switchToFahrenheit": "Passer en Fahrenheit",
+    "pinned": "Épinglé à vos lieux",
+    "unpinned": "Retiré de vos lieux",
+    "alreadyPinned": "Déjà épinglé à vos lieux",
+    "cityRemoved": "{city} retirée",
+    "subscriptionsUpdated": "Abonnements mis à jour pour {city}",
+    "newsletterSubscribed": "Abonné aux actualités meridian",
+    "newsletterUnsubscribed": "Désabonné de la newsletter meridian",
+    "reportSubmitted": "Signalement envoyé. Notre équipe examinera ce lieu.",
+    "reportReviewing": "Notre équipe examine déjà ce lieu",
+    "selectAtLeastOneAlert": "Sélectionnez au moins une alerte météo, ou désactivez les alertes.",
+    "showPreviousArticles": "Afficher les articles précédents",
+    "showNextArticles": "Afficher les articles suivants"
+  },
+  "Brand": {
+    "tagline": "Suivre la météo partout dans votre monde",
+    "description": "Suivez les conditions actuelles et les prévisions pour les villes qui comptent pour vous — dans le navigateur aujourd’hui, en application installable demain.",
+    "heroEyebrow": "Meridian Weather",
+    "heroIntro": "Vérifiez n’importe quelle ville instantanément, épinglez celles à suivre et recevez des alertes lorsque les conditions changent."
+  },
+  "Header": {
+    "checkAction": "Vérifier",
+    "language": {
+      "changeLanguage": "Changer de langue",
+      "selectLanguage": "Choisir la langue",
+      "searchPlaceholder": "Rechercher des langues…",
+      "searchLabel": "Rechercher des langues",
+      "noMatch": "Aucune langue correspondante",
+      "footerNote": "Les textes de l’interface sont fournis pour ces langues. Les textes de conditions OpenWeather suivent la même locale lorsqu’ils sont disponibles."
+    }
+  },
+  "Search": {
+    "placeholder": "Rechercher un lieu dans le monde",
+    "label": "Rechercher un lieu",
+    "dropdownLabel": "Résultats de recherche de villes",
+    "searching": "Recherche…",
+    "noCitiesFound": "Aucune ville trouvée.",
+    "archive": {
+      "title": "Recherche de lieu",
+      "description": "Comparez les lieux correspondants sur la carte, puis ouvrez la prévision qui convient.",
+      "placeholder": "Rechercher un lieu dans le monde",
+      "ariaLabel": "Rechercher des lieux",
+      "hintWithQuery": "Saisissez une ville, un village ou un lieu, puis appuyez sur Rechercher.",
+      "minChars": "Saisissez au moins 2 caractères pour rechercher.",
+      "noMatches": "Aucun lieu ne correspond à cette recherche.",
+      "openAction": "Ouvrir la prévision",
+      "resultsLabel": "Résultats de recherche",
+      "resultsFor": "Résultats pour \"{query}\"",
+      "mapAlt": "Carte centrée sur {name}",
+      "osmAttribution": "Les suggestions de lieux incluent des données OpenStreetMap."
+    },
+    "wrongLocation": {
+      "title": "Définir votre position",
+      "description": "Recherchez le lieu qui correspond à où vous êtes. Nous le mémoriserons sur cet appareil pour la prochaine fois.",
+      "actionLabel": "Utiliser ce lieu"
+    },
+    "sources": {
+      "confirmed": "votre domicile enregistré",
+      "gps": "position précise de l’appareil",
+      "history": "vos vérifications récentes",
+      "ip": "position approximative du réseau"
+    }
+  },
+  "Dashboard": {
+    "hero": {
+      "shareLocationTitle": "Partager votre position",
+      "shareLocationBody": "Autorisez la localisation ci-dessus pour voir les conditions locales ici.",
+      "searchCardTitle": "Rechercher un lieu",
+      "allowLocation": "Autoriser la localisation",
+      "recentChecks": "Vérifications récentes",
+      "yourLocations": "Vos lieux",
+      "nearbyCarouselTitle": "Lieux à proximité",
+      "nearbyCarouselLabel": "Carrousel des lieux à proximité"
+    },
+    "localCard": {
+      "weatherLoadFailedNear": "Près de {label}, mais la météo n’a pas pu être chargée.",
+      "weatherLoadFailed": "La météo locale n’a pas encore pu être chargée.",
+      "setLocation": "Définir le lieu",
+      "wrongLocation": "Incorrect ?"
+    },
+    "recentChecks": {
+      "title": "Autour de vous",
+      "description": "Lieux proches et villes que vous avez recherchées sur cet appareil.",
+      "nearYouTitle": "Près de vous",
+      "nearYouDescription": "Lieux proches de votre point météo local.",
+      "nearYouEmpty": "Aucun lieu proche disponible pour le moment.",
+      "nearYouNeedLocation": "Autorisez la localisation pour voir la météo près de chez vous.",
+      "empty": "Aucune vérification récente sur la plateforme.",
+      "carouselLabel": "Vérifications météo récentes",
+      "popularSearchesTitle": "Recherches populaires",
+      "popularSearchesEmpty": "Aucune recherche populaire pour le moment. Cherchez une ville ci-dessus — les lieux consultés apparaissent ici.",
+      "popularSearchesDescription": "Lieux les plus consultés sur meridian.",
+      "popularSearchesEmptyCta": "Chercher une ville"
+    },
+    "locations": {
+      "title": "Vos lieux",
+      "description": "Villes que vous avez épinglées après une vérification.",
+      "emptyTitle": "Aucun lieu pour l’instant",
+      "emptyDescription": "Recherchez un lieu, puis épinglez-le ici pour le suivre sur cet appareil.",
+      "searchToggle": "Rechercher un lieu"
+    },
+    "blog": {
+      "title": "Du journal meridian",
+      "description": "Courts articles sur les prévisions, les alertes et le tableau de bord.",
+      "carouselLabel": "Articles de blog"
+    },
+    "weatherCard": {
+      "loadFailedTitle": "Impossible de charger la météo",
+      "unpin": "Désépingler",
+      "refresh": "Actualiser la météo pour {city}",
+      "updated": "Mis à jour {age}",
+      "staleUpdated": "Cache · mis à jour {age}",
+      "sevenDayOutlook": "Tendance sur 7 jours",
+      "viewFullForecast": "Voir la prévision complète",
+      "dailyUnavailable": "Prévision quotidienne indisponible.",
+      "humidity": "Humidité",
+      "wind": "Vent"
+    }
+  },
+  "CityDetail": {
+    "loading": "Chargement…",
+    "notFoundTitle": "Ville introuvable",
+    "notFoundBody": "Vérifiez une ville depuis la recherche du tableau de bord pour voir sa prévision ici.",
+    "loadFailedTitle": "Impossible de charger la météo",
+    "tabs": {
+      "label": "Vues des prévisions",
+      "today": "Aujourd’hui",
+      "hourly": "Horaire",
+      "daily": "10 jours",
+      "history": "Historique"
+    },
+    "options": {
+      "menu": "Options",
+      "menuLabel": "Options de la ville",
+      "rerunCheck": "Relancer la vérification",
+      "rerunCheckDescription": "Récupérer la météo la plus récente pour cette ville",
+      "reportInaccurate": "Signaler une inexactitude",
+      "reportInaccurateDescription": "Signaler des données météo ou de prévision qui semblent incorrectes",
+      "reportInaccurateActive": "Notre équipe examine déjà ce lieu",
+      "removeFromLocations": "Retirer des lieux",
+      "removeFromLocationsDescription": "Désépingler cette ville de votre tableau de bord",
+      "pinToLocations": "Épingler à vos lieux",
+      "pinToLocationsDescription": "Enregistrer cette ville sur votre tableau de bord",
+      "emailOptions": "Options e-mail",
+      "emailOptionsManage": "Gérer les prévisions et alertes météo à l’échelle de la plateforme",
+      "emailOptionsGet": "Recevoir les prévisions et alertes météo à l’échelle de la plateforme"
+    },
+    "inaccurateBanner": "Un membre de notre équipe examine un signalement de données inexactes. Merci de votre patience pendant que nous améliorons la météo et les prévisions affichées.",
+    "hero": {
+      "title": "Météo du jour à {city}",
+      "titleFallback": "Météo du jour",
+      "atAGlance": "En un coup d’œil",
+      "currentConditions": "Conditions actuelles"
+    },
+    "metrics": {
+      "humidity": "Humidité",
+      "pressure": "Pression",
+      "visibility": "Visibilité",
+      "cloudCover": "Couverture nuageuse",
+      "sunrise": "Lever du soleil",
+      "sunset": "Coucher du soleil",
+      "temperature": "Température",
+      "feelsLike": "Ressenti",
+      "dewPoint": "Point de rosée",
+      "uvIndex": "Indice UV",
+      "wind": "Vent",
+      "windGust": "Rafales",
+      "rain1h": "Pluie (1 h)",
+      "snow1h": "Neige (1 h)"
+    },
+    "today": {
+      "next12HoursTitle": "12 prochaines heures",
+      "next12HoursDescription": "Température à court terme, chance de pluie et vent.",
+      "next12HoursEmpty": "Les points horaires pour la période à venir sont encore en chargement."
+    },
+    "hourly": {
+      "next12HoursTitle": "12 prochaines heures",
+      "next12HoursDescription": "Une carte par heure à partir de maintenant pour les douze prochaines heures.",
+      "next12HoursEmpty": "Les points horaires pour la période à venir sont encore en chargement.",
+      "dayChartTitle": "Graphique journalier",
+      "dayChartDescription": "Choisissez un jour pour tracer température, précipitations, vent, humidité ou UV."
+    },
+    "daily": {
+      "title": "Tendance sur 10 jours",
+      "description": "Appuyez sur un jour pour ouvrir les graphiques. L’offre gratuite OpenWeather couvre environ 5–6 jours ; les jours suivants sont indiqués Estimé lorsque les connecteurs plus longs ne sont pas disponibles.",
+      "unavailable": "La prévision quotidienne n’est pas encore disponible."
+    },
+    "history": {
+      "title": "Historique",
+      "description": "Observations stockées et graphiques horaires archivés pour les jours passés à ce lieu.",
+      "loading": "Chargement de l’historique stocké…",
+      "noData": "Les données de prévision ne sont pas encore disponibles.",
+      "noEntries": "Aucune entrée d’historique pour ce lieu. Vos vérifications apparaîtront ici au fil du temps."
+    },
+    "loadingDataFor": "Chargement des données pour {location}",
+    "checkingAlerts": "Vérification des alertes…",
+    "formulatingCharts": "Préparation des graphiques…",
+    "preparingForecast": "Préparation de votre prévision…",
+    "loadingLocation": "Chargement du lieu…"
+  },
+  "Forecast": {
+    "hourly": {
+      "title": "Prévision horaire",
+      "description": "Température, vent et précipitations par heure.",
+      "empty": "La prévision horaire n’est pas encore disponible."
+    },
+    "minute": {
+      "title": "Prévision minute",
+      "description": "Intensité des précipitations pour les 60 prochaines minutes."
+    },
+    "range": {
+      "label": "Période de prévision",
+      "week": "Semaine",
+      "month": "Mois"
+    },
+    "metrics": {
+      "temperature": "Température",
+      "precipitation": "Précipitations",
+      "wind": "Vent",
+      "humidity": "Humidité",
+      "uv": "UV",
+      "noChartData": "Aucune donnée graphique pour ce jour."
+    }
+  },
+  "Subscriptions": {
+    "emailMeUpdates": "M’envoyer des mises à jour",
+    "manageUpdates": "Gérer les mises à jour",
+    "forecastsOn": "Prévisions activées",
+    "alertsOn": "Alertes activées",
+    "dialog": {
+      "title": "Mises à jour e-mail pour {city}",
+      "description": "Recevez une prévision hebdomadaire (jusqu’à {limit} lieux) et des alertes optionnelles pour cet endroit.",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "vous@exemple.com",
+      "weeklyTitle": "Prévision hebdomadaire",
+      "weeklyHint": "Inclure {city} dans votre résumé hebdomadaire avec vos autres lieux.",
+      "weeklyLimitHint": "Vous avez atteint la limite de {limit} lieux pour les prévisions hebdomadaires.",
+      "alertsTitle": "Alertes météo",
+      "alertsHint": "E-mail lorsque les conditions correspondent pour cet endroit.",
+      "saveSubscriptions": "Enregistrer"
+    },
+    "alertPrefs": {
+      "title": "Alertes météo",
+      "description": "Notifications par ville lorsque les conditions correspondent à vos choix.",
+      "modeLabel": "Mode de sélection des alertes",
+      "allTitle": "Toutes les alertes",
+      "allHint": "Vous recevrez tous les types d’alerte pris en charge pour cet endroit.",
+      "customTitle": "Choisir les types",
+      "selectedCount": "{count} sur {total} sélectionnés",
+      "selectGroup": "Sélectionner le groupe",
+      "disabledHint": "Activez les alertes météo pour choisir tous les types ou personnaliser ceux que vous recevez pour cette ville."
+    },
+    "removeCity": {
+      "title": "Retirer {city} ?",
+      "hasSubscriptions": "Vous recevez des mises à jour e-mail pour cette ville. Voulez-vous aussi les arrêter ?",
+      "noSubscriptions": "Cette ville sera retirée de votre tableau de bord.",
+      "stopForecasts": "Arrêter les prévisions plateforme",
+      "stopAlerts": "Arrêter les alertes météo",
+      "removeOnly": "Retirer la ville seulement",
+      "removeAndUnsubscribe": "Retirer et se désabonner"
+    },
+    "newsletter": {
+      "description": "Actualités produit et fonctions de prévision pour meridianweather.co.uk.",
+      "placeholder": "vous@exemple.com",
+      "subscribe": "S’abonner à meridian",
+      "subscribed": "Abonné aux actualités meridian.",
+      "unsubscribe": "Se désabonner"
+    }
+  },
+  "Footer": {
+    "getTheApp": "Obtenir l’application",
+    "comingSoon": "Bientôt disponible",
+    "newsletterTitle": "Newsletter",
+    "legalNavLabel": "Mentions légales",
+    "documentation": "Documentation",
+    "adminAccess": "Accès admin",
+    "storeBadges": {
+      "appStore": "Télécharger dans l’App Store",
+      "googlePlay": "Disponible sur Google Play"
+    }
+  },
+  "Cookie": {
+    "banner": {
+      "title": "Nous utilisons le stockage du navigateur pour vos villes et préférences",
+      "descriptionBefore": "meridian stocke les données essentielles localement. Les fonctions optionnelles incluent le cache météo, la localisation précise et la publicité. Consultez notre",
+      "cookiePolicy": "Politique relative aux cookies",
+      "descriptionAfter": ".",
+      "acceptAll": "Tout accepter",
+      "acceptFunctional": "Accepter le fonctionnel",
+      "essentialOnly": "Essentiel seulement",
+      "managePreferences": "Gérer les préférences"
+    },
+    "preferences": {
+      "intro": "Choisissez quels stockages et scripts optionnels meridian peut utiliser. Les fonctions essentielles comme les villes enregistrées et le thème restent toujours activées.",
+      "essentialTitle": "Essentiel",
+      "essentialDescription": "Villes enregistrées, ID client, thème et état de base nécessaires au fonctionnement de meridian.",
+      "functionalTitle": "Fonctionnel",
+      "functionalDescription": "Cache météo pour des chargements plus rapides et localisation précise optionnelle pour le classement de recherche.",
+      "analyticsTitle": "Analytique",
+      "analyticsDescription": "Réservé aux statistiques d’usage anonymes. Activé uniquement avec votre consentement.",
+      "advertisingTitle": "Publicité",
+      "advertisingDescription": "Google AdSense sur l’offre gratuite. Google peut déposer des cookies tiers lorsque c’est activé.",
+      "marketingTitle": "Marketing",
+      "marketingDescription": "Réservé à de futures communications promotionnelles. Non utilisé en v1.",
+      "cookiePolicy": "Politique relative aux cookies",
+      "privacyPolicy": "Politique de confidentialité",
+      "savePreferences": "Enregistrer les préférences cookies",
+      "acceptAll": "Tout accepter",
+      "rejectNonEssential": "Refuser le non essentiel"
+    }
+  },
+  "Settings": {
+    "title": "Paramètres",
+    "description": "Gérer les cookies et l’accessibilité pour meridian sur cet appareil.",
+    "tabs": {
+      "label": "Sections des paramètres",
+      "cookies": "Cookies",
+      "accessibility": "Accessibilité"
+    },
+    "accessibility": {
+      "intro": "Ajustez l’affichage et l’interaction pour cet appareil. Les changements s’appliquent immédiatement et sont enregistrés dans le navigateur.",
+      "colourScheme": "Schéma de couleurs",
+      "colourSchemeDescription": "Choisissez clair, sombre ou suivre la préférence du système.",
+      "motion": "Mouvement",
+      "motionDescription": "Réduire les animations et les carrousels à défilement automatique lorsque activé.",
+      "textSize": "Taille du texte",
+      "textSizeDescription": "Mettre à l’échelle le texte de l’interface sur tout le site.",
+      "highContrast": "Contraste élevé",
+      "highContrastDescription": "Augmenter le contraste du texte, des bordures et des états de focus.",
+      "underlineLinks": "Souligner les liens",
+      "underlineLinksDescription": "Toujours souligner les liens texte pour une lecture plus facile.",
+      "enhancedFocus": "Indicateurs de focus renforcés",
+      "enhancedFocusDescription": "Afficher des anneaux de focus plus visibles à la navigation clavier.",
+      "readableFont": "Police lisible",
+      "readableFontDescription": "Utiliser une police système sans empattement optimisée pour la lisibilité.",
+      "skipLink": "Lien vers le contenu principal",
+      "skipLinkDescription": "Afficher un lien d’évitement accessible au clavier en haut de chaque page.",
+      "accessibilityStatement": "Déclaration d’accessibilité",
+      "save": "Enregistrer les paramètres d’accessibilité",
+      "reset": "Réinitialiser",
+      "colorScheme": {
+        "system": "Par défaut du système",
+        "light": "Clair",
+        "dark": "Sombre"
+      },
+      "motionOptions": {
+        "system": "Utiliser le réglage système",
+        "reduce": "Réduire le mouvement",
+        "full": "Mouvement complet"
+      },
+      "fontScale": {
+        "100": "Par défaut (100%)",
+        "110": "Grand (110%)",
+        "125": "Très grand (125%)",
+        "150": "Maximum (150%)"
+      }
+    }
+  },
+  "Journal": {
+    "archive": {
+      "title": "Journal Meridian",
+      "description": "Tous les articles — prévisions, notes produit et guides pour tirer le meilleur du tableau de bord météo.",
+      "backLink": "← Tous les articles du journal",
+      "relatedTitle": "Plus du journal"
+    },
+    "post": {
+      "commentsTitle": "Commentaires",
+      "commentsDescription": "Share a note about this article. Comments stay on this device for the demo — they are not synced to a server.",
+      "commentsNameLabel": "Name",
+      "commentsNamePlaceholder": "Your name",
+      "commentsBodyLabel": "Comment",
+      "commentsBodyPlaceholder": "What stood out for you?",
+      "commentsSubmit": "Publier",
+      "commentsEmpty": "Pas encore de commentaires. Soyez le premier.",
+      "commentsValidation": "Please add a name (2+ characters) and a short comment.",
+      "otherPostsTitle": "Autres articles",
+      "bannerAdLabel": "Advertisement",
+      "sidebarLabel": "Journal sidebar",
+      "sidebarAdLabel": "Advertisement",
+      "schemaTitle": "Schéma du site",
+      "schemaDescription": "Related pages in the meridian documentation and journal.",
+      "schemaJournal": "Archives du journal",
+      "schemaDocs": "Documentation",
+      "schemaPrivacy": "Confidentialité",
+      "localityTitle": "Près de vous"
+    }
+  },
+  "Legal": {
+    "navLabel": "Navigation des politiques",
+    "navTitle": "Mentions légales",
+    "tocLabel": "Table des matières",
+    "tocTitle": "Sur cette page",
+    "lastUpdated": "Dernière mise à jour {date}",
+    "breadcrumb": "Mentions légales"
+  },
+  "Docs": {
+    "title": "documentation meridian",
+    "description": "Guides pour le tableau de bord, les abonnements et le comportement de l’API.",
+    "navLabel": "Documentation",
+    "tocTitle": "Sur cette page",
+    "lastUpdated": "Dernière mise à jour {date}",
+    "breadcrumb": "Documentation",
+    "relatedTitle": "Documentation associée"
+  },
+  "Alerts": {
+    "groups": {
+      "standard": "Alertes standard",
+      "severity": "Niveaux de gravité",
+      "hydrological": "Hydrologique",
+      "environment": "Environnement",
+      "us_severe": "Météo sévère US"
+    },
+    "types": {
+      "rain": "Pluie",
+      "wind": "Vent",
+      "thunderstorm": "Orages",
+      "snow": "Neige",
+      "ice": "Glace",
+      "extreme_heat": "Chaleur extrême",
+      "fog": "Brouillard",
+      "lightning": "Foudre",
+      "yellow_warning": "Vigilance jaune",
+      "amber_warning": "Vigilance orange",
+      "red_warning": "Vigilance rouge",
+      "flood_alert": "Alerte inondation",
+      "flood_warning": "Avertissement inondation",
+      "severe_flood_warning": "Avertissement inondation sévère",
+      "air_quality": "Qualité de l’air",
+      "marine": "Houle / marin",
+      "uv": "UV / soleil",
+      "tornado_watch": "Veille tornade",
+      "tornado_warning": "Alerte tornade",
+      "tornado_emergency": "Urgence tornade",
+      "severe_thunderstorm": "Orage violent",
+      "hurricane": "Ouragan / tropical"
+    }
+  },
+  "Monetization": {
+    "placeholderOverlay": "Emplacement AdSense : les publicités apparaîtront ici sur le site en ligne.",
+    "enableAdvertisingCta": "Activer la publicité dans les paramètres"
+  },
   "Seo": {
-    "homeTitle": "tableau météo",
-    "homeDescription": "Suivez les conditions actuelles et les prévisions pour les villes qui comptent pour vous.",
-    "homeIntro": "meridian est un tableau de bord météo multi-villes pour suivre les conditions en direct, les prévisions à court terme et les alertes e-mail.",
+    "homeTitle": "tableau de bord météo",
+    "homeDescription": "Suivez les conditions actuelles et les prévisions pour les villes qui comptent pour vous — dans le navigateur aujourd’hui, en application installable demain.",
+    "homeIntro": "meridian est un tableau de bord météo multi-villes pour suivre les conditions en direct, les prévisions à court terme et les alertes e-mail optionnelles aux lieux qui vous importent.",
     "docsTitle": "Documentation",
-    "docsDescription": "Guides pour le tableau de bord meridian, les prévisions, les abonnements et l'API.",
+    "docsDescription": "Guides pour le tableau de bord meridian, les prévisions, les abonnements et le comportement de l’API.",
     "cityForecastTitle": "Prévisions météo {city}",
-    "cityForecastDescription": "{summary} à {city}, {country} — prévisions sur 7 jours sur meridian.",
+    "cityForecastDescription": "{summary} à {city}, {country} — prévision sur 7 jours et conditions en direct sur meridian.",
     "cityForecastFallback": "Suivez les conditions et prévisions pour {city}, {country} sur meridian.",
-    "dataSource": "Source météo : OpenWeather.",
+    "dataSource": "Source des données météo : OpenWeather.",
     "notFoundTitle": "Page introuvable",
-    "notFoundDescription": "La page demandée est introuvable sur meridian."
+    "notFoundDescription": "La page demandée est introuvable sur meridian.",
+    "searchTitle": "Recherche de lieu",
+    "searchTitleWithQuery": "Recherche : {query}",
+    "searchDescription": "Recherchez des villes et lieux dans le monde sur meridian.",
+    "searchDescriptionWithQuery": "Lieux correspondant à \"{query}\" sur meridian.",
+    "journalTitle": "Journal",
+    "journalDescription": "Guides et notes sur les prévisions, les alertes et l’utilisation de meridian."
   },
   "Errors": {
     "notFoundHeading": "Page introuvable",
-    "notFoundBody": "La page recherchée n'existe pas ou a été déplacée.",
+    "notFoundBody": "La page que vous recherchez n’existe pas ou a peut-être été déplacée.",
     "backHome": "Retour au tableau de bord",
     "viewDocs": "Lire la documentation",
     "errorHeading": "Une erreur est survenue",
-    "errorBody": "meridian a rencontré une erreur inattendue. Veuillez réessayer."
+    "errorBody": "meridian a rencontré une erreur inattendue. Réessayez ou revenez au tableau de bord.",
+    "tryAgain": "Réessayer",
+    "geolocationUnavailable": "Géolocalisation indisponible",
+    "unableToLoadLocalWeather": "Impossible de charger la météo locale",
+    "unableToSubscribe": "Impossible de s’abonner",
+    "unableToUnsubscribe": "Impossible de se désabonner",
+    "unableToUpdateAlerts": "Impossible de mettre à jour les alertes",
+    "unableToSubmitReport": "Impossible d’envoyer le signalement",
+    "newsletterSaveFailed": "Impossible d’enregistrer l’abonnement à la newsletter",
+    "newsletterUnsubscribeFailed": "Impossible de se désabonner"
   }
 }

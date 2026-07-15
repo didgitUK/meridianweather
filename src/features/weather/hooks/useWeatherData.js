@@ -1,11 +1,13 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useLocale } from 'next-intl';
 import {
   DASHBOARD_CURRENT_MAX_AGE_MS,
   SCOPE_TTL,
 } from '@/constants/weather';
 import { WEATHER_CHECK_TRIGGERS } from '@/constants/weather-check-triggers';
+import { resolveOpenWeatherLang } from '@/i18n/locales';
 import {
   cacheMeetsMaxAge,
   getSnapshotAgeMs,
@@ -93,11 +95,14 @@ function applyBatchEntry(city, entry, mergedWeather, mergedForecast) {
 }
 
 export function useWeatherData(savedCities, isHydrated) {
+  const locale = useLocale();
+  const weatherLang = resolveOpenWeatherLang(locale);
   const { isManual } = useWeatherRefreshMode();
   const [weatherByCity, setWeatherByCity] = useState({});
   const [forecastByCity, setForecastByCity] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [refreshingCityIds, setRefreshingCityIds] = useState({});
+  const loadGenerationRef = useRef(0);
 
   const loadWeather = useCallback(async () => {
     if (!isHydrated || savedCities.length === 0) {
@@ -106,6 +111,7 @@ export function useWeatherData(savedCities, isHydrated) {
       return;
     }
 
+    const generation = ++loadGenerationRef.current;
     setIsLoading(true);
 
     const nextWeatherState = {};
@@ -125,6 +131,10 @@ export function useWeatherData(savedCities, isHydrated) {
           loading: false,
         };
       }
+    }
+
+    if (generation !== loadGenerationRef.current) {
+      return;
     }
 
     setWeatherByCity(nextWeatherState);
@@ -147,9 +157,14 @@ export function useWeatherData(savedCities, isHydrated) {
           scopes: DASHBOARD_SCOPES,
           maxAgeMs: DASHBOARD_MAX_AGE_MS,
           trigger: WEATHER_CHECK_TRIGGERS.dashboardLoad,
+          lang: weatherLang,
         })),
-        { trigger: WEATHER_CHECK_TRIGGERS.dashboardLoad },
+        { trigger: WEATHER_CHECK_TRIGGERS.dashboardLoad, lang: weatherLang },
       );
+
+      if (generation !== loadGenerationRef.current) {
+        return;
+      }
 
       const mergedWeather = { ...nextWeatherState };
       const mergedForecast = { ...nextForecastState };
@@ -166,6 +181,9 @@ export function useWeatherData(savedCities, isHydrated) {
       setWeatherByCity(mergedWeather);
       setForecastByCity(mergedForecast);
     } catch (error) {
+      if (generation !== loadGenerationRef.current) {
+        return;
+      }
       setWeatherByCity((current) => {
         const fallback = { ...current };
         for (const city of citiesToFetch) {
@@ -186,9 +204,11 @@ export function useWeatherData(savedCities, isHydrated) {
         return fallback;
       });
     } finally {
-      setIsLoading(false);
+      if (generation === loadGenerationRef.current) {
+        setIsLoading(false);
+      }
     }
-  }, [isHydrated, isManual, savedCities]);
+  }, [isHydrated, isManual, savedCities, weatherLang]);
 
   const refreshCityWeather = useCallback(async (city) => {
     if (!city?.lat || !city?.lon) {
@@ -208,8 +228,9 @@ export function useWeatherData(savedCities, isHydrated) {
             daily: FORCE_REFRESH_MAX_AGE_MS,
           },
           trigger: WEATHER_CHECK_TRIGGERS.dashboardRefresh,
+          lang: weatherLang,
         },
-      ], { trigger: WEATHER_CHECK_TRIGGERS.dashboardRefresh });
+      ], { trigger: WEATHER_CHECK_TRIGGERS.dashboardRefresh, lang: weatherLang });
 
       const entry = payload.cities?.[0];
       if (!entry) {
@@ -241,10 +262,13 @@ export function useWeatherData(savedCities, isHydrated) {
         return next;
       });
     }
-  }, []);
+  }, [weatherLang]);
 
   useEffect(() => {
     loadWeather();
+    return () => {
+      loadGenerationRef.current += 1;
+    };
   }, [loadWeather]);
 
   return {

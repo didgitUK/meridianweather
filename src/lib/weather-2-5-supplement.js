@@ -8,13 +8,23 @@ function locationCacheKey(lat, lon) {
   return `${Number(lat).toFixed(3)},${Number(lon).toFixed(3)}`;
 }
 
+function buildUsageMeta(lat, lon, usageMeta = {}) {
+  return {
+    lat,
+    lon,
+    reason: 'legacy_weather_2_5_supplement',
+    ...usageMeta,
+  };
+}
+
 export function clearWeather25CachesForTests() {
   forecast25Cache.clear();
   uviForecastCache.clear();
 }
 
-export async function fetchForecastDaily16Data(lat, lon) {
-  const cacheKey = `${locationCacheKey(lat, lon)}:daily16`;
+export async function fetchForecastDaily16Data(lat, lon, usageMeta = {}, lang = 'en') {
+  const weatherLang = typeof lang === 'string' && lang.length > 0 ? lang : 'en';
+  const cacheKey = `${locationCacheKey(lat, lon)}:daily16:${weatherLang}`;
 
   if (forecast25Cache.has(cacheKey)) {
     return forecast25Cache.get(cacheKey);
@@ -22,8 +32,8 @@ export async function fetchForecastDaily16Data(lat, lon) {
 
   const key = getApiKey();
   const urls = [
-    `https://pro.openweathermap.org/data/2.5/forecast/daily?lat=${lat}&lon=${lon}&cnt=16&units=metric&lang=en&appid=${key}`,
-    `https://api.openweathermap.org/data/2.5/forecast/daily?lat=${lat}&lon=${lon}&cnt=16&units=metric&lang=en&appid=${key}`,
+    `https://pro.openweathermap.org/data/2.5/forecast/daily?lat=${lat}&lon=${lon}&cnt=16&units=metric&lang=${weatherLang}&appid=${key}`,
+    `https://api.openweathermap.org/data/2.5/forecast/daily?lat=${lat}&lon=${lon}&cnt=16&units=metric&lang=${weatherLang}&appid=${key}`,
   ];
 
   const promise = (async () => {
@@ -32,7 +42,7 @@ export async function fetchForecastDaily16Data(lat, lon) {
         const tracked = await trackUpstreamCall(
           'forecast_daily_16',
           () => fetchOpenWeather(url, { endpoint: 'forecast_daily_16' }),
-          { lat, lon },
+          buildUsageMeta(lat, lon, usageMeta),
         );
 
         if (tracked.blocked) {
@@ -60,20 +70,21 @@ export async function fetchForecastDaily16Data(lat, lon) {
   }
 }
 
-export async function fetchForecast25Data(lat, lon) {
-  const cacheKey = locationCacheKey(lat, lon);
+export async function fetchForecast25Data(lat, lon, usageMeta = {}, lang = 'en') {
+  const weatherLang = typeof lang === 'string' && lang.length > 0 ? lang : 'en';
+  const cacheKey = `${locationCacheKey(lat, lon)}:${weatherLang}`;
 
   if (forecast25Cache.has(cacheKey)) {
     return forecast25Cache.get(cacheKey);
   }
 
   const key = getApiKey();
-  const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=en&appid=${key}`;
+  const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=${weatherLang}&appid=${key}`;
 
   const promise = trackUpstreamCall(
     'forecast_2_5',
     () => fetchOpenWeather(url, { endpoint: 'forecast_2_5' }),
-    { lat, lon },
+    buildUsageMeta(lat, lon, usageMeta),
   ).then((tracked) => {
     if (tracked.blocked) {
       throw new Error('Weather updates are paused until quota resets');
@@ -92,14 +103,14 @@ export async function fetchForecast25Data(lat, lon) {
   }
 }
 
-export async function fetchCurrentUvi(lat, lon) {
+export async function fetchCurrentUvi(lat, lon, usageMeta = {}) {
   const key = getApiKey();
   const url = `https://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&appid=${key}`;
 
   const tracked = await trackUpstreamCall(
     'uvi_current',
     () => fetchOpenWeather(url, { endpoint: 'uvi_current' }),
-    { lat, lon },
+    buildUsageMeta(lat, lon, usageMeta),
   );
 
   if (tracked.blocked) {
@@ -109,7 +120,7 @@ export async function fetchCurrentUvi(lat, lon) {
   return tracked.result.data?.value ?? null;
 }
 
-export async function fetchUviForecast(lat, lon) {
+export async function fetchUviForecast(lat, lon, usageMeta = {}) {
   const cacheKey = locationCacheKey(lat, lon);
 
   if (uviForecastCache.has(cacheKey)) {
@@ -122,7 +133,7 @@ export async function fetchUviForecast(lat, lon) {
   const promise = trackUpstreamCall(
     'uvi_forecast',
     () => fetchOpenWeather(url, { endpoint: 'uvi_forecast' }),
-    { lat, lon },
+    buildUsageMeta(lat, lon, usageMeta),
   ).then((tracked) => {
     if (tracked.blocked) {
       return [];
@@ -163,10 +174,11 @@ export function findNearestForecastSlot(list, timestamp = null) {
 export async function supplementLegacyCurrent(payload, lat, lon, deps = {}) {
   const loadUvi = deps.fetchCurrentUvi ?? fetchCurrentUvi;
   const loadForecast = deps.fetchForecast25Data ?? fetchForecast25Data;
+  const usageMeta = deps.usageMeta ?? {};
 
   const [uvi, forecastData] = await Promise.all([
-    loadUvi(lat, lon),
-    loadForecast(lat, lon).catch(() => null),
+    loadUvi(lat, lon, usageMeta),
+    loadForecast(lat, lon, usageMeta).catch(() => null),
   ]);
 
   const nearest = findNearestForecastSlot(forecastData?.list, payload.updatedAt);

@@ -3,3 +3,5 @@ Copyright (c) Bas Milius
 https://github.com/basmilius/meteocons
 
 MIT License — icons copied from @meteocons/svg-static (fill style).
+Includes condition icons for OpenWeather mapping and metric tiles
+(humidity, barometer, wind, UV, sunrise/sunset, etc.).

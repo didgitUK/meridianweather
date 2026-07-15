@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import {
   areAllAlertPrefsEnabled,
@@ -24,11 +25,13 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 
 function countActiveWeeklyDigests(registry) {
   return Object.values(registry.cities ?? {}).filter((city) => city?.weekly?.active).length;
@@ -42,6 +45,8 @@ function resolveAlertPrefsForSave(mode, prefs) {
 }
 
 export function SubscribeDialog({ city, open, onOpenChange }) {
+  const t = useTranslations('Subscriptions.dialog');
+  const tCommon = useTranslations('Common');
   const clientId = useClientId();
   const { registry, recordSubscription, clearCity } = useLocalSubscriptions();
   const subState = getCitySubscriptionState(registry, city.id);
@@ -145,7 +150,7 @@ export function SubscribeDialog({ city, open, onOpenChange }) {
 
     const nextAlertPrefs = resolveAlertPrefsForSave(alertMode, alertPrefs);
     if (alerts && !hasAnyAlertPrefEnabled(nextAlertPrefs)) {
-      toast.error('Select at least one weather alert, or turn alerts off.');
+      toast.error(tCommon('selectAtLeastOneAlert'));
       return;
     }
 
@@ -182,7 +187,7 @@ export function SubscribeDialog({ city, open, onOpenChange }) {
         await updateAlertPrefs(nextAlertPrefs);
       }
 
-      toast.success(`Subscriptions updated for ${city.name}`);
+      toast.success(tCommon('subscriptionsUpdated', { city: city.name }));
       onOpenChange(false);
     } catch (error) {
       toast.error(error.message);
@@ -191,92 +196,112 @@ export function SubscribeDialog({ city, open, onOpenChange }) {
     }
   }
 
+  const emailId = `email-${city.id}`;
+  const weeklyId = `weekly-${city.id}`;
+  const alertsId = `alerts-${city.id}`;
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="flex max-h-[min(90vh,52rem)] w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-4xl">
-        <DialogHeader className="shrink-0 space-y-1 border-b border-border/60 px-5 py-4 pr-12">
+      <DialogContent className="flex max-h-[min(90vh,40rem)] flex-col gap-0 overflow-hidden p-0 sm:max-w-md">
+        <DialogHeader className="shrink-0 space-y-1.5 px-4 pb-0 pt-4 pr-12">
           <DialogTitle className="font-heading text-lg">
-            Email updates for {city.name}
+            {t('title', { city: city.name })}
           </DialogTitle>
           <DialogDescription>
-            Platform-wide forecasts combine your locations into one email (up to{' '}
-            {MAX_WEEKLY_DIGEST_LOCATIONS}). Weather alerts stay per city and match the types shown
-            in admin.
+            {t('description', { limit: MAX_WEEKLY_DIGEST_LOCATIONS })}
           </DialogDescription>
         </DialogHeader>
 
         <form className="flex min-h-0 flex-1 flex-col" onSubmit={handleSubmit}>
-          <div className="shrink-0 border-b border-border/60 px-5 py-4">
-            <div className="flex max-w-md flex-col gap-2">
-              <Label htmlFor={`email-${city.id}`}>Email</Label>
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor={emailId}>{t('emailLabel')}</Label>
               <Input
-                id={`email-${city.id}`}
+                id={emailId}
                 type="email"
                 required
+                autoComplete="email"
+                placeholder={t('emailPlaceholder')}
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
               />
             </div>
-          </div>
 
-          <div className="grid min-h-0 flex-1 gap-0 md:grid-cols-[minmax(12rem,0.9fr)_minmax(0,1.6fr)]">
-            <section className="flex flex-col gap-3 border-b border-border/60 p-5 md:border-r md:border-b-0">
-              <div>
-                <h3 className="text-sm font-medium">Platform-wide forecasts</h3>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  One weekly email covering all your subscribed locations — not just {city.name}.
-                </p>
-              </div>
-              <label className="flex items-start gap-2 rounded-lg border border-border/70 bg-muted/20 px-3 py-3 text-sm">
-                <input
-                  type="checkbox"
-                  className="mt-0.5"
-                  checked={weekly}
-                  disabled={atWeeklyLimit}
-                  onChange={(event) => setWeekly(event.target.checked)}
-                />
-                <span>
-                  Include {city.name} in platform-wide forecasts
-                  {atWeeklyLimit ? (
-                    <span className="mt-1 block text-xs text-muted-foreground">
-                      Limit of {MAX_WEEKLY_DIGEST_LOCATIONS} locations reached for this email.
-                    </span>
-                  ) : (
-                    <span className="mt-1 block text-xs font-normal text-muted-foreground">
-                      Forecast summary for every location on this email.
-                    </span>
-                  )}
-                </span>
-              </label>
-            </section>
+            <div className="space-y-2">
+              <PreferenceRow
+                id={weeklyId}
+                title={t('weeklyTitle')}
+                description={
+                  atWeeklyLimit
+                    ? t('weeklyLimitHint', { limit: MAX_WEEKLY_DIGEST_LOCATIONS })
+                    : t('weeklyHint', { city: city.name })
+                }
+                checked={weekly}
+                disabled={atWeeklyLimit}
+                onCheckedChange={setWeekly}
+              />
 
-            <section className="flex min-h-0 flex-col p-5 md:max-h-[min(28rem,50vh)]">
+              <PreferenceRow
+                id={alertsId}
+                title={t('alertsTitle')}
+                description={t('alertsHint')}
+                checked={alerts}
+                onCheckedChange={setAlerts}
+              />
+            </div>
+
+            {alerts ? (
               <SubscribeAlertPrefs
-                enabled={alerts}
                 mode={alertMode}
                 prefs={alertPrefs}
-                onEnabledChange={setAlerts}
                 onModeChange={setAlertMode}
                 onPrefsChange={setAlertPrefs}
               />
-            </section>
+            ) : null}
           </div>
 
-          <div className="flex shrink-0 justify-end gap-2 border-t border-border/60 bg-muted/30 px-5 py-3">
+          <DialogFooter className="mx-0 mb-0 shrink-0">
             <Button
               type="button"
               variant="outline"
               disabled={isSaving}
               onClick={() => onOpenChange(false)}
             >
-              Cancel
+              {tCommon('cancel')}
             </Button>
             <Button type="submit" disabled={isSaving}>
-              {isSaving ? 'Saving…' : 'Save subscriptions'}
+              {isSaving ? tCommon('loading') : t('saveSubscriptions')}
             </Button>
-          </div>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function PreferenceRow({
+  id,
+  title,
+  description,
+  checked,
+  disabled = false,
+  onCheckedChange,
+}) {
+  return (
+    <div className="flex items-start justify-between gap-3 rounded-lg border border-border/70 bg-muted/15 px-3 py-3">
+      <div className="min-w-0 flex-1 space-y-0.5">
+        <Label htmlFor={id} className="text-sm font-medium leading-snug">
+          {title}
+        </Label>
+        <p className="text-xs text-muted-foreground">{description}</p>
+      </div>
+      <Switch
+        id={id}
+        checked={checked}
+        disabled={disabled}
+        onCheckedChange={onCheckedChange}
+        className="mt-0.5"
+      />
+    </div>
   );
 }

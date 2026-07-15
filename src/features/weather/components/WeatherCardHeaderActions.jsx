@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { PinOff, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useWeatherRefreshMode } from '@/providers/WeatherRefreshModeProvider';
@@ -11,16 +12,18 @@ export function WeatherCardHeaderActions({
   onRefresh,
   onUnpin,
 }) {
+  const t = useTranslations('Dashboard.weatherCard');
   const { isManual } = useWeatherRefreshMode();
 
   return (
     <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
-      {isManual ? (
+      {isManual && onRefresh ? (
         <Button
           type="button"
           variant="ghost"
           size="icon"
-          aria-label={`Refresh ${cityName}`}
+          aria-label={t('refresh', { city: cityName })}
+          title={t('refresh', { city: cityName })}
           disabled={isRefreshing}
           onClick={onRefresh}
           className="size-10 sm:size-8"
@@ -32,7 +35,7 @@ export function WeatherCardHeaderActions({
         type="button"
         variant="ghost"
         size="icon"
-        aria-label={`Unpin ${cityName}`}
+        aria-label={`${t('unpin')} ${cityName}`}
         onClick={onUnpin}
         className="size-10 sm:size-8"
       >

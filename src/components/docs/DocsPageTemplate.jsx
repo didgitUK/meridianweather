@@ -1,14 +1,17 @@
+import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { LegalSection } from '@/components/legal/LegalSection';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { buildBreadcrumbSchema } from '@/lib/seo';
 
-export function DocsSidebar({ pages, activeSlug, sections }) {
+export async function DocsSidebar({ pages, activeSlug, sections }) {
+  const t = await getTranslations('Docs');
+
   return (
     <aside className="lg:sticky lg:top-24 lg:h-fit">
-      <nav aria-label="Documentation" className="rounded-xl border bg-card p-4">
-        <p className="font-heading text-sm uppercase tracking-wide text-muted-foreground">Documentation</p>
+      <nav aria-label={t('navLabel')} className="rounded-xl border bg-card p-4">
+        <p className="font-heading text-sm uppercase tracking-wide text-muted-foreground">{t('navLabel')}</p>
         <ul className="mt-3 flex flex-col gap-2">
           {pages.map((page) => (
             <li key={page.slug}>
@@ -24,8 +27,8 @@ export function DocsSidebar({ pages, activeSlug, sections }) {
         </ul>
       </nav>
 
-      <nav aria-label="Table of contents" className="mt-4 rounded-xl border bg-card p-4">
-        <p className="font-heading text-sm uppercase tracking-wide text-muted-foreground">On this page</p>
+      <nav aria-label={t('tocTitle')} className="mt-4 rounded-xl border bg-card p-4">
+        <p className="font-heading text-sm uppercase tracking-wide text-muted-foreground">{t('tocTitle')}</p>
         <ul className="mt-3 flex flex-col gap-2">
           {sections.map((section) => (
             <li key={section.id}>
@@ -40,12 +43,13 @@ export function DocsSidebar({ pages, activeSlug, sections }) {
   );
 }
 
-function DocsRelatedLinks({ currentSlug, pages }) {
+async function DocsRelatedLinks({ currentSlug, pages }) {
+  const t = await getTranslations('Docs');
   const related = pages.filter((page) => page.slug !== currentSlug).slice(0, 3);
 
   return (
     <section className="mt-12 rounded-xl border bg-card p-5">
-      <h2 className="font-heading text-xl">Related documentation</h2>
+      <h2 className="font-heading text-xl">{t('relatedTitle')}</h2>
       <ul className="mt-4 flex flex-col gap-2">
         {related.map((page) => (
           <li key={page.slug}>
@@ -59,11 +63,12 @@ function DocsRelatedLinks({ currentSlug, pages }) {
   );
 }
 
-export function DocsPageTemplate({ page, pages, breadcrumbs = [] }) {
+export async function DocsPageTemplate({ page, pages, breadcrumbs = [] }) {
+  const t = await getTranslations('Docs');
   const breadcrumbItems = breadcrumbs.length
     ? breadcrumbs
     : [
-        { name: 'Documentation', path: '/docs' },
+        { name: t('breadcrumb'), path: '/docs' },
         { name: page.title, path: `/docs/${page.slug}` },
       ];
 
@@ -73,7 +78,7 @@ export function DocsPageTemplate({ page, pages, breadcrumbs = [] }) {
       <article>
         <Breadcrumbs items={breadcrumbItems} />
         <JsonLd data={buildBreadcrumbSchema(breadcrumbItems)} />
-        <p className="text-sm text-muted-foreground">Last updated {page.lastUpdated}</p>
+        <p className="text-sm text-muted-foreground">{t('lastUpdated', { date: page.lastUpdated })}</p>
         <h1 className="mt-2 font-heading text-4xl">{page.title}</h1>
         <div className="mt-8 flex flex-col gap-8">
           {page.sections.map((section) => (

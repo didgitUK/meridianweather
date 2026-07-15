@@ -1,19 +1,159 @@
-export const EMAIL_TEMPLATE_SLUGS = {
-  WELCOME: 'welcome',
-  WEEKLY_DIGEST: 'weekly-digest',
-  WEATHER_ALERT: 'weather-alert',
+import { ALL_ALERT_TYPES } from '@/constants/alert-types';
+import {
+  EMAIL_TEMPLATE_CATEGORIES,
+  EMAIL_TEMPLATE_SLUGS,
+  resolveWeatherAlertTemplateSlug,
+  weatherAlertTemplateSlug,
+} from '@/constants/email-template-slugs';
+import {
+  buildAdminReplyEmailHtml,
+  buildAuthForgotPasswordEmailHtml,
+  buildAuthInviteEmailHtml,
+  buildAuthPasswordChangedEmailHtml,
+  buildAuthWelcomeEmailHtml,
+  buildWeatherAlertEmailHtml,
+  buildWelcomeEmailHtml,
+  buildWeeklyDigestEmailHtml,
+  weatherAlertDefaultSlug,
+} from '@/lib/email-templates/branded-email-layout';
+import { buildEmailBrandVars } from '@/lib/email-templates/build-email-brand-vars';
+import {
+  WEATHER_ALERT_EMAIL_VARIABLES,
+  buildWeatherAlertPreviewWeatherVars,
+} from '@/lib/email-templates/build-weather-email-vars';
+
+export {
+  EMAIL_TEMPLATE_CATEGORIES,
+  EMAIL_TEMPLATE_SLUGS,
+  resolveWeatherAlertTemplateSlug,
+  weatherAlertTemplateSlug,
 };
 
-export const EMAIL_TEMPLATE_DEFINITIONS = [
+export { buildWeatherAlertEmailHtml } from '@/lib/email-templates/branded-email-layout';
+
+const BRAND_PREVIEW = buildEmailBrandVars({ appUrl: 'https://meridianweather.co.uk' });
+
+const AUTH_EMAIL_VARIABLES = [
+  'email',
+  'displayName',
+  'inviteUrl',
+  'resetUrl',
+  'expiresAt',
+  'invitedBy',
+  'appUrl',
+  'logoUrl',
+];
+
+const ADMIN_REPLY_VARIABLES = [
+  'recipientName',
+  'recipientEmail',
+  'subject',
+  'messageHtml',
+  'adminName',
+  'appUrl',
+  'logoUrl',
+];
+
+function buildWeatherAlertDefault(alertType) {
+  const label = alertType?.label ?? 'Weather alert';
+  const slug = weatherAlertDefaultSlug(alertType);
+
+  return {
+    slug,
+    subject: `${label} for {{cityName}} — {{temperature}}`,
+    html: buildWeatherAlertEmailHtml(alertType),
+  };
+}
+
+function buildWeatherAlertDefinition(alertType) {
+  const label = alertType?.label ?? 'Weather alert';
+  const slug = weatherAlertDefaultSlug(alertType);
+
+  return {
+    slug,
+    label,
+    category: EMAIL_TEMPLATE_CATEGORIES.MAILING,
+    description: alertType
+      ? `Sent when a subscribed city matches the ${label} alert.`
+      : 'Fallback condition-change alert for subscribed cities when a per-type template is missing.',
+    variables: WEATHER_ALERT_EMAIL_VARIABLES,
+  };
+}
+
+const AUTH_TEMPLATE_DEFINITIONS = [
+  {
+    slug: EMAIL_TEMPLATE_SLUGS.ADMIN_INVITE,
+    label: 'Admin invite',
+    category: EMAIL_TEMPLATE_CATEGORIES.AUTH,
+    description: 'Sent when an administrator invites another admin.',
+    variables: AUTH_EMAIL_VARIABLES,
+  },
+  {
+    slug: EMAIL_TEMPLATE_SLUGS.ADMIN_WELCOME,
+    label: 'Admin welcome',
+    category: EMAIL_TEMPLATE_CATEGORIES.AUTH,
+    description: 'Sent after an invite is accepted and the account is ready.',
+    variables: AUTH_EMAIL_VARIABLES,
+  },
+  {
+    slug: EMAIL_TEMPLATE_SLUGS.ADMIN_FORGOT_PASSWORD,
+    label: 'Forgot password',
+    category: EMAIL_TEMPLATE_CATEGORIES.AUTH,
+    description: 'Sent when an admin requests a password reset.',
+    variables: AUTH_EMAIL_VARIABLES,
+  },
+  {
+    slug: EMAIL_TEMPLATE_SLUGS.ADMIN_PASSWORD_CHANGED,
+    label: 'Password changed',
+    category: EMAIL_TEMPLATE_CATEGORIES.AUTH,
+    description: 'Confirmation after a successful password reset or change.',
+    variables: AUTH_EMAIL_VARIABLES,
+  },
+];
+
+const ADMIN_REPLY_TEMPLATE_DEFINITIONS = [
+  {
+    slug: EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_CONTACT,
+    label: 'Contact reply',
+    category: EMAIL_TEMPLATE_CATEGORIES.ADMIN,
+    description: 'Default first response for contact-us messages.',
+    variables: ADMIN_REPLY_VARIABLES,
+  },
+  {
+    slug: EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_DPO,
+    label: 'DPO reply',
+    category: EMAIL_TEMPLATE_CATEGORIES.ADMIN,
+    description: 'Default first response for data-protection requests.',
+    variables: ADMIN_REPLY_VARIABLES,
+  },
+  {
+    slug: EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_COMPLAINT,
+    label: 'Complaint reply',
+    category: EMAIL_TEMPLATE_CATEGORIES.ADMIN,
+    description: 'Default acknowledgement for complaints.',
+    variables: ADMIN_REPLY_VARIABLES,
+  },
+  {
+    slug: EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_SUPPORT,
+    label: 'Support reply',
+    category: EMAIL_TEMPLATE_CATEGORIES.ADMIN,
+    description: 'Default first response for support requests.',
+    variables: ADMIN_REPLY_VARIABLES,
+  },
+];
+
+const BASE_EMAIL_TEMPLATE_DEFINITIONS = [
   {
     slug: EMAIL_TEMPLATE_SLUGS.WELCOME,
     label: 'Welcome',
+    category: EMAIL_TEMPLATE_CATEGORIES.MAILING,
     description: 'Sent when someone subscribes to product updates.',
-    variables: ['email'],
+    variables: ['email', 'unsubscribeUrl', 'appUrl', 'logoUrl'],
   },
   {
     slug: EMAIL_TEMPLATE_SLUGS.WEEKLY_DIGEST,
     label: 'Weekly digest',
+    category: EMAIL_TEMPLATE_CATEGORIES.MAILING,
     description:
       'One email per subscriber covering all their digest locations. Use {{locationsHtml}} for the city sections.',
     variables: [
@@ -21,116 +161,161 @@ export const EMAIL_TEMPLATE_DEFINITIONS = [
       'locationNames',
       'locationsHtml',
       'unsubscribeUrl',
+      'cityName',
+      'temperature',
+      'condition',
+      'humidity',
+      'windSpeed',
+      'appUrl',
+      'logoUrl',
     ],
   },
-  {
-    slug: EMAIL_TEMPLATE_SLUGS.WEATHER_ALERT,
-    label: 'Weather alert',
-    description: 'Condition-change alert for subscribed cities.',
-    variables: ['cityName', 'condition', 'unsubscribeUrl'],
-  },
+  buildWeatherAlertDefinition(null),
+  ...ALL_ALERT_TYPES.map((type) => buildWeatherAlertDefinition(type)),
+  ...AUTH_TEMPLATE_DEFINITIONS,
+  ...ADMIN_REPLY_TEMPLATE_DEFINITIONS,
 ];
 
-function layoutShell({ preview, title, bodyHtml, includeUnsubscribe = false }) {
-  const unsubscribeBlock = includeUnsubscribe
-    ? `
-          <div style="margin-top:32px;border-top:1px solid #e5e5e5;padding-top:16px;">
-            <p style="font-family:Georgia,serif;font-size:12px;color:#666666;">
-              <a href="{{unsubscribeUrl}}">Unsubscribe</a> from these emails.
-            </p>
-          </div>`
-    : '';
-
-  return `<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>${title}</title>
-  </head>
-  <body style="font-family:Georgia,serif;background-color:#ffffff;color:#111111;margin:0;padding:0;">
-    <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${preview}</div>
-    <div style="padding:24px;max-width:560px;margin:0 auto;">
-      <p style="font-family:Georgia,serif;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;">
-        meridian
-      </p>
-      <h1 style="font-family:Georgia,serif;font-size:28px;font-weight:500;margin:16px 0;">
-        ${title}
-      </h1>
-      ${bodyHtml}
-      ${unsubscribeBlock}
-    </div>
-  </body>
-</html>`;
-}
+export const EMAIL_TEMPLATE_DEFINITIONS = BASE_EMAIL_TEMPLATE_DEFINITIONS;
 
 export const DEFAULT_EMAIL_TEMPLATES = {
   [EMAIL_TEMPLATE_SLUGS.WELCOME]: {
     slug: EMAIL_TEMPLATE_SLUGS.WELCOME,
     subject: 'Welcome to meridian',
-    html: layoutShell({
-      preview: 'Welcome to meridian',
-      title: 'Welcome to meridian',
-      bodyHtml: `
-      <p style="font-family:Georgia,serif;">Thanks for subscribing with {{email}}. We will send product updates sparingly.</p>
-      <p style="font-family:Georgia,serif;">Your city selections stay in your browser — no account required.</p>`,
-    }),
+    html: buildWelcomeEmailHtml(),
   },
   [EMAIL_TEMPLATE_SLUGS.WEEKLY_DIGEST]: {
     slug: EMAIL_TEMPLATE_SLUGS.WEEKLY_DIGEST,
     subject: 'Your weekly weather digest',
-    html: layoutShell({
-      preview: 'Your weekly weather for {{locationNames}}',
-      title: 'Your weekly weather',
-      includeUnsubscribe: true,
-      bodyHtml: `
-      <p style="font-family:Georgia,serif;">Here is this week’s snapshot for {{locationCount}} location(s): {{locationNames}}.</p>
-      {{locationsHtml}}
-      <p style="font-family:Georgia,serif;font-size:12px;color:#666666;">Use the link under each city to stop digests for that location only.</p>`,
+    html: buildWeeklyDigestEmailHtml(),
+  },
+  [EMAIL_TEMPLATE_SLUGS.WEATHER_ALERT]: buildWeatherAlertDefault(null),
+  ...Object.fromEntries(
+    ALL_ALERT_TYPES.map((type) => {
+      const defaults = buildWeatherAlertDefault(type);
+      return [defaults.slug, defaults];
+    }),
+  ),
+  [EMAIL_TEMPLATE_SLUGS.ADMIN_INVITE]: {
+    slug: EMAIL_TEMPLATE_SLUGS.ADMIN_INVITE,
+    subject: 'You are invited to administer meridian',
+    html: buildAuthInviteEmailHtml(),
+  },
+  [EMAIL_TEMPLATE_SLUGS.ADMIN_WELCOME]: {
+    slug: EMAIL_TEMPLATE_SLUGS.ADMIN_WELCOME,
+    subject: 'Your meridian admin account is ready',
+    html: buildAuthWelcomeEmailHtml(),
+  },
+  [EMAIL_TEMPLATE_SLUGS.ADMIN_FORGOT_PASSWORD]: {
+    slug: EMAIL_TEMPLATE_SLUGS.ADMIN_FORGOT_PASSWORD,
+    subject: 'Reset your meridian admin password',
+    html: buildAuthForgotPasswordEmailHtml(),
+  },
+  [EMAIL_TEMPLATE_SLUGS.ADMIN_PASSWORD_CHANGED]: {
+    slug: EMAIL_TEMPLATE_SLUGS.ADMIN_PASSWORD_CHANGED,
+    subject: 'Your meridian admin password was changed',
+    html: buildAuthPasswordChangedEmailHtml(),
+  },
+  [EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_CONTACT]: {
+    slug: EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_CONTACT,
+    subject: '{{subject}}',
+    html: buildAdminReplyEmailHtml(EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_CONTACT, {
+      title: 'Thanks for contacting us',
+      preview: 'Thanks for contacting meridian',
     }),
   },
-  [EMAIL_TEMPLATE_SLUGS.WEATHER_ALERT]: {
-    slug: EMAIL_TEMPLATE_SLUGS.WEATHER_ALERT,
-    subject: 'Weather alert for {{cityName}}',
-    html: layoutShell({
-      preview: 'Weather alert for {{cityName}}',
-      title: 'Weather alert for {{cityName}}',
-      includeUnsubscribe: true,
-      bodyHtml: `
-      <p style="font-family:Georgia,serif;">Conditions have changed to {{condition}}.</p>
-      <p style="font-family:Georgia,serif;">Open meridian to review the latest forecast for your saved cities.</p>`,
+  [EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_DPO]: {
+    slug: EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_DPO,
+    subject: '{{subject}}',
+    html: buildAdminReplyEmailHtml(EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_DPO, {
+      title: 'Data protection response',
+      preview: 'Data protection response from meridian',
+    }),
+  },
+  [EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_COMPLAINT]: {
+    slug: EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_COMPLAINT,
+    subject: '{{subject}}',
+    html: buildAdminReplyEmailHtml(EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_COMPLAINT, {
+      title: 'We have received your complaint',
+      preview: 'Complaint acknowledgement from meridian',
+    }),
+  },
+  [EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_SUPPORT]: {
+    slug: EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_SUPPORT,
+    subject: '{{subject}}',
+    html: buildAdminReplyEmailHtml(EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_SUPPORT, {
+      title: 'Support update',
+      preview: 'Support response from meridian',
     }),
   },
 };
 
+const AUTH_PREVIEW_VARS = {
+  ...BRAND_PREVIEW,
+  email: 'alex@example.com',
+  displayName: 'Alex Admin',
+  inviteUrl: 'https://meridianweather.co.uk/invite/preview-token',
+  resetUrl: 'https://meridianweather.co.uk/reset-password/preview-token',
+  expiresAt: '16 Jul 2026, 12:00',
+  invitedBy: 'Jordan Host',
+};
+
+const ADMIN_REPLY_PREVIEW_VARS = {
+  ...BRAND_PREVIEW,
+  recipientName: 'Sam Neighbor',
+  recipientEmail: 'sam@example.com',
+  subject: 'Re: Your message to meridian',
+  messageHtml: '<p>Thanks again — we will keep you updated.</p>',
+  adminName: 'Alex Admin',
+};
+
 export const EMAIL_TEMPLATE_PREVIEW_VARS = {
   [EMAIL_TEMPLATE_SLUGS.WELCOME]: {
+    ...BRAND_PREVIEW,
     email: 'you@example.com',
+    unsubscribeUrl: 'https://meridianweather.co.uk/api/unsubscribe?token=preview-welcome',
   },
   [EMAIL_TEMPLATE_SLUGS.WEEKLY_DIGEST]: {
+    ...BRAND_PREVIEW,
     locationCount: '2',
     locationNames: 'Manchester, Dubai',
     locationsHtml: `
       <div style="margin:20px 0;padding:16px 0;border-top:1px solid #e5e5e5;">
-        <p style="font-family:Georgia,serif;font-size:18px;font-weight:600;margin:0 0 8px;">Manchester</p>
-        <p style="font-family:Georgia,serif;margin:0 0 4px;">Current conditions: 14° — Partly cloudy</p>
-        <p style="font-family:Georgia,serif;margin:0 0 8px;">Humidity 62% · Wind 4.2 m/s</p>
-        <p style="font-family:Georgia,serif;font-size:12px;margin:0;">
+        <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:18px;font-weight:600;margin:0 0 8px;">Manchester</p>
+        <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin:0 0 4px;">Current conditions: 14°C — Partly cloudy</p>
+        <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin:0 0 8px;">Humidity 62% · Wind 4.2 m/s</p>
+        <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;margin:0;">
           <a href="https://meridianweather.co.uk/api/unsubscribe?token=preview-manchester">Stop digest for Manchester</a>
         </p>
       </div>
       <div style="margin:20px 0;padding:16px 0;border-top:1px solid #e5e5e5;">
-        <p style="font-family:Georgia,serif;font-size:18px;font-weight:600;margin:0 0 8px;">Dubai</p>
-        <p style="font-family:Georgia,serif;margin:0 0 4px;">Current conditions: 34° — Clear</p>
-        <p style="font-family:Georgia,serif;margin:0 0 8px;">Humidity 41% · Wind 3.1 m/s</p>
-        <p style="font-family:Georgia,serif;font-size:12px;margin:0;">
+        <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:18px;font-weight:600;margin:0 0 8px;">Dubai</p>
+        <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin:0 0 4px;">Current conditions: 34° — Clear</p>
+        <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin:0 0 8px;">Humidity 41% · Wind 3.1 m/s</p>
+        <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;margin:0;">
           <a href="https://meridianweather.co.uk/api/unsubscribe?token=preview-dubai">Stop digest for Dubai</a>
         </p>
       </div>`,
     unsubscribeUrl: 'https://meridianweather.co.uk/api/unsubscribe?token=preview',
-  },
-  [EMAIL_TEMPLATE_SLUGS.WEATHER_ALERT]: {
     cityName: 'Manchester',
-    condition: 'Rain',
-    unsubscribeUrl: 'https://meridianweather.co.uk/api/unsubscribe?token=preview',
+    temperature: '14°C',
+    condition: 'Partly cloudy',
+    humidity: '62',
+    windSpeed: '4.2',
   },
+  [EMAIL_TEMPLATE_SLUGS.WEATHER_ALERT]: buildWeatherAlertPreviewWeatherVars(null),
+  ...Object.fromEntries(
+    ALL_ALERT_TYPES.map((type) => [
+      weatherAlertTemplateSlug(type.id),
+      buildWeatherAlertPreviewWeatherVars(type),
+    ]),
+  ),
+  [EMAIL_TEMPLATE_SLUGS.ADMIN_INVITE]: AUTH_PREVIEW_VARS,
+  [EMAIL_TEMPLATE_SLUGS.ADMIN_WELCOME]: AUTH_PREVIEW_VARS,
+  [EMAIL_TEMPLATE_SLUGS.ADMIN_FORGOT_PASSWORD]: AUTH_PREVIEW_VARS,
+  [EMAIL_TEMPLATE_SLUGS.ADMIN_PASSWORD_CHANGED]: AUTH_PREVIEW_VARS,
+  [EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_CONTACT]: ADMIN_REPLY_PREVIEW_VARS,
+  [EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_DPO]: ADMIN_REPLY_PREVIEW_VARS,
+  [EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_COMPLAINT]: ADMIN_REPLY_PREVIEW_VARS,
+  [EMAIL_TEMPLATE_SLUGS.ADMIN_REPLY_SUPPORT]: ADMIN_REPLY_PREVIEW_VARS,
 };

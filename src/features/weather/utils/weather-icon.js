@@ -22,6 +22,28 @@ export const OPENWEATHER_TO_METEOCON = {
 
 const FALLBACK_ICON = 'cloudy';
 
+/** Colored Meteocon names used by metric / detail UI tiles. */
+export const METRIC_METEOCON = Object.freeze({
+  temperature: 'thermometer',
+  feelsLike: 'thermometer-sun',
+  humidity: 'humidity',
+  pressure: 'barometer',
+  dewPoint: 'thermometer-water',
+  uvi: 'uv-index',
+  clouds: 'cloudy',
+  /** Fog bands — not the near-identical sun/horizon set used for rise/set. */
+  visibility: 'fog',
+  wind: 'wind',
+  windGust: 'windsock',
+  rain: 'raindrop',
+  snow: 'snowflake',
+  /** Full sun vs night sky so rise/set stay distinct at tile size. */
+  sunrise: 'clear-day',
+  sunset: 'starry-night',
+  coordinates: 'compass',
+  timezone: 'time-afternoon',
+});
+
 export function openWeatherIconToMeteocon(iconCode) {
   if (!iconCode) {
     return FALLBACK_ICON;
@@ -36,6 +58,18 @@ export function getWeatherIconPath(iconCode) {
   return `/weather-icons/${openWeatherIconToMeteocon(iconCode)}.svg`;
 }
 
+export function getMeteoconPath(name) {
+  if (!name || typeof name !== 'string') {
+    return `/weather-icons/${FALLBACK_ICON}.svg`;
+  }
+
+  return `/weather-icons/${name}.svg`;
+}
+
 export const METEOCON_ICON_NAMES = [
-  ...new Set([...Object.values(OPENWEATHER_TO_METEOCON), FALLBACK_ICON]),
+  ...new Set([
+    ...Object.values(OPENWEATHER_TO_METEOCON),
+    ...Object.values(METRIC_METEOCON),
+    FALLBACK_ICON,
+  ]),
 ];

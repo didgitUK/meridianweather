@@ -7,8 +7,19 @@ import { buildCityId } from '@/lib/utils';
 import { clearWeatherCacheForCity } from '@/features/weather/utils/weather-cache';
 import { useHasMounted, writeLocalStorageValue } from '@/hooks/use-browser-storage';
 import { toast } from 'sonner';
+import { singleFlight } from '@/lib/client/single-flight';
 
 const EMPTY_CITIES = [];
+
+function loadPlatformLimitsOnce() {
+  return singleFlight('platform-limits', async () => {
+    const response = await fetch('/api/platform/limits');
+    if (!response.ok) {
+      return null;
+    }
+    return response.json();
+  });
+}
 
 function subscribe(onStoreChange) {
   const handler = () => onStoreChange();
@@ -53,14 +64,18 @@ export function useSavedCities() {
       return;
     }
 
-    fetch('/api/platform/limits')
-      .then((response) => response.json())
+    let cancelled = false;
+    loadPlatformLimitsOnce()
       .then((payload) => {
-        if (Number.isFinite(payload.maxSavedCities)) {
+        if (!cancelled && Number.isFinite(payload?.maxSavedCities)) {
           setMaxSavedCities(payload.maxSavedCities);
         }
       })
       .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
   }, [isHydrated]);
 
   const addCity = useCallback((city) => {

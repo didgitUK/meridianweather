@@ -5,6 +5,7 @@ export function CityDetailOptionsMenuItem({
   label,
   description,
   onClick,
+  disabled = false,
   className,
 }) {
   return (
@@ -12,14 +13,16 @@ export function CityDetailOptionsMenuItem({
       type="button"
       role="menuitem"
       onClick={onClick}
+      disabled={disabled}
       className={cn(
-        'flex w-full items-start gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
+        'flex w-full items-start gap-3 rounded-lg bg-transparent px-3 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
+        disabled && 'pointer-events-none opacity-50',
         className,
       )}
     >
       {Icon ? <Icon className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden /> : null}
       <span className="flex min-w-0 flex-col gap-0.5">
-        <span className="font-medium leading-none">{label}</span>
+        <span className="font-medium leading-none text-foreground">{label}</span>
         {description ? (
           <span className="text-xs leading-snug text-muted-foreground">{description}</span>
         ) : null}

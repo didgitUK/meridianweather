@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
+  getMeteoconPath,
   getWeatherIconPath,
+  METRIC_METEOCON,
   openWeatherIconToMeteocon,
 } from './weather-icon';
 
@@ -23,5 +25,6 @@ describe('weather-icon', () => {
 
   it('builds local public asset paths', () => {
     expect(getWeatherIconPath('10d')).toBe('/weather-icons/partly-cloudy-day-rain.svg');
+    expect(getMeteoconPath(METRIC_METEOCON.humidity)).toBe('/weather-icons/humidity.svg');
   });
 });

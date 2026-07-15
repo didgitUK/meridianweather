@@ -155,9 +155,47 @@ export function saveUserLocationProfile(profile) {
 
 export function writeUserLocationMeta(partial) {
   const current = readProfileRaw() ?? {};
-  writeProfile({
+  const next = {
     ...current,
     ...partial,
+  };
+
+  // Skip no-op writes — each write dispatches meridian:storage and can
+  // re-trigger every mounted location/weather effect on the page.
+  const keys = Object.keys(partial ?? {});
+  const changed = keys.some((key) => {
+    const before = current[key];
+    const after = next[key];
+    if (before === after) {
+      return false;
+    }
+    if (
+      typeof before === 'number'
+      && typeof after === 'number'
+      && Number.isFinite(before)
+      && Number.isFinite(after)
+    ) {
+      return Math.abs(before - after) > 1e-6;
+    }
+    if (
+      (before && typeof before === 'object')
+      || (after && typeof after === 'object')
+    ) {
+      try {
+        return JSON.stringify(before ?? null) !== JSON.stringify(after ?? null);
+      } catch {
+        return true;
+      }
+    }
+    return String(before ?? '') !== String(after ?? '');
+  });
+
+  if (!changed) {
+    return;
+  }
+
+  writeProfile({
+    ...next,
     updatedAt: new Date().toISOString(),
   });
 }

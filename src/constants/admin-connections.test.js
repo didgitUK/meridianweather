@@ -12,7 +12,7 @@ import {
 } from './admin-connections.js';
 
 describe('admin-connections constants', () => {
-  it('defines weather, adsense, and email group with expected check modes', () => {
+  it('defines weather, adsense, email, and alert-feeds with expected check modes', () => {
     expect(
       ADMIN_CONNECTIONS.map((item) => ({
         id: item.id,
@@ -35,6 +35,11 @@ describe('admin-connections constants', () => {
         kind: ADMIN_CONNECTION_KIND.GROUP,
         checkMode: ADMIN_CONNECTION_CHECK_MODE.CONFIG,
       },
+      {
+        id: 'alert-feeds',
+        kind: ADMIN_CONNECTION_KIND.GROUP,
+        checkMode: ADMIN_CONNECTION_CHECK_MODE.LIVE,
+      },
     ]);
   });
 
@@ -50,6 +55,10 @@ describe('admin-connections constants', () => {
     expect(getAdminConnectionSectionId('email-resend')).toBe(ADMIN_SECTION_IDS.emailConnectors);
     expect(getAdminConnectionSectionId('email-sendgrid')).toBe(ADMIN_SECTION_IDS.emailConnectors);
     expect(getAdminConnectionSectionId('email-ses')).toBe(ADMIN_SECTION_IDS.emailConnectors);
+    expect(getAdminConnectionSectionId('email-smtp')).toBe(ADMIN_SECTION_IDS.emailConnectors);
+    expect(getAdminConnectionSectionId('open-meteo')).toBe(ADMIN_SECTION_IDS.alertConnectors);
+    expect(getAdminConnectionSectionId('nws')).toBe(ADMIN_SECTION_IDS.alertConnectors);
+    expect(getAdminConnectionSectionId('alert-feeds')).toBeNull();
     expect(getAdminConnectionSectionId('unknown')).toBeNull();
   });
 

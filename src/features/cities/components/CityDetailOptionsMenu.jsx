@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { ChevronDown, Flag, Mail, Pin, PinOff, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -9,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { useSavedCities } from '@/features/cities/hooks/useSavedCities';
 import { CityDetailOptionsMenuItem } from '@/features/cities/components/CityDetailOptionsMenuItem';
 import { CityDetailPinButton } from '@/features/cities/components/CityDetailPinButton';
-import { CityDetailRefreshButton } from '@/features/cities/components/CityDetailRefreshButton';
+import { CityDetailHeroImageButton } from '@/features/cities/components/CityDetailHeroImageButton';
 import { SubscribeDialog } from '@/features/subscriptions/components/SubscribeDialog';
 import { useLocalSubscriptions } from '@/features/subscriptions/hooks/useLocalSubscriptions';
 import { getCitySubscriptionState } from '@/features/subscriptions/utils/subscription-state';
@@ -20,10 +21,15 @@ export function CityDetailOptionsMenu({
   isPinned,
   onRerunCheck,
   isRefreshing = false,
+  onChangeHeroImage,
+  isChangingHeroImage = false,
   onReportInaccurate,
   isReportActive = false,
   isReporting = false,
 }) {
+  const t = useTranslations('CityDetail.options');
+  const tCommon = useTranslations('Common');
+  const tSubs = useTranslations('Subscriptions');
   const { isManual } = useWeatherRefreshMode();
   const { addCity, removeCity } = useSavedCities();
   const { registry } = useLocalSubscriptions();
@@ -37,13 +43,13 @@ export function CityDetailOptionsMenu({
 
   function handlePin() {
     addCity(city);
-    toast.success('Pinned to your locations');
+    toast.success(tCommon('pinned'));
     setMenuOpen(false);
   }
 
   function handleUnpin() {
     removeCity(city.id);
-    toast.message('Removed from your locations');
+    toast.message(tCommon('unpinned'));
     setMenuOpen(false);
   }
 
@@ -65,13 +71,11 @@ export function CityDetailOptionsMenu({
   return (
     <>
       <div className="flex items-center gap-2">
-        {isManual ? (
-          <CityDetailRefreshButton
-            onClick={handleRerunCheck}
-            isRefreshing={isRefreshing}
-            disabled={!onRerunCheck}
-          />
-        ) : null}
+        <CityDetailHeroImageButton
+          onClick={onChangeHeroImage}
+          isChanging={isChangingHeroImage}
+          disabled={!onChangeHeroImage}
+        />
 
         <CityDetailPinButton
           isPinned={isPinned}
@@ -97,7 +101,7 @@ export function CityDetailOptionsMenu({
           className="h-11 min-w-[9.5rem] gap-2 px-4 text-base"
           onClick={() => setMenuOpen((open) => !open)}
         >
-          Options
+          {t('menu')}
           <ChevronDown
             className={cn('size-4 transition-transform duration-200', menuOpen && 'rotate-180')}
             aria-hidden
@@ -106,7 +110,7 @@ export function CityDetailOptionsMenu({
 
         <div
           className={cn(
-            'absolute top-full right-0 z-30 w-64 pt-2 transition-all duration-150',
+            'absolute top-full right-0 z-50 w-64 pt-2 transition-all duration-150',
             menuOpen
               ? 'pointer-events-auto translate-y-0 opacity-100'
               : 'pointer-events-none -translate-y-1 opacity-0',
@@ -114,17 +118,18 @@ export function CityDetailOptionsMenu({
         >
           <div
             role="menu"
-            aria-label="City options"
+            aria-label={t('menuLabel')}
             inert={!menuOpen}
-            className="rounded-xl border border-border/80 bg-popover p-1.5 shadow-lg ring-1 ring-foreground/5"
+            className="rounded-xl border border-border/80 bg-white p-1.5 text-foreground shadow-lg ring-1 ring-foreground/5 dark:bg-popover"
           >
             {isManual ? (
               <>
                 <CityDetailOptionsMenuItem
                   icon={RefreshCw}
-                  label="Rerun check"
-                  description="Fetch the latest weather for this city"
+                  label={t('rerunCheck')}
+                  description={t('rerunCheckDescription')}
                   onClick={handleRerunCheck}
+                  disabled={!onRerunCheck || isRefreshing}
                 />
 
                 <div className="my-1 border-t border-border/60" role="separator" />
@@ -133,11 +138,11 @@ export function CityDetailOptionsMenu({
 
             <CityDetailOptionsMenuItem
               icon={Flag}
-              label="Report inaccurate"
+              label={t('reportInaccurate')}
               description={
                 isReportActive
-                  ? 'Our team is already reviewing this location'
-                  : 'Flag weather or forecast data that looks wrong'
+                  ? t('reportInaccurateActive')
+                  : t('reportInaccurateDescription')
               }
               onClick={handleReportInaccurate}
               className={isReporting ? 'opacity-60' : undefined}
@@ -148,15 +153,15 @@ export function CityDetailOptionsMenu({
             {isPinned ? (
               <CityDetailOptionsMenuItem
                 icon={PinOff}
-                label="Remove from locations"
-                description="Unpin this city from your dashboard"
+                label={t('removeFromLocations')}
+                description={t('removeFromLocationsDescription')}
                 onClick={handleUnpin}
               />
             ) : (
               <CityDetailOptionsMenuItem
                 icon={Pin}
-                label="Pin to your locations"
-                description="Save this city on your dashboard"
+                label={t('pinToLocations')}
+                description={t('pinToLocationsDescription')}
                 onClick={handlePin}
               />
             )}
@@ -165,19 +170,19 @@ export function CityDetailOptionsMenu({
 
             <CityDetailOptionsMenuItem
               icon={Mail}
-              label="Email options"
+              label={t('emailOptions')}
               description={
                 subState.any
-                  ? 'Manage platform-wide forecasts and weather alerts'
-                  : 'Get platform-wide forecasts and weather alerts'
+                  ? t('emailOptionsManage')
+                  : t('emailOptionsGet')
               }
               onClick={handleEmailOpen}
             />
 
             {subState.any ? (
               <div className="flex flex-wrap gap-1.5 px-3 pb-2">
-                {subState.weekly ? <Badge variant="outline">Weekly</Badge> : null}
-                {subState.alerts ? <Badge variant="outline">Alerts</Badge> : null}
+                {subState.weekly ? <Badge variant="outline">{tSubs('forecastsOn')}</Badge> : null}
+                {subState.alerts ? <Badge variant="outline">{tSubs('alertsOn')}</Badge> : null}
               </div>
             ) : null}
           </div>

@@ -19,7 +19,7 @@ export function AdminSidebar({
   const sidebar = (
     <aside
       className={cn(
-        'flex h-full w-64 flex-col bg-neutral-950 text-white',
+        'flex h-full w-64 flex-col overflow-visible bg-neutral-950 text-white',
         'lg:fixed lg:inset-y-0 lg:left-0 lg:z-40',
       )}
     >

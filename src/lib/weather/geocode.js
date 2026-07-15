@@ -1,6 +1,7 @@
 import {
   enrichAndDedupeGeocodeResults,
 } from '@/lib/geocode-enrichment';
+import { searchNominatimPlaces } from '@/lib/geocode-nominatim';
 import { createReverseGeocodeLookup } from '@/lib/geocode-reverse';
 import {
   GEOCODE_RESULT_LIMIT,
@@ -13,6 +14,7 @@ import {
   canMakeUpstreamCall,
   trackUpstreamCall,
 } from '@/lib/api-usage-tracker';
+import { WEATHER_CHECK_TRIGGERS } from '@/constants/weather-check-triggers';
 import { normalizeGeocodeResults } from '@/lib/one-call';
 import { buildSnapshotKey } from '@/lib/weather-snapshot-repo';
 import { readFromCaches, wrapSnapshot } from '@/lib/weather/cache-policy';
@@ -26,14 +28,32 @@ async function finalizeGeocodeResults(results, query, context) {
   });
 }
 
+function mergeRankedPayload(query, localResults, apiResults, context) {
+  return mergeAndRankGeocodeResults(
+    query,
+    localResults,
+    apiResults,
+    GEOCODE_RESULT_LIMIT,
+    context,
+  );
+}
+
+async function mergeWithPrefixPlaces(query, baseResults, context) {
+  const prefixResults = await searchNominatimPlaces(query, context);
+  const localResults = searchPopularCities(query, GEOCODE_RESULT_LIMIT);
+  return mergeRankedPayload(query, localResults, [...baseResults, ...prefixResults], context);
+}
+
 export async function fetchGeocode(query, context = null) {
   const normalized = query.trim().toLowerCase();
   const cacheKey = buildSnapshotKey(normalized, null, 'geocode');
   const cached = readFromCaches(cacheKey);
 
+  // Always re-run location-biased prefix search even on L1/L2 hits so
+  // near-you completions (Hart → Hartlepool) are not frozen in a global cache.
   if (cached && !cached.emergency) {
-    const results = rerankGeocodeResults(cached.data.results ?? [], query, context);
-    const finalizedResults = await finalizeGeocodeResults(results, query, context);
+    const merged = await mergeWithPrefixPlaces(query, cached.data.results ?? [], context);
+    const finalizedResults = await finalizeGeocodeResults(merged, query, context);
 
     return {
       data: { results: finalizedResults },
@@ -47,15 +67,8 @@ export async function fetchGeocode(query, context = null) {
 
   const localResults = searchPopularCities(query, GEOCODE_RESULT_LIMIT);
 
-  function popularFallback(cacheLayer = 'popular', freshness = 'fresh') {
-    const offlineResults = mergeAndRankGeocodeResults(
-      query,
-      localResults,
-      [],
-      GEOCODE_RESULT_LIMIT,
-      context,
-    );
-
+  async function popularWithPrefix(cacheLayer = 'popular', freshness = 'fresh') {
+    const offlineResults = await mergeWithPrefixPlaces(query, [], context);
     return {
       data: { results: offlineResults },
       meta: { cacheLayer, freshness },
@@ -68,27 +81,34 @@ export async function fetchGeocode(query, context = null) {
       return wrapSnapshot({ ...cached.emergency, payload: { results } }, 'database', 'emergency');
     }
 
-    return popularFallback('popular', 'fresh');
+    return popularWithPrefix('popular', 'fresh');
   }
 
   let key;
   try {
     key = getApiKey();
   } catch {
-    return popularFallback('popular', 'emergency');
+    return popularWithPrefix('popular', 'emergency');
   }
 
   const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=5&appid=${key}`;
 
   let tracked;
+  let prefixResults = [];
+
   try {
-    tracked = await trackUpstreamCall(
-      'geocode',
-      () => fetchOpenWeather(url, { endpoint: 'geocode' }),
-      { query },
-    );
+    const [owmTracked, prefix] = await Promise.all([
+      trackUpstreamCall(
+        'geocode',
+        () => fetchOpenWeather(url, { endpoint: 'geocode' }),
+        { query, trigger: WEATHER_CHECK_TRIGGERS.geocodeSearch, reason: 'city_search' },
+      ),
+      searchNominatimPlaces(query, context),
+    ]);
+    tracked = owmTracked;
+    prefixResults = prefix;
   } catch {
-    return popularFallback('popular', 'emergency');
+    return popularWithPrefix('popular', 'emergency');
   }
 
   if (tracked.blocked) {
@@ -97,26 +117,39 @@ export async function fetchGeocode(query, context = null) {
       return wrapSnapshot({ ...cached.emergency, payload: { results } }, 'database', 'emergency');
     }
 
-    return popularFallback('popular', 'emergency');
+    const ranked = mergeRankedPayload(query, localResults, prefixResults, context);
+    return {
+      data: { results: ranked },
+      meta: { cacheLayer: 'popular', freshness: 'emergency' },
+    };
   }
 
-  const apiResults = normalizeGeocodeResults(tracked.result.data ?? []);
-  const rankedResults = mergeAndRankGeocodeResults(
+  const apiResults = [
+    ...normalizeGeocodeResults(tracked.result.data ?? []),
+    ...prefixResults,
+  ];
+  const rankedResults = mergeRankedPayload(query, localResults, apiResults, context);
+  const finalizedResults = await finalizeGeocodeResults(rankedResults, query, context);
+
+  // Persist OWM + popular only (stable worldwide); location-biased prefixes stay request-time.
+  const owmOnly = mergeRankedPayload(
     query,
     localResults,
-    apiResults,
-    GEOCODE_RESULT_LIMIT,
-    context,
+    normalizeGeocodeResults(tracked.result.data ?? []),
+    null,
   );
-  const finalizedResults = await finalizeGeocodeResults(rankedResults, query, context);
-  const payload = { results: finalizedResults };
 
-  return persistAndReturn({
+  void persistAndReturn({
     lat: normalized,
     lon: null,
     scope: 'geocode',
     cacheKey,
-    payload,
+    payload: { results: owmOnly },
     source: 'geocode',
   });
+
+  return {
+    data: { results: finalizedResults },
+    meta: { cacheLayer: 'network', freshness: 'fresh' },
+  };
 }

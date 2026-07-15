@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { TEMPERATURE_UNIT } from '@/constants/temperature-unit';
 import { useTemperatureUnit } from '@/providers/TemperatureUnitProvider';
@@ -19,6 +20,8 @@ const METRIC_COLORS = {
   temperature: '#f59e0b',
   precipitation: '#38bdf8',
   wind: '#34d399',
+  humidity: '#a78bfa',
+  uv: '#fb7185',
 };
 
 function buildPath(points, min, max, width, height, metricId, timezone, timezoneOffset = null, unit = TEMPERATURE_UNIT.CELSIUS) {
@@ -70,11 +73,13 @@ export function ForecastMetricChart({
   points,
   timezone,
   timezoneOffset = null,
-  emptyMessage = 'No chart data for this day.',
+  emptyMessage,
 }) {
+  const t = useTranslations('Forecast.metrics');
   const { unit } = useTemperatureUnit();
   const [metricId, setMetricId] = useState('temperature');
-  const color = METRIC_COLORS[metricId];
+  const color = METRIC_COLORS[metricId] ?? METRIC_COLORS.temperature;
+  const empty = emptyMessage ?? t('noChartData');
 
   const series = useMemo(() => buildChartSeries(points, metricId), [points, metricId]);
 
@@ -96,18 +101,18 @@ export function ForecastMetricChart({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex gap-6 border-b border-border/70">
+      <div className="meridian-scrollbar flex gap-4 overflow-x-auto border-b border-border/70 sm:gap-6">
         {FORECAST_METRIC_TABS.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setMetricId(tab.id)}
             className={cn(
-              'relative pb-3 text-sm font-medium transition-colors',
+              'relative shrink-0 pb-3 text-sm font-medium transition-colors',
               metricId === tab.id ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
             )}
           >
-            {tab.label}
+            {t(tab.id)}
             {metricId === tab.id ? (
               <span
                 className="absolute inset-x-0 bottom-0 h-0.5 rounded-full"

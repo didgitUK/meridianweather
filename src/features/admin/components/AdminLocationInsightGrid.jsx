@@ -6,7 +6,7 @@ function formatDelta(value) {
   }
 
   const prefix = value > 0 ? '+' : '';
-  return `${prefix}${value}°`;
+  return `${prefix}${value}°C`;
 }
 
 export function AdminLocationInsightGrid({ insights, historySummary }) {

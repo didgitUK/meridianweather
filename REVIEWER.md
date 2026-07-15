@@ -1,14 +1,16 @@
 # Reviewer guide — meridian
 
-**Start here for a demo walkthrough.** Binding interview scope (what must work vs stretch): [`SCOPE.md`](SCOPE.md).
+**Start here for a demo walkthrough.** Binding interview scope: [`SCOPE.md`](SCOPE.md).
 
-Maps criteria to files and verification steps.
+**Demo only needs `OPENWEATHER_API_KEY`.** Everything else (admin, AdSense, email, cron) is **stretch** and optional.
+
+Candidate cue sheet: [`docs/STUDY-BACKEND.md`](docs/STUDY-BACKEND.md) → *Interview cue card*.
 
 ## 5-minute review path
 
 1. Skim [`SCOPE.md`](SCOPE.md) §3 (in-scope demo) and §4 (stretch / freeze).
-2. Read this file.
-3. Skim [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and [`docs/DECISIONS.md`](docs/DECISIONS.md) (English-first UI; stretch ADRs are optional extras).
+2. Read this file (core demo script below — stop after step 4 unless reviewing stretch).
+3. Skim [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) if you want cache/quota depth; [`docs/DECISIONS.md`](docs/DECISIONS.md) stretch ADRs are optional.
 4. `src/app/[locale]/page.js` → `DashboardPage` — search, city grid, loading/empty states (core brief).
 5. `src/lib/weather-fetch-orchestrator.js` (facade) → `src/lib/weather/*` — cache policy, upstream strategies, persist (rate-limit mindfulness).
 6. `npm run test` (or `npm run verify` before submission).
@@ -24,25 +26,32 @@ Maps criteria to files and verification steps.
 | UX | DashboardPage, WeatherCard, empty/loading/error states | Skeletons, empty instructions, Meteocons icons, responsive layout |
 | Readability | Feature modules + weather package seams | Clear core path; stretch (admin/email/ads) is optional — see [`SCOPE.md`](SCOPE.md) §4 |
 
-## Demo script
+## Demo script (core)
 
-1. `npm install && cp .env.example .env.local` — set `OPENWEATHER_API_KEY`.
+1. `npm install && cp .env.example .env.local` — set **`OPENWEATHER_API_KEY` only**. (`better-sqlite3` needs a normal Node native-build toolchain — see [README Troubleshooting](README.md#troubleshooting-install).)
 2. `npm run dev` → localhost:3000
-3. Search **London**, add city, open card → city detail.
-4. `npm run seed:checks` — refresh home → recent checks strip populates.
-5. Footer → **Privacy preferences** → enable Advertising (if testing AdSense env).
-6. **`/admin`** — usage, refresh interval, platform settings (optional stretch).
-7. `/docs` — documentation via `src/app/[locale]/docs/[slug]/page.js` + `src/content/docs/`.
-8. Optional: newsletter subscribe; cron with `CRON_SECRET`; React Email templates under `src/emails/`.
+3. Search **London** → open city detail → **pin** → back to home (card shows data).
+4. Reload → city still pinned (localStorage). Unpin → empty state instructions visible.
+
+That is the interview brief. Stop here unless exploring stretch.
+
+## Stretch demos (optional)
+
+5. `npm run seed:checks` — populates L2 `weather_snapshots` for cache demos (does **not** fill the popular-searches strip; that needs real search-triggered checks).
+6. AdSense placeholders / live units: Settings FAB → Cookies → Advertising (needs env + consent). Home ads stay off unless `NEXT_PUBLIC_SHOW_HOME_STRETCH=1`.
+7. Admin: `/login` then `/admin` (`ADMIN_PASSWORD` / `ADMIN_SECRET`; or local dev bypass when those are unset in development).
+8. `/docs` — documentation via `src/app/[locale]/docs/[slug]/page.js` + `src/content/docs/`.
+9. Newsletter subscribe; cron with `CRON_SECRET`; React Email templates under `src/emails/`.
 
 ## Edge cases
 
-- &lt;2 char search — validation error.
+- &lt;2 char search — client does not query (no error UI); server rejects if hit with &lt;2 chars.
 - Duplicate city — deduped by `buildCityId`.
 - Remove city with subscriptions — `RemoveCityDialog` unsubscribe prompt.
 - Quota exceeded — emergency stale cache; admin status `soft_block` / `hard_block`.
-- City detail URL for unsaved city — “not on this device”.
-- Premium tier (admin toggle) — minutely strip unlocks, ads hidden.
+- City detail URL for unknown id — copy explains checking a city from dashboard search (checked cities via `meridian:checked-cities` still resolve).
+- Advertising off — AdSense script and units stay unloaded; enable via Settings → Cookies (tier is always free; Premium/minutely UI is not wired).
+- Force error path — blank/invalid `OPENWEATHER_API_KEY` and retry a card, or DevTools → Offline.
 
 ## Key files
 
@@ -55,9 +64,9 @@ Maps criteria to files and verification steps.
 | API errors | `src/lib/server/api-response.js` |
 | Recent checks | `src/lib/weather/recent-checks.js`, `src/app/api/recent-checks/route.js` |
 | Icons | `src/features/weather/utils/weather-icon.js`, `public/weather-icons/` |
-| AdSense | `src/providers/AdSenseProvider.jsx`, `src/lib/server/adsense.js` |
-| Seed | `scripts/seed-recent-checks.mjs` |
-| Subscriptions | `src/app/api/subscriptions/route.js`, `src/emails/` |
+| AdSense (stretch) | `src/providers/AdSenseProvider.jsx`, `src/lib/server/adsense.js` |
+| Seed (stretch/cache demo) | `scripts/seed-recent-checks.mjs` |
+| Subscriptions (stretch) | `src/app/api/subscriptions/route.js`, `src/emails/` |
 | Docs | `src/content/docs/*.js`, `src/app/[locale]/docs/[slug]/page.js` |
 
 ## Tests
@@ -66,12 +75,11 @@ Maps criteria to files and verification steps.
 npm run test
 ```
 
-Covers validators, usage tracker, formatters, weather-icon mapping, cache policy, upstream strategy runner, contracts, subscription state.
+Covers validators, usage tracker, formatters, weather-icon mapping, cache policy, upstream strategy runner, contracts, subscription state, and route tests for `/api/weather` + `/api/geocode`.
 
 ## Deployment notes
 
-- Persistent `DATABASE_PATH` for SQLite.
-- `NEXT_PUBLIC_APP_URL` for email unsubscribe links.
-- `GOOGLE_ADSENSE_*` in host secrets; `/ads.txt` auto-served.
-- Schedule cron routes externally (not in-repo); require `CRON_SECRET` in production.
-- `docs.localhost` rewrite via `src/middleware.js`.
+- See [README Deploy](README.md#deploy) for the Vercel / env checklist.
+- Persistent `DATABASE_PATH` for SQLite when possible.
+- `NEXT_PUBLIC_APP_URL` for production canonicals, email unsubscribe, invites.
+- Stretch: `GOOGLE_ADSENSE_*`, `CRON_SECRET`, `ADMIN_*` only if exploring those surfaces.

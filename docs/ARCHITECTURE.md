@@ -2,7 +2,7 @@
 
 ## Overview
 
-meridian is a Next.js 16 App Router application (JavaScript). The browser stores user preferences (cities, theme, consent, tier, weather L0 cache). Server routes proxy OpenWeather, enforce quota limits, persist weather snapshots in SQLite, send email via Resend, and serve AdSense configuration.
+meridian is a Next.js 16 App Router application (JavaScript). The browser stores user preferences (cities, theme, consent, weather L0 cache, and related settings). Runtime tier is always free (`meridian:tier` is reserved/unused). Server routes proxy OpenWeather, enforce quota limits, persist weather snapshots and platform settings in SQLite, send email via the active connector (Resend, SendGrid, SES, or SMTP), ingest first-party analytics, and serve AdSense configuration.
 
 ```mermaid
 flowchart LR
@@ -12,16 +12,16 @@ flowchart LR
   Orchestrator --> L1[Memory cache]
   Orchestrator --> L2[SQLite snapshots]
   Orchestrator --> OpenWeather
-  AdSenseProvider -->|consent + free tier| GoogleAdSense
+  AdSenseProvider -->|consent.advertising| GoogleAdSense
   Cron --> Orchestrator
-  Cron --> Resend
+  Cron --> EmailConnector[Email connector]
 ```
 
 ## Folder map
 
 | Path | Responsibility |
 | --- | --- |
-| `src/app/` | Routes, API handlers, layouts, `ads.txt` |
+| `src/app/` | Routes, API handlers, layouts; `ads.txt` via `src/app/ads.txt/route.js` |
 | `src/features/` | Domain UI: weather, cities, subscriptions, admin |
 | `src/lib/weather/` | Cache policy, upstream strategies, persist, contracts, recent checks |
 | `src/lib/geocode/` | Geocode public barrel (ranking/enrichment peers + fetch) |
@@ -31,12 +31,12 @@ flowchart LR
 | `src/lib/` | DB, shared utils, thin orchestrator facade |
 | `src/hooks/` | Client hooks (`use-browser-storage`, `use-now`, scroll header) |
 | `src/components/` | Shared UI, layout, monetization, docs templates |
-| `src/providers/` | Theme, consent, AdSense, privacy preferences |
+| `src/providers/` | Theme, consent, AdSense, settings, accessibility, temperature unit, weather refresh mode |
 | `src/constants/` | Weather TTLs, storage keys, monetization, seed locations |
 | `src/content/` | Legal and user documentation prose |
 | `src/emails/` | React Email templates |
 | `src/design-system/` | CSS tokens and themes |
-| `scripts/` | `seed-recent-checks.mjs`, `copy-weather-icons.mjs` |
+| `scripts/` | `seed-recent-checks.mjs`, `copy-weather-icons.mjs`, `backfill-city-slugs.mjs` |
 | `public/weather-icons/` | Meteocons SVG assets (MIT) |
 
 ## API error envelope
@@ -48,30 +48,30 @@ Route handlers return `{ error, message }` via `src/lib/server/api-response.js`.
 1. Client `useWeatherData` / `useCityWeather` reads L0 from `localStorage`.
 2. Client requests `GET /api/weather` or `POST /api/weather/batch`.
 3. `weather-fetch-orchestrator` (facade → `lib/weather/fetch-scope`) dedupes in-flight fetches via `pendingFetches` Map.
-4. Checks L1 memory, then L2 SQLite by `buildSnapshotKey(lat, lon, scope)`.
+4. Checks L1 memory, then L2 SQLite by `buildSnapshotKey(lat, lon, scope[, lang])` (non-`en` appends `,{lang}`).
 5. Classifies freshness: `fresh`, `acceptable`, `expired`, or serves `emergency` stale when quota blocked.
-6. `api-usage-tracker` enforces daily (1000) and per-minute (60) limits before upstream.
+6. `api-usage-tracker` enforces daily (1000; warning 800; soft-block 950) and per-minute (60) limits before upstream (overridable via `platform_settings`).
 7. OpenWeather One Call 4.0; current falls back to 2.5. Geocode and alert scopes are server-only.
 8. `writeSnapshot` upserts SQLite; client updates L0.
 
 ## Data flow — recent checks
 
-1. `GET /api/recent-checks` calls `listRecentPlatformChecks(40)`.
-2. Dedupes by rounded lat/lon from `weather_snapshots` where `scope = current`.
-3. If empty, hydrates four `PLATFORM_SHOWCASE_CITIES` via orchestrator.
-4. `npm run seed:checks` writes North England demo snapshots with staggered timestamps.
+1. `GET /api/recent-checks` calls `getRecentChecksPayload()` → `listPopularSearchChecks` on `location_weather_checks` (triggers `search_select` / `search_preview`), default limit **20**.
+2. Response `{ checks, source }` where `source` is `popular` or `empty`. There is **no** showcase fallback.
+3. Home UI (`RecentChecksSection`) shows two columns (“Near you” + “Popular searches”), up to **5** cards each; cards link to city detail when coordinates exist.
+4. `npm run seed:checks` writes North England `weather_snapshots` for cache demos — it does **not** populate `/api/recent-checks` (that needs search-triggered check rows).
 
 ## Data flow — subscriptions
 
 1. User submits via `SubscribeModal` or `NewsletterSignup`.
 2. `POST /api/subscriptions` writes SQLite; client updates `meridian:subscriptions`.
-3. Cron routes reuse orchestrator snapshots; Resend sends templates when keyed.
+3. Cron routes reuse orchestrator snapshots; the active email connector sends templates when configured.
 4. `subscription_send_log` dedupes weather alert emails.
 
 ## Data flow — advertising
 
 1. `AdSenseProvider` fetches `GET /api/ads/config` once.
-2. If free tier + `consent.advertising` + valid env client ID, loads AdSense script once.
+2. If `consent.advertising` + valid env client ID, loads AdSense script once (runtime tier is always free; `meridian:tier` is unused).
 3. `AdSlot` components fetch per-placement config and push `adsbygoogle` units when slot IDs set.
 
 ### AdSense Management API (admin earnings)
@@ -83,16 +83,27 @@ Route handlers return `{ error, message }` via `src/lib/server/api-response.js`.
 
 ## Database schema
 
-SQLite (`src/lib/db/index.js`):
+SQLite (`src/lib/db/index.js`) — core plus stretch tables:
 
 | Table | Purpose |
 | --- | --- |
 | `weather_snapshots` | L2 cache; unique `cache_key` |
 | `api_call_log` | Quota audit (hit vs upstream) |
-| `subscriptions` | Email opt-ins |
+| `subscriptions` | Email opt-ins (newsletter / weekly / alerts) |
 | `subscription_send_log` | Alert dedup |
-| `platform_settings` | Singleton refresh interval, limits, AdSense OAuth |
+| `platform_settings` | Singleton refresh interval, limits, connectors, AdSense OAuth, digest defaults |
 | `adsense_report_snapshots` | Cached Management API report rows by range + dimension |
+| `locations` / `location_weather_checks` | Admin location history and check audit |
+| `admin_users` / admin invite+reset tokens | Admin accounts and auth flows |
+| `email_templates` | Editable branded HTML templates |
+| `hero_image_cache` | Dual-orientation location hero URLs |
+| `cms_pages` | Editable legal/docs copy |
+| `site_analytics_events` | First-party analytics (beacon ingest) |
+| `admin_audit_log` | Admin action audit trail |
+| `weather_observations` | Upstream-only observation archive |
+| `weather_forecast_archive` | Forecast archive rows |
+
+Additional migrations may exist; treat `src/lib/db/index.js` as source of truth.
 
 ## Layer rules
 
@@ -103,8 +114,8 @@ SQLite (`src/lib/db/index.js`):
 
 ## Middleware
 
-`src/middleware.js` rewrites `docs.localhost` → `/docs` for local documentation subdomain.
+`src/middleware.js` runs `next-intl` locale middleware and rewrites `docs.localhost` → `/docs`. API, `ads.txt`, and sitemap paths bypass locale rewriting.
 
 ## User documentation
 
-In-app docs at `/docs/*` — pages sourced from `src/content/docs/` via dynamic `[slug]` route. See `DOCS_PAGES` in `src/content/docs/index.js`.
+In-app docs at `/docs/*` — **11** pages from `DOCS_PAGES` in `src/content/docs/defaults.js` (re-exported via `index.js`), resolved through CMS/`getDocBySlug`. File defaults seed and reset SQLite `cms_pages`.

@@ -12,11 +12,15 @@ import {
   FileText,
   Gauge,
   History,
+  Inbox,
+  KeyRound,
   LayoutDashboard,
   Mail,
   Newspaper,
   Radar,
   Scale,
+  Settings,
+  UserRound,
   Users,
 } from 'lucide-react';
 import {
@@ -44,8 +48,12 @@ const ADMIN_NAV_ICONS = {
   Scale,
   BookOpen,
   Users,
+  UserRound,
   Radar,
   CalendarDays,
+  KeyRound,
+  Inbox,
+  Settings,
 };
 
 const UNLABELED_GROUPS = ADMIN_NAV_GROUPS.filter((group) => !group.label);
@@ -69,7 +77,10 @@ export function AdminSidebarNav({ activeSection, onSectionChange }) {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <nav aria-label="Admin sections" className="min-h-0 flex-1 overflow-y-auto px-2 py-3">
+      <nav
+        aria-label="Admin sections"
+        className="meridian-scrollbar-sidebar min-h-0 flex-1 overflow-y-auto px-2 py-3"
+      >
         <ul className="flex flex-col gap-1">
           {UNLABELED_GROUPS.flatMap((group) =>
             group.items.map((item) => {

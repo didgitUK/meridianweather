@@ -1,6 +1,7 @@
 import { getDb } from '@/lib/db';
 import { v4 as uuidv4 } from 'uuid';
 import {
+  ALL_ALERT_TYPES,
   createDefaultAlertPrefs,
   hasAnyAlertPrefEnabled,
   normalizeAlertPrefs,
@@ -210,6 +211,12 @@ export function getSubscriptionSummary() {
     weeklyActive: 0,
     alertsActive: 0,
     total: 0,
+    alertTypeCounts: ALL_ALERT_TYPES.map((type) => ({
+      id: type.id,
+      label: type.label,
+      shortLabel: type.shortLabel ?? type.label,
+      count: 0,
+    })),
   };
 
   for (const row of rows) {
@@ -220,6 +227,31 @@ export function getSubscriptionSummary() {
     if (row.type === 'newsletter' && !row.active) summary.newsletterInactive += total;
     if (row.type === 'city_weekly' && row.active) summary.weeklyActive += total;
     if (row.type === 'city_alerts' && row.active) summary.alertsActive += total;
+  }
+
+  const alertRows = getDb()
+    .prepare(
+      `SELECT alert_prefs_json, alert_on_rain, alert_on_storm
+       FROM subscriptions
+       WHERE active = 1 AND type = 'city_alerts'`,
+    )
+    .all();
+
+  const countsById = Object.fromEntries(
+    summary.alertTypeCounts.map((entry) => [entry.id, entry]),
+  );
+
+  for (const row of alertRows) {
+    const prefs = normalizeAlertPrefs(row.alert_prefs_json, {
+      alertOnRain: Boolean(row.alert_on_rain),
+      alertOnStorm: Boolean(row.alert_on_storm),
+    });
+
+    for (const type of ALL_ALERT_TYPES) {
+      if (prefs[type.id]) {
+        countsById[type.id].count += 1;
+      }
+    }
   }
 
   return summary;

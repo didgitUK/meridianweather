@@ -44,8 +44,8 @@ Do **not** introduce: new primary languages, new major UI frameworks, Docker-as-
 ### 3.1 City management
 
 - Search cities by name
-- Add city to dashboard
-- Remove city from dashboard
+- Add city to dashboard (UI: **pin from city detail** after search — preview before saving)
+- Remove city from dashboard (UI: unpin / remove)
 - Persist selected cities in **localStorage** across sessions
 - Empty state with helpful instructions when no cities are selected
 
@@ -71,19 +71,21 @@ Do **not** introduce: new primary languages, new major UI frameworks, Docker-as-
 ### 3.4 Primary demo path (agents: protect this)
 
 1. `npm install` → configure `.env.local` with `OPENWEATHER_API_KEY` → `npm run dev`
-2. Search a city (e.g. London) → add → card shows temp/description/icon (+ extras)
+2. Search a city (e.g. London) → opens city detail → **Pin to your locations** → home card shows temp/description/icon (+ extras)
 3. Reload → cities still present (localStorage)
-4. Remove a city → persists after reload
+4. Remove / unpin a city → persists after reload
 5. Empty dashboard → instructions visible
 6. Force/simulate error path if possible (bad key / offline) → user-visible message
 7. Resize / mobile viewport → usable layout
 
 Canonical UI entry points:
 
-- Home dashboard: `src/app/[locale]/page.js` → `src/features/weather/components/DashboardPage.jsx`
-- Search / add: city search components under `src/features/cities/`
+- Home dashboard: `src/app/[locale]/page.js` → hero search + `src/features/weather/components/DashboardPage.jsx`
+- Search → detail navigation: `src/features/cities/hooks/useCheckCityNavigation.js`
+- City detail (pin): `src/app/[locale]/city/[cityId]/page.js` → `src/features/weather/components/CityDetailPage.jsx`
+- Search UI: city search components under `src/features/cities/`
 - Cards: `src/features/weather/components/WeatherCard.jsx` (+ grid)
-- Weather fetch: `src/app/api/weather/*`, `src/lib/weather/*`
+- Weather fetch: `src/app/api/weather/*`, `src/lib/weather/*`, `src/features/weather/hooks/useWeatherData.js`
 - City persistence: `src/features/cities/hooks/useSavedCities.js` (and related storage helpers)
 
 Supporting docs for reviewers (keep accurate, don’t balloon):
@@ -101,7 +103,7 @@ These exist in the repo as **over-scope extras**. They may remain for the interv
 | Admin platform | `/admin`, users, CMS, connections, AdSense earnings OAuth | Freeze |
 | Monetization product | AdSense slots, premium tier, billing stubs | Freeze |
 | Email product | Resend/SendGrid/SES, digests, alert emails, React Email | Freeze |
-| Heavy i18n product work | Expanding 7 locales / translation completeness | Freeze (English-first demo is enough) |
+| Heavy i18n product work | Expanding admin/auth locale completeness | Freeze admin/auth English-first; public UI + legal/docs/journal are in scope when requested |
 | Legal/docs site expansion | New legal/doc pages | Freeze |
 | PWA / service worker polish | New offline product features | Freeze |
 | Platform “recent checks” as a product | Seed scripts, showcase analytics | Freeze unless it breaks home demo |
@@ -146,8 +148,8 @@ Non-goals for “done”: perfect admin, AdSense live earnings, multi-ESP email,
 | Task | Look here first | Avoid unless needed |
 | --- | --- | --- |
 | Dashboard / cards / empty state | `src/features/weather/components/` | `src/features/admin/**` |
-| Search / add / remove / localStorage | `src/features/cities/` | admin locations CMS |
-| Weather API + cache + quota | `src/lib/weather/`, `src/app/api/weather/` | adsense, email, cron |
+| Search / pin / unpin / localStorage | `src/features/cities/`, city detail `CityDetailPage.jsx` | admin locations CMS |
+| Weather API + cache + quota | `src/lib/weather/`, `src/app/api/weather/`, `src/lib/weather-fetch-orchestrator.js` | adsense, email, cron |
 | Errors / API envelope | `src/lib/server/api-response.js` | — |
 | Styling / layout chrome | `src/components/layout/`, `src/app/globals.css` | footer app-store marketing expansion |
 | Tests | co-located `*.test.js`, `npm run test` | — |
@@ -179,7 +181,7 @@ Keep these stable unless the user explicitly changes product direction:
 2. **localStorage** holds the user’s city list (brief requirement).
 3. **Caching** exists to respect the 1000 calls/day free tier (problem-solving criterion).
 4. **JavaScript** (not TypeScript) for this delivery.
-5. **English-first UI** for demo; locale routing may exist but is not the evaluation centre.
+5. **Public UI localizes** via next-intl + content packs; auth/admin stay English-first. Locale routing and OpenWeather `lang` follow the selected public locale.
 6. Stretch features (admin, email, ads) are **optional extras**, not substitutes for the core dashboard.
 
 ---

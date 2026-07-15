@@ -1,6 +1,7 @@
 'use client';
 
 import { Input } from '@/components/ui/input';
+import { labelWeatherCheckTrigger } from '@/constants/weather-check-triggers';
 import { AdminField, AdminPanel } from '@/features/admin/components/AdminPanel';
 import { AdminOpenWeatherKeyField } from '@/features/admin/components/AdminOpenWeatherKeyField';
 import { useDebouncedAdminSave } from '@/features/admin/hooks/useDebouncedAdminSave';
@@ -50,7 +51,11 @@ export function AdminUsagePanel({ usage, onRefresh }) {
                   </td>
                   <td className="py-2 pr-4">{call.endpoint}</td>
                   <td className="py-2 pr-4">{call.status}</td>
-                  <td className="py-2 pr-4">{call.meta?.trigger ?? '—'}</td>
+                  <td className="py-2 pr-4">
+                    {call.meta?.trigger
+                      ? labelWeatherCheckTrigger(call.meta.trigger)
+                      : '—'}
+                  </td>
                   <td className="py-2">{call.cacheHit ? 'hit' : 'miss'}</td>
                 </tr>
               ))}

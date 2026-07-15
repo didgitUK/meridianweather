@@ -1,61 +1,79 @@
 export const cityDetailDoc = {
   slug: 'city-detail',
   title: 'City detail',
-  lastUpdated: '2026-07-09',
+  lastUpdated: '2026-07-15',
   sections: [
     {
       id: 'access',
       title: 'Who can view a city page',
       body:
-        'City detail pages at /city/[cityId] are public once meridian has recorded a successful weather check for that location. Featured cities and any recently checked city with a stable slug are available without saving the city on your device. If you open a malformed or unknown slug, you receive a 404 page.',
+        'City detail pages live at /city/[cityId]. resolveCity() always serves the five PLATFORM_SHOWCASE_CITIES (London, Dubai, New York, Tokyo, Sydney). Any location row with a city_slug also resolves. Parsed IDs of the form {name}-{country}-{lat} match when lat/country exist in SQLite. Unknown or malformed slugs return 404. You do not need to pin a city to open its page.',
     },
     {
-      id: 'hero',
-      title: 'Current conditions hero',
+      id: 'tabs',
+      title: 'Forecast tabs',
       body:
-        'Large temperature, Meteocons icon, description, and “Updated X ago” from the current scope. Data loads via POST /api/weather/batch with scopes current, hourly, daily, and minutely in one request bundle.',
+        'Sticky tabs: Today, Hourly, 10-Day, and History. Deep-link with ?tab=hourly, ?tab=daily, or ?tab=history. Legacy ?tab=next-hour redirects to Today. Up to three OpenWeather alert banners render above the hero when alertIds are present. A city-detail AdSlot sits directly under the tabs.',
+    },
+    {
+      id: 'header',
+      title: 'Page header and hero',
+      body:
+        'By default the header uses an OSM satellite map backdrop when isCityHeroOsmEnabled() is true (NEXT_PUBLIC_CITY_HERO_OSM unset or not "0"). Set NEXT_PUBLIC_CITY_HERO_OSM=0 to prefer photos. Photo mode cascades Unsplash → Wikimedia Commons → Pexels via getHeroImageForRegion, with static SVG fallbacks when keys are missing. Optional Google Street View applies when OSM is off and NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1.',
+    },
+    {
+      id: 'today',
+      title: 'Today tab',
+      body:
+        'Current conditions hero, metric tiles with Meteocon icons, and Current conditions / Location / Sun times accordions. Hourly preview for the rest of today when hourly data is available.',
+    },
+    {
+      id: 'hourly',
+      title: 'Hourly tab',
+      body:
+        'Next-12-hour card list (one column) for near-term temperature, precipitation chance, and wind.',
+    },
+    {
+      id: 'daily',
+      title: '10-Day tab',
+      body:
+        'Daily outlook list (up to ten days): weekday, icon, description/summary, min/max, rain chance, wind, UV. Selecting a day opens the metric chart for that date.',
+    },
+    {
+      id: 'history',
+      title: 'History tab',
+      body:
+        'Past days from stored observations and archived forecasts via GET /api/weather/history, with day picker and chart.',
     },
     {
       id: 'alerts',
       title: 'Weather alerts',
       body:
-        'When OpenWeather returns alerts, up to three appear in a banner with event name and sender. Full alert text is available via GET /api/alerts/[alertId].',
+        'When OpenWeather returns alerts, AlertBanner shows at most three above the hero. Full alert text is available via GET /api/alerts/[alertId].',
     },
     {
-      id: 'minutely',
-      title: 'Next-hour precipitation (Premium gate)',
+      id: 'data',
+      title: 'Data loading',
       body:
-        'The minutely scope strip shows precipitation for the next hour. On the free tier this section is behind PremiumGate with a disabled upgrade button (Stripe checkout planned). Premium tier (dev toggle via Ctrl+Shift+L) unlocks the strip immediately.',
-    },
-    {
-      id: 'hourly',
-      title: 'Hourly forecast',
-      body:
-        'Horizontal scroll of the next twelve hourly points: time label, icon, temperature, and probability of precipitation when available. The section heading reads “Next 48 hours” but the UI currently renders twelve hours from the hourly scope payload.',
-    },
-    {
-      id: 'daily',
-      title: 'Daily outlook',
-      body:
-        'Full daily scope list (up to ten days from OpenWeather): weekday, icon, description, min/max range, and precipitation probability. This is not premium-gated in the current build despite extendedDaily appearing in premium marketing copy.',
+        'SSR hydrates current, daily, and hourly when available from getCityWeatherForSeo. The client hook useCityWeather batch-fetches DETAIL_SCOPES = [current, hourly, daily] via POST /api/weather/batch — minutely is not requested. Premium / MinutelyPrecipStrip is not wired.',
     },
     {
       id: 'subscribe',
-      title: 'Subscribe on detail page',
+      title: 'Pin and subscribe',
       body:
-        'The same SubscribeModal as dashboard cards allows weekly digest and rain/storm alert emails. Badge states reflect active subscriptions synced from the server by anonymous clientId.',
+        'The Options menu on the header provides Pin to your locations and Subscribe (weekly digest + weather alerts) — the same flows as dashboard cards. Pin saves to meridian:saved-cities; subscribe opens SubscribeDialog.',
     },
     {
       id: 'prefetch',
       title: 'Prefetch',
       body:
-        'Hovering a dashboard card prefetches /city/[cityId] and warms L0 cache via useCityWeather so detail pages open faster.',
+        'Hovering a dashboard weather card prefetches /city/[cityId] and warms L0 cache via prefetchCityDetail so detail pages open faster.',
     },
     {
       id: 'seo',
       title: 'Search and discovery',
       body:
-        'When a city receives its first successful current-weather check, meridian marks it indexable, adds it to the sitemap, and server-renders SEO metadata plus a summary block on the city page.',
+        'When a location receives its first successful current-weather check, markLocationIndexable sets city_slug and indexable_at, adds the city to the sitemap, and server-renders SEO metadata plus a summary block on the city page.',
     },
   ],
 };

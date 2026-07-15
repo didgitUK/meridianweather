@@ -22,18 +22,17 @@ export async function generateMetadata({ params }) {
 export default async function DocsHomePage({ params }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const docsPages = getDocsPages();
-  const breadcrumbItems = [{ name: 'Documentation', path: '/docs' }];
+  const t = await getTranslations('Docs');
+  const docsPages = getDocsPages(locale);
+  const breadcrumbItems = [{ name: t('breadcrumb'), path: '/docs' }];
 
   return (
     <article className="flex flex-col gap-8">
       <Breadcrumbs items={breadcrumbItems} />
       <JsonLd data={buildBreadcrumbSchema(breadcrumbItems)} />
       <div>
-        <h1 className="font-heading text-4xl">meridian documentation</h1>
-        <p className="mt-3 max-w-2xl text-muted-foreground">
-          Guides for using the dashboard, subscriptions, and API behaviour.
-        </p>
+        <h1 className="font-heading text-4xl">{t('title')}</h1>
+        <p className="mt-3 max-w-2xl text-muted-foreground">{t('description')}</p>
       </div>
 
       <ul className="grid gap-4 sm:grid-cols-2">

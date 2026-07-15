@@ -6,6 +6,18 @@ export const BRAND = {
     'Track current conditions and forecasts for the cities that matter to you — in your browser today, as an installable app tomorrow.',
 };
 
+/** UK legal identity for Website Servers Ltd trading as meridian. */
+export const LEGAL_ENTITY = {
+  tradingName: 'meridian',
+  companyName: 'Website Servers Ltd',
+  companyNumber: '17240780',
+  registeredOffice:
+    'Orchard Cottage, Beck Orchard, Brampton, United Kingdom, CA8 1UR',
+  parentUrl: 'https://websiteservers.co.uk',
+  productUrl: 'https://meridianweather.co.uk',
+  privacyEmail: 'privacy@meridianweather.co.uk',
+};
+
 export const SOCIAL_LINKS = [
   {
     id: 'website',

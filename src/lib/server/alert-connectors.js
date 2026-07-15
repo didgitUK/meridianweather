@@ -11,11 +11,12 @@ export function getAlertConnectorsAdminConfig() {
       id: 'open-meteo',
       label: 'Open-Meteo warnings',
       description:
-        'Global national weather warnings standardized into one JSON feed. Free, no API key.',
-      docsUrl: 'https://open-meteo.com/en/docs/warnings-api',
+        'National weather warnings via Open-Meteo. Upstream /v1/warnings is currently unavailable (HTTP 404) — toggle off until restored; cron returns no Open-Meteo events meanwhile.',
+      docsUrl: 'https://open-meteo.com/en/docs',
       endpoint: 'https://api.open-meteo.com/v1/warnings',
       enabled: Boolean(settings.openMeteoAlertsEnabled ?? true),
       configured: true,
+      upstreamAvailable: false,
       source: 'public',
     },
     nws: {

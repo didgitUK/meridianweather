@@ -30,11 +30,15 @@ export function assertServerEnv() {
   }
 
   if (!read('CRON_SECRET') && process.env.NODE_ENV === 'production') {
-    warn('CRON_SECRET is unset in production — cron routes accept any caller.');
+    warn('CRON_SECRET is unset in production — cron routes deny all callers.');
   }
 
-  if (!read('ADMIN_PASSWORD') && !read('ADMIN_SECRET') && process.env.NODE_ENV === 'production') {
-    warn('ADMIN_PASSWORD/ADMIN_SECRET unset in production — admin auth is weak.');
+  if (!read('ADMIN_SECRET') && process.env.NODE_ENV === 'production') {
+    warn('ADMIN_SECRET is unset in production — admin sessions cannot be signed.');
+  }
+
+  if (!read('ADMIN_PASSWORD') && process.env.NODE_ENV === 'production') {
+    warn('ADMIN_PASSWORD is unset — env root admin bootstrap is disabled.');
   }
 
   return { ok: true, warnings: getEnvWarnings() };

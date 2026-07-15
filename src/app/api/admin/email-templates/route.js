@@ -41,9 +41,17 @@ export async function GET(request) {
     return NextResponse.json({ template });
   }
 
+  const category = searchParams.get('category');
+  const templates = listEmailTemplates().filter((template) =>
+    category ? template.category === category : true,
+  );
+  const definitions = EMAIL_TEMPLATE_DEFINITIONS.filter((definition) =>
+    category ? definition.category === category : true,
+  );
+
   return NextResponse.json({
-    templates: listEmailTemplates(),
-    definitions: EMAIL_TEMPLATE_DEFINITIONS,
+    templates,
+    definitions,
   });
 }
 

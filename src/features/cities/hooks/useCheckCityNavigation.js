@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { stashCheckedCity } from '@/features/cities/utils/checked-city-store';
 import { buildCityId } from '@/lib/utils';
 

@@ -2,16 +2,26 @@
 
 Rehearse this before the interview demo. Binding scope: [`SCOPE.md`](../SCOPE.md). Architecture detail: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
-## Elevator pitch (30 seconds)
+## Interview cue card (≤1 screen)
 
-Next.js API routes proxy OpenWeather so the key never hits the browser. The user’s city list lives in **localStorage** (brief requirement). Shared weather cache uses **SQLite** plus in-memory cache so we respect the **1000 calls/day** free tier. Default refresh mode is **manual** so reloads don’t burn quota.
+Memorize these short answers; they match what SCOPE §5 says you should discuss.
+
+| Question | Answer |
+| --- | --- |
+| Why API routes? | OpenWeather key stays on the server; the browser only hits `/api/weather` and `/api/geocode`. |
+| Why localStorage *and* SQLite? | **localStorage** holds the user’s pinned city list (brief requirement). **SQLite** (+ memory) is shared server cache and quota accounting so we don’t burn the free tier. |
+| Why caching + manual refresh? | Free tier is ~**1000 calls/day**. L0/L1/L2 reuse snapshots; default refresh is **manual** so a page reload doesn’t force upstream. |
+| How do you show errors? | Rename/blank `OPENWEATHER_API_KEY` and retry a card, or DevTools → Offline. Cards show an Alert + Retry; search soft-falls when appropriate. |
+| What about admin / email / ads? | Stretch exploration. Evaluation focus is the **weather dashboard** brief — search → pin → cards. |
+
+Elevator (30s): Next.js API routes proxy OpenWeather so the key never hits the browser. Cities live in localStorage. Shared cache + quota protect the free tier. Manual refresh keeps demos cheap.
 
 ## Core vs stretch
 
 | Keep for demo | Freeze (don’t expand; optional env) |
 | --- | --- |
 | Search, pin/unpin, cards, localStorage | Admin, email/cron, AdSense live, CMS |
-| `/api/weather`, `/batch`, `/api/geocode` | 7-locale product work, PWA polish |
+| `/api/weather`, `/batch`, `/api/geocode` | PWA polish, CMS product work |
 | Cache + quota (`lib/weather/*`) | Recent-checks seed as product |
 
 Interview line: “Stretch exists as exploration; evaluation focus is the dashboard brief.”
@@ -42,12 +52,23 @@ Interview line: “Stretch exists as exploration; evaluation focus is the dashbo
 - Hydration → skeletons for uncached cards; refresh keeps data + spinner
 - Cities: `meridian:saved-cities` via `useSyncExternalStore`
 - Quota defaults: soft **950** / hard **1000** / **60**/min
-- Server `current` TTL ~1h fresh / 2h stale; client dashboard max-age current **10m**
+- Server `current` TTL ~1h fresh / 2h stale; client dashboard max-age current **1h** (`DASHBOARD_CURRENT_MAX_AGE_MS`)
+- Warning threshold **800** (admin-configurable via `platform_settings` with soft/hard/per-minute limits)
+- L0 localStorage writes require functional consent; in-memory session L0 still works without it
+- Non-`en` weather L2 keys append `,{lang}`
+
+## Stretch backends (optional study)
+
+- Cron: `Authorization: Bearer CRON_SECRET` (`weather-alerts`, `weekly-digests`); fail-closed in production when unset
+- Admin: HttpOnly cookie `meridian_admin_session`; multi-ESP email (Resend / SendGrid / SES / SMTP)
+- Analytics: `POST /api/analytics/collect` when analytics consent; optional GA4
+- Popular searches: `GET /api/recent-checks` from `location_weather_checks` (not `seed:checks` snapshots)
 
 ## Heroes & ads (portable deploys)
 
-- Unsplash when `UNSPLASH_ACCESS_KEY` is set; else committed `public/hero/*` SVGs
-- AdSense when configured + consent; else labeled `public/ads/*` demo placeholders
+- Unsplash when `UNSPLASH_ACCESS_KEY` is set; else Wikimedia / Pexels / committed `public/hero/*` SVGs
+- AdSense when configured + advertising consent; else branded `public/ads/*` PNG placeholders (sr-only overlay)
+- Home ads / journal teaser stay off unless `NEXT_PUBLIC_SHOW_HOME_STRETCH=1`
 
 ## Top files to open
 
@@ -67,12 +88,12 @@ Interview line: “Stretch exists as exploration; evaluation focus is the dashbo
 - Feature folders + hooks (`useSavedCities`, `useWeatherData`)
 - `useSyncExternalStore` for localStorage without hydration mismatch
 - Cache-first then network; batch isolates per-city errors
+- City search combobox supports Arrow/Enter keyboard navigation
 
 ## Testing honesty
 
-- `npm run test` — validators, cache policy, ApiError mapper, geocode ranking, repos, icons
+- `npm run test` — validators, cache policy, ApiError mapper, geocode ranking, repos, icons, `/api/weather` + `/api/geocode` route tests
 - Manual: search → pin → reload → remove → break key → mobile width
-- “With more time”: more route integration tests, combobox keyboard nav, trim stretch surface
 
 ## Demo checklist
 
@@ -80,5 +101,5 @@ Interview line: “Stretch exists as exploration; evaluation focus is the dashbo
 2. Search London → pin → card on dashboard
 3. Reload → cities persist
 4. Remove → empty state with search open
-5. Settings → weather refresh mode Manual
+5. Optional stretch: `/admin` API usage panel (not a Settings → weather toggle — refresh mode lives in code/provider defaults)
 6. Optional: `/admin` for usage (not Ctrl+Shift+L — that shortcut is not wired)

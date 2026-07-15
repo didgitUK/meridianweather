@@ -1,5 +1,42 @@
 import { HERO_IMAGE_CACHE_DUAL_VERSION, HERO_IMAGE_CACHE_TTL_MS } from '@/constants/hero-image';
+import { inferHeroSourceName } from '@/lib/hero-image/infer-hero-source';
 import { getDb } from '@/lib/db';
+
+/**
+ * @param {string | null} imageUrl
+ * @param {string | null} sourceUrl
+ * @param {string | null} photographer
+ * @param {string | null} photographerUrl
+ * @param {string | null} queryUsed
+ * @param {string | null} blurHash
+ * @param {string | null} [sourceNameHint]
+ */
+function buildCachedVariant(
+  imageUrl,
+  sourceUrl,
+  photographer,
+  photographerUrl,
+  queryUsed,
+  blurHash,
+  sourceNameHint = null,
+) {
+  if (!imageUrl) {
+    return null;
+  }
+
+  const sourceName = sourceNameHint ?? inferHeroSourceName(sourceUrl, imageUrl);
+
+  return {
+    imageUrl,
+    blurHash,
+    photographer,
+    photographerUrl,
+    sourceUrl,
+    sourceName,
+    unsplashUrl: sourceUrl,
+    queryUsed,
+  };
+}
 
 /**
  * @param {string} cacheKey
@@ -22,27 +59,23 @@ export function getCachedHeroImage(cacheKey) {
     return null;
   }
 
-  const landscape = row.image_url
-    ? {
-        imageUrl: row.image_url,
-        blurHash: row.blur_hash,
-        photographer: row.photographer,
-        photographerUrl: row.photographer_url,
-        unsplashUrl: row.unsplash_url,
-        queryUsed: row.query_used,
-      }
-    : null;
+  const landscape = buildCachedVariant(
+    row.image_url,
+    row.unsplash_url,
+    row.photographer,
+    row.photographer_url,
+    row.query_used,
+    row.blur_hash,
+  );
 
-  const portrait = row.portrait_image_url
-    ? {
-        imageUrl: row.portrait_image_url,
-        blurHash: row.portrait_blur_hash,
-        photographer: row.portrait_photographer,
-        photographerUrl: row.portrait_photographer_url,
-        unsplashUrl: row.portrait_unsplash_url,
-        queryUsed: row.portrait_query_used,
-      }
-    : null;
+  const portrait = buildCachedVariant(
+    row.portrait_image_url,
+    row.portrait_unsplash_url,
+    row.portrait_photographer,
+    row.portrait_photographer_url,
+    row.portrait_query_used,
+    row.portrait_blur_hash,
+  );
 
   if (!landscape && !portrait) {
     return null;
@@ -56,6 +89,8 @@ export function getCachedHeroImage(cacheKey) {
     portrait,
     photographer: primary?.photographer ?? null,
     photographerUrl: primary?.photographerUrl ?? null,
+    sourceUrl: primary?.sourceUrl ?? null,
+    sourceName: primary?.sourceName ?? null,
     unsplashUrl: primary?.unsplashUrl ?? null,
   };
 }
@@ -69,6 +104,7 @@ export function getCachedHeroImage(cacheKey) {
  *     photographer?: string | null;
  *     photographerUrl?: string | null;
  *     unsplashUrl?: string | null;
+ *     sourceUrl?: string | null;
  *     queryUsed?: string | null;
  *   } | null;
  *   portrait?: {
@@ -77,6 +113,7 @@ export function getCachedHeroImage(cacheKey) {
  *     photographer?: string | null;
  *     photographerUrl?: string | null;
  *     unsplashUrl?: string | null;
+ *     sourceUrl?: string | null;
  *     queryUsed?: string | null;
  *   } | null;
  * }} image
@@ -119,13 +156,13 @@ export function setCachedHeroImage(cacheKey, image) {
       landscape?.blurHash ?? null,
       landscape?.photographer ?? null,
       landscape?.photographerUrl ?? null,
-      landscape?.unsplashUrl ?? null,
+      landscape?.sourceUrl ?? landscape?.unsplashUrl ?? null,
       landscape?.queryUsed ?? null,
       portrait?.imageUrl ?? null,
       portrait?.blurHash ?? null,
       portrait?.photographer ?? null,
       portrait?.photographerUrl ?? null,
-      portrait?.unsplashUrl ?? null,
+      portrait?.sourceUrl ?? portrait?.unsplashUrl ?? null,
       portrait?.queryUsed ?? null,
       HERO_IMAGE_CACHE_DUAL_VERSION,
       fetchedAt.toISOString(),

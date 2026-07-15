@@ -2,6 +2,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { getDb } from '@/lib/db';
 import { hashPassword, verifyPassword } from '@/lib/server/password';
 
+const ADMIN_USER_COLUMNS =
+  'id, email, display_name, password_hash, active, session_version, created_at, updated_at, last_login_at';
+
 function mapAdminUser(row) {
   if (!row) {
     return null;
@@ -12,6 +15,7 @@ function mapAdminUser(row) {
     email: row.email,
     displayName: row.display_name,
     active: Boolean(row.active),
+    sessionVersion: Number(row.session_version ?? 0),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     lastLoginAt: row.last_login_at,
@@ -26,7 +30,7 @@ export function countAdminUsers() {
 export function listAdminUsers() {
   return getDb()
     .prepare(
-      `SELECT id, email, display_name, active, created_at, updated_at, last_login_at
+      `SELECT id, email, display_name, active, session_version, created_at, updated_at, last_login_at
        FROM admin_users
        ORDER BY created_at ASC`,
     )
@@ -37,7 +41,7 @@ export function listAdminUsers() {
 export function getAdminUserById(id) {
   const row = getDb()
     .prepare(
-      `SELECT id, email, display_name, password_hash, active, created_at, updated_at, last_login_at
+      `SELECT ${ADMIN_USER_COLUMNS}
        FROM admin_users
        WHERE id = ?`,
     )
@@ -55,7 +59,7 @@ export function getAdminUserByEmail(email) {
   return (
     getDb()
       .prepare(
-        `SELECT id, email, display_name, password_hash, active, created_at, updated_at, last_login_at
+        `SELECT ${ADMIN_USER_COLUMNS}
          FROM admin_users
          WHERE email = ?`,
       )
@@ -71,8 +75,8 @@ export function createAdminUser({ email, displayName, password, active = true })
   getDb()
     .prepare(
       `INSERT INTO admin_users (
-         id, email, display_name, password_hash, active, created_at, updated_at, last_login_at
-       ) VALUES (?, ?, ?, ?, ?, ?, ?, NULL)`,
+         id, email, display_name, password_hash, active, session_version, created_at, updated_at, last_login_at
+       ) VALUES (?, ?, ?, ?, ?, 0, ?, ?, NULL)`,
     )
     .run(
       id,
@@ -118,7 +122,7 @@ export function updateAdminUserPassword(id, password) {
   getDb()
     .prepare(
       `UPDATE admin_users
-       SET password_hash = ?, updated_at = ?
+       SET password_hash = ?, session_version = session_version + 1, updated_at = ?
        WHERE id = ?`,
     )
     .run(hashPassword(password), new Date().toISOString(), id);
@@ -162,7 +166,7 @@ export function publicAdminUser(rowOrMapped) {
 }
 
 function getRootAdminEnv() {
-  const password = (process.env.ADMIN_PASSWORD ?? process.env.ADMIN_SECRET ?? '').trim();
+  const password = (process.env.ADMIN_PASSWORD ?? '').trim();
   if (!password) {
     return null;
   }
@@ -177,7 +181,7 @@ function getRootAdminEnv() {
 /**
  * Ensures the root admin from ADMIN_EMAIL / ADMIN_PASSWORD always exists.
  * Env is the buried master account — created if missing, reactivated if disabled.
- * Does not re-hash on every call (scrypt is expensive); master unlock still accepts ADMIN_PASSWORD.
+ * Does not re-hash on every call (scrypt is expensive); root unlock still accepts ADMIN_PASSWORD.
  */
 export function bootstrapAdminUsersFromEnv() {
   const root = getRootAdminEnv();

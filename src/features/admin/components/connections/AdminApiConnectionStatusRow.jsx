@@ -28,7 +28,7 @@ export function AdminApiConnectionStatusRow({
       )}
       title={detail}
     >
-      <AdminApiConnectionStatusDot status={connection.status} />
+      <AdminApiConnectionStatusDot status={connection.status} tone={tone} />
       <div className="min-w-0 flex-1 leading-tight">
         <p
           className={cn(

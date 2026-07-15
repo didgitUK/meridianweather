@@ -20,6 +20,7 @@ export {
   mergeChartPoints,
   densifyChartPoints,
   buildDayChartPoints,
+  dayHasExpandableMetrics,
   buildChartAxisLabels,
   FORECAST_METRIC_TABS,
   getMetricValue,

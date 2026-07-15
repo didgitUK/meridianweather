@@ -6,7 +6,8 @@ export const MAX_SAVED_CITIES = 10;
 export const DEBOUNCE_MS = 300;
 export const DEFAULT_REFRESH_INTERVAL_MS = 60 * 60 * 1000;
 export const DEFAULT_STALE_CACHE_MAX_MS = 2 * 60 * 60 * 1000;
-export const DASHBOARD_CURRENT_MAX_AGE_MS = 10 * 60 * 1000;
+/** Client L0 reuse window for dashboard/home/nearby current weather (aligns with current TTL). */
+export const DASHBOARD_CURRENT_MAX_AGE_MS = DEFAULT_REFRESH_INTERVAL_MS;
 
 export const SCOPE_TTL = {
   current: { fresh: DEFAULT_REFRESH_INTERVAL_MS, stale: DEFAULT_STALE_CACHE_MAX_MS },

@@ -74,7 +74,7 @@ export function ChecksLogTable({ onSelectLocation }) {
   return (
     <AdminPanel
       title="All checks"
-      description="Every served current-weather lookup — cache hits and upstream calls — with trigger and token cost."
+      description="Upstream current-weather lookups (OpenWeather spend). Cache serves are not logged as checks."
     >
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex flex-wrap gap-3">

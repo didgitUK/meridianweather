@@ -1,7 +1,9 @@
 'use client';
 
 import { useCallback, useRef, useState } from 'react';
+import { useLocale } from 'next-intl';
 import { WEATHER_CHECK_TRIGGERS } from '@/constants/weather-check-triggers';
+import { resolveOpenWeatherLang } from '@/i18n/locales';
 import { buildCityId } from '@/lib/utils';
 import {
   prefetchWeatherBatch,
@@ -10,6 +12,8 @@ import {
 import { buildSearchResultKey } from '@/features/cities/utils/city-search';
 
 export function useSearchResultPreview() {
+  const locale = useLocale();
+  const weatherLang = resolveOpenWeatherLang(locale);
   const [previews, setPreviews] = useState({});
   const inflightRef = useRef(new Set());
 
@@ -43,6 +47,7 @@ export function useSearchResultPreview() {
         cityId,
         scopes: ['current'],
         trigger: WEATHER_CHECK_TRIGGERS.searchPreview,
+        lang: weatherLang,
       });
       const data = entry?.scopes?.current?.data ?? null;
 
@@ -62,7 +67,7 @@ export function useSearchResultPreview() {
     } finally {
       inflightRef.current.delete(key);
     }
-  }, []);
+  }, [weatherLang]);
 
   return { previews, loadPreview };
 }

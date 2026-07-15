@@ -1,8 +1,11 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { AlertTriangle } from 'lucide-react';
 
 export function CityDetailInaccurateReportBanner() {
+  const t = useTranslations('CityDetail');
+
   return (
     <div
       role="status"
@@ -11,8 +14,7 @@ export function CityDetailInaccurateReportBanner() {
       <div className="flex items-start gap-3">
         <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
         <p>
-          A member of our team is looking into a report of inaccurate data. Please bear with us
-          whilst we improve our weather and forecasts shown.
+          {t('inaccurateBanner')}
         </p>
       </div>
     </div>

@@ -1,29 +1,30 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AdminSidebar } from '@/features/admin/components/shell/AdminSidebar';
 import { CMS_COLLECTION } from '@/constants/cms';
 import { AdminAdSensePanel } from '@/features/admin/components/adsense/AdminAdSensePanel';
 import { AdminCmsPagesPanel } from '@/features/admin/components/AdminCmsPagesPanel';
 import { AdminEmailConnectorsPanel } from '@/features/admin/components/email-connectors/AdminEmailConnectorsPanel';
-import { AdminEmailTemplatesPanel } from '@/features/admin/components/AdminEmailTemplatesPanel';
 import { AdminInaccuraciesPanel } from '@/features/admin/components/AdminInaccuraciesPanel';
 import { AdminLocationsPanel } from '@/features/admin/components/AdminLocationsPanel';
 import { AdminOverviewPanel } from '@/features/admin/components/AdminOverviewPanel';
 import { AdminPlatformSettings } from '@/features/admin/components/AdminPlatformSettings';
-import { AdminNewsletterPanel } from '@/features/admin/components/subscriptions/AdminNewsletterPanel';
-import { AdminWeeklyDigestsPanel } from '@/features/admin/components/subscriptions/AdminWeeklyDigestsPanel';
-import { AdminWeatherAlertsPanel } from '@/features/admin/components/subscriptions/AdminWeatherAlertsPanel';
+import { AdminMailingListsPanel } from '@/features/admin/components/subscriptions/AdminMailingListsPanel';
 import { AdminAlertConnectorsPanel } from '@/features/admin/components/alert-connectors/AdminAlertConnectorsPanel';
 import { AdminUsagePanel, AdminWeatherSettings } from '@/features/admin/components/AdminWeatherSettings';
+import { AdminEmailTemplatesPanel } from '@/features/admin/components/AdminEmailTemplatesPanel';
+import { AdminEmailSettingsPanel } from '@/features/admin/components/emails/AdminEmailSettingsPanel';
+import { DashboardEmailListsPanel } from '@/features/admin/components/dashboard/DashboardEmailListsPanel';
+import { AdminProfilePanel } from '@/features/admin/components/users/AdminProfilePanel';
 import { AdminUsersPanel } from '@/features/admin/components/users/AdminUsersPanel';
 import { ADMIN_SECTION_ALIASES, getAdminSection } from '@/constants/admin';
-
-function readSectionFromLocation() {
-  const raw = new URLSearchParams(window.location.search).get('section');
-  if (!raw) return null;
-  return ADMIN_SECTION_ALIASES[raw] ?? raw;
+function resolveSectionFromParams(params) {
+  const raw = params.get('section');
+  if (!raw) return 'overview';
+  const resolved = ADMIN_SECTION_ALIASES[raw] ?? raw;
+  return getAdminSection(resolved) ? resolved : 'overview';
 }
 
 async function fetchAdminConfig() {
@@ -52,17 +53,14 @@ async function fetchSessionUser() {
 
 export function AdminDashboard() {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [data, setData] = useState(null);
   const [user, setUser] = useState(null);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState(() => {
-    if (typeof window === 'undefined') {
-      return 'overview';
-    }
-    return readSectionFromLocation() || 'overview';
-  });
   const [mobileOpen, setMobileOpen] = useState(false);
+  const activeSection = resolveSectionFromParams(searchParams);
 
   const refresh = useCallback(async () => {
     try {
@@ -138,10 +136,38 @@ export function AdminDashboard() {
     router.refresh();
   }
 
-  function handleSectionChange(sectionId) {
-    setActiveSection(sectionId);
-    setMobileOpen(false);
-  }
+  const handleSectionChange = useCallback(
+    (sectionId, extras = {}) => {
+      const nextSection = ADMIN_SECTION_ALIASES[sectionId] ?? sectionId;
+      const resolved = getAdminSection(nextSection) ? nextSection : 'overview';
+      setMobileOpen(false);
+
+      const params = new URLSearchParams(searchParams.toString());
+      if (resolved === 'overview') {
+        params.delete('section');
+      } else {
+        params.set('section', resolved);
+        params.delete('tab');
+      }
+
+      if (resolved !== 'email-templates') {
+        params.delete('slug');
+        params.delete('category');
+        params.delete('mode');
+      } else {
+        if (extras.slug) params.set('slug', extras.slug);
+        else if (!extras.keepDeepLink) params.delete('slug');
+        if (extras.category) params.set('category', extras.category);
+        else if (!extras.keepDeepLink) params.delete('category');
+        if (extras.mode === 'compose') params.set('mode', 'compose');
+        else if (!extras.keepDeepLink) params.delete('mode');
+      }
+
+      const query = params.toString();
+      router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    },
+    [pathname, router, searchParams],
+  );
 
   const sectionMeta = getAdminSection(activeSection);
 
@@ -151,13 +177,7 @@ export function AdminDashboard() {
         return (
           <AdminOverviewPanel
             usage={data?.usage}
-            settings={data?.settings}
             ads={data?.ads}
-            emailConnectors={data?.emailConnectors}
-            inaccurateReports={data?.inaccurateReports}
-            locations={data?.locations}
-            onSectionChange={handleSectionChange}
-            onRefresh={refresh}
           />
         );
       case 'usage':
@@ -194,15 +214,26 @@ export function AdminDashboard() {
             onUpdated={handleUpdated}
           />
         );
-      case 'email-templates':
-        return <AdminEmailTemplatesPanel />;
+      case 'mailing-lists':
       case 'newsletter':
-        return <AdminNewsletterPanel />;
       case 'weekly-digests':
-        return <AdminWeeklyDigestsPanel />;
       case 'alert-subscribers':
       case 'weather-alerts':
-        return <AdminWeatherAlertsPanel />;
+        return <AdminMailingListsPanel />;
+      case 'email-dashboard':
+        return <DashboardEmailListsPanel />;
+      case 'email-templates':
+      case 'auth-emails':
+      case 'admin-emails':
+        return <AdminEmailTemplatesPanel />;
+      case 'email-settings':
+        return (
+          <AdminEmailSettingsPanel
+            settings={data?.settings}
+            onUpdated={handleUpdated}
+            onSectionChange={handleSectionChange}
+          />
+        );
       case 'policies':
         return (
           <AdminCmsPagesPanel
@@ -230,9 +261,9 @@ export function AdminDashboard() {
         );
       case 'locations':
         return <AdminLocationsPanel locations={data?.locations} onRefresh={refresh} />;
-      case 'users':
+      case 'profile':
         return (
-          <AdminUsersPanel
+          <AdminProfilePanel
             currentUser={user}
             onUserUpdated={(nextUser) => {
               setUser(nextUser);
@@ -240,6 +271,8 @@ export function AdminDashboard() {
             }}
           />
         );
+      case 'users':
+        return <AdminUsersPanel currentUser={user} />;
       default:
         return null;
     }
@@ -267,7 +300,7 @@ export function AdminDashboard() {
         activeSection={activeSection}
         onSectionChange={handleSectionChange}
         user={user}
-        onOpenProfile={() => handleSectionChange('users')}
+        onOpenProfile={() => handleSectionChange('profile')}
         onLogout={handleLogout}
         mobileOpen={mobileOpen}
         onMobileOpenChange={setMobileOpen}

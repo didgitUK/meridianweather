@@ -9,6 +9,8 @@ function variant(path, label) {
     blurHash: null,
     photographer: label,
     photographerUrl: null,
+    sourceUrl: null,
+    sourceName: 'static',
     unsplashUrl: null,
     queryUsed: 'static-fallback',
   };
@@ -19,6 +21,8 @@ const DEFAULT_HERO = {
   portrait: variant('/hero/default-portrait.svg', 'meridian static hero'),
   photographer: 'meridian static hero',
   photographerUrl: null,
+  sourceUrl: null,
+  sourceName: 'static',
   unsplashUrl: null,
 };
 
@@ -30,6 +34,8 @@ export const HERO_STATIC_FALLBACKS = Object.freeze({
     portrait: variant('/hero/gb-portrait.svg', 'meridian static hero (GB)'),
     photographer: 'meridian static hero (GB)',
     photographerUrl: null,
+    sourceUrl: null,
+    sourceName: 'static',
     unsplashUrl: null,
   },
   US: {
@@ -37,6 +43,8 @@ export const HERO_STATIC_FALLBACKS = Object.freeze({
     portrait: variant('/hero/us-portrait.svg', 'meridian static hero (US)'),
     photographer: 'meridian static hero (US)',
     photographerUrl: null,
+    sourceUrl: null,
+    sourceName: 'static',
     unsplashUrl: null,
   },
 });

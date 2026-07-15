@@ -7,20 +7,22 @@ import {
   useImperativeHandle,
   useMemo,
   useRef,
-  useState,
 } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAccessibility } from '@/providers/AccessibilityProvider';
 import {
   RecentCheckCard,
   RecentCheckCardSkeleton,
 } from '@/features/weather/components/RecentCheckCard';
+import { cn } from '@/lib/utils';
 
 const DISPLAY_LIMIT = 20;
 const AUTO_ADVANCE_MS = 4000;
 const GAP_PX = 12;
+const DRAG_CLICK_THRESHOLD_PX = 6;
 
 const CAROUSEL_TRACK_CLASS =
-  'flex gap-3 overflow-x-auto pt-1 pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden';
+  'flex cursor-grab gap-3 overflow-x-auto pt-1 pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden active:cursor-grabbing';
 
 function usePrefersReducedMotion() {
   const { reducedMotion } = useAccessibility();
@@ -28,11 +30,21 @@ function usePrefersReducedMotion() {
 }
 
 export const RecentChecksCarousel = forwardRef(function RecentChecksCarousel(
-  { checks, isLoading },
+  { checks, isLoading, ariaLabel = null, emptyMessage = null },
   ref,
 ) {
+  const t = useTranslations('Dashboard.recentChecks');
+  const tCommon = useTranslations('Common');
+  const resolvedAriaLabel = ariaLabel ?? t('carouselLabel');
+  const resolvedEmpty = emptyMessage ?? t('empty');
   const scrollRef = useRef(null);
   const pausedRef = useRef(false);
+  const dragRef = useRef({
+    pointerId: null,
+    startX: 0,
+    startScroll: 0,
+    moved: false,
+  });
   const prefersReducedMotion = usePrefersReducedMotion();
 
   const displayChecks = useMemo(() => checks.slice(0, DISPLAY_LIMIT), [checks]);
@@ -114,6 +126,78 @@ export const RecentChecksCarousel = forwardRef(function RecentChecksCarousel(
     [displayChecks.length, getStepWidth, pauseTemporarily, prefersReducedMotion],
   );
 
+  const endDrag = useCallback((event) => {
+    const drag = dragRef.current;
+    if (drag.pointerId == null || drag.pointerId !== event.pointerId) {
+      return;
+    }
+
+    const container = scrollRef.current;
+    if (container?.hasPointerCapture?.(event.pointerId)) {
+      container.releasePointerCapture(event.pointerId);
+    }
+
+    drag.pointerId = null;
+    drag.captured = false;
+    pauseTemporarily();
+  }, [pauseTemporarily]);
+
+  const onPointerDown = useCallback((event) => {
+    if (event.pointerType !== 'mouse' || event.button !== 0) {
+      return;
+    }
+
+    const container = scrollRef.current;
+    if (!container) {
+      return;
+    }
+
+    pause();
+    dragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startScroll: container.scrollLeft,
+      moved: false,
+      captured: false,
+    };
+
+  }, [pause]);
+
+  const onPointerMove = useCallback((event) => {
+    const drag = dragRef.current;
+    if (drag.pointerId !== event.pointerId) {
+      return;
+    }
+
+    const container = scrollRef.current;
+    if (!container) {
+      return;
+    }
+
+    const delta = event.clientX - drag.startX;
+    if (Math.abs(delta) >= DRAG_CLICK_THRESHOLD_PX) {
+      // Capture only after a real drag so plain clicks still hit the card <Link>.
+      if (!drag.captured) {
+        drag.captured = true;
+        drag.moved = true;
+        container.setPointerCapture(event.pointerId);
+      }
+      container.scrollLeft = drag.startScroll - delta;
+    }
+  }, []);
+
+  const onClickCapture = useCallback((event) => {
+
+    if (!dragRef.current.moved) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    dragRef.current.moved = false;
+    dragRef.current.captured = false;
+  }, []);
+
   useImperativeHandle(
     ref,
     () => ({
@@ -145,7 +229,7 @@ export const RecentChecksCarousel = forwardRef(function RecentChecksCarousel(
       <div
         className={CAROUSEL_TRACK_CLASS}
         aria-busy="true"
-        aria-label="Loading recent checks"
+        aria-label={tCommon('loading')}
       >
         {Array.from({ length: 8 }).map((_, index) => (
           <RecentCheckCardSkeleton key={index} />
@@ -156,18 +240,18 @@ export const RecentChecksCarousel = forwardRef(function RecentChecksCarousel(
 
   if (loopChecks.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground">No recent platform checks yet.</p>
+      <p className="text-sm text-muted-foreground">{resolvedEmpty}</p>
     );
   }
 
   return (
     <div
       ref={scrollRef}
-      className={CAROUSEL_TRACK_CLASS}
+      className={cn(CAROUSEL_TRACK_CLASS, 'select-none')}
       tabIndex={0}
       role="region"
       aria-roledescription="carousel"
-      aria-label="Recent weather checks"
+      aria-label={resolvedAriaLabel}
       onScroll={normalizeScrollPosition}
       onMouseEnter={pause}
       onMouseLeave={resume}
@@ -180,6 +264,11 @@ export const RecentChecksCarousel = forwardRef(function RecentChecksCarousel(
       onTouchStart={pause}
       onTouchEnd={resume}
       onTouchCancel={resume}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+      onClickCapture={onClickCapture}
     >
       {loopChecks.map((check, index) => (
         <RecentCheckCard

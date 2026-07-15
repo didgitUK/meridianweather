@@ -13,36 +13,23 @@ async function parseJson(response) {
   return payload;
 }
 
-export function AdminUsersPanel({ currentUser, onUserUpdated }) {
+export function AdminUsersPanel({ currentUser }) {
   const [users, setUsers] = useState([]);
+  const [invites, setInvites] = useState([]);
   const [error, setError] = useState('');
+  const [status, setStatus] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-
-  const [profileName, setProfileName] = useState(currentUser?.displayName ?? '');
-  const [profileEmail, setProfileEmail] = useState(currentUser?.email ?? '');
-  const [profileUserId, setProfileUserId] = useState(currentUser?.id ?? null);
-  const [profileMessage, setProfileMessage] = useState('');
-  const [isSavingProfile, setIsSavingProfile] = useState(false);
-
-  if (currentUser?.id !== profileUserId) {
-    setProfileUserId(currentUser?.id ?? null);
-    setProfileName(currentUser?.displayName ?? '');
-    setProfileEmail(currentUser?.email ?? '');
-  }
-
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [nextPassword, setNextPassword] = useState('');
-  const [passwordMessage, setPasswordMessage] = useState('');
-  const [isSavingPassword, setIsSavingPassword] = useState(false);
-
   const [newName, setNewName] = useState('');
   const [newEmail, setNewEmail] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [isCreating, setIsCreating] = useState(false);
+  const [isInviting, setIsInviting] = useState(false);
 
-  async function refreshUsers() {
-    const payload = await parseJson(await fetch('/api/admin/users'));
-    setUsers(payload.users ?? []);
+  async function refresh() {
+    const [usersPayload, invitesPayload] = await Promise.all([
+      parseJson(await fetch('/api/admin/users')),
+      parseJson(await fetch('/api/admin/users/invite')),
+    ]);
+    setUsers(usersPayload.users ?? []);
+    setInvites(invitesPayload.invites ?? []);
   }
 
   useEffect(() => {
@@ -50,7 +37,7 @@ export function AdminUsersPanel({ currentUser, onUserUpdated }) {
 
     (async () => {
       try {
-        await refreshUsers();
+        await refresh();
         if (!cancelled) {
           setError('');
         }
@@ -70,85 +57,73 @@ export function AdminUsersPanel({ currentUser, onUserUpdated }) {
     };
   }, []);
 
-  async function handleSaveProfile(event) {
+  async function handleInvite(event) {
     event.preventDefault();
-    setIsSavingProfile(true);
-    setProfileMessage('');
+    setIsInviting(true);
     setError('');
-
-    try {
-      const payload = await parseJson(
-        await fetch('/api/admin/me', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            displayName: profileName,
-            email: profileEmail,
-          }),
-        }),
-      );
-      onUserUpdated?.(payload.user);
-      setProfileMessage('Profile updated');
-      await refreshUsers();
-    } catch (saveError) {
-      setError(saveError.message);
-    } finally {
-      setIsSavingProfile(false);
-    }
-  }
-
-  async function handleChangePassword(event) {
-    event.preventDefault();
-    setIsSavingPassword(true);
-    setPasswordMessage('');
-    setError('');
+    setStatus('');
 
     try {
       await parseJson(
-        await fetch('/api/admin/me', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            currentPassword,
-            password: nextPassword,
-          }),
-        }),
-      );
-      setCurrentPassword('');
-      setNextPassword('');
-      setPasswordMessage('Password updated');
-    } catch (saveError) {
-      setError(saveError.message);
-    } finally {
-      setIsSavingPassword(false);
-    }
-  }
-
-  async function handleCreateUser(event) {
-    event.preventDefault();
-    setIsCreating(true);
-    setError('');
-
-    try {
-      await parseJson(
-        await fetch('/api/admin/users', {
+        await fetch('/api/admin/users/invite', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             displayName: newName,
             email: newEmail,
-            password: newPassword,
           }),
         }),
       );
       setNewName('');
       setNewEmail('');
-      setNewPassword('');
-      await refreshUsers();
-    } catch (createError) {
-      setError(createError.message);
+      setStatus('Invite email sent.');
+      await refresh();
+    } catch (inviteError) {
+      setError(inviteError.message);
     } finally {
-      setIsCreating(false);
+      setIsInviting(false);
+    }
+  }
+
+  async function handleResendInvite(invite) {
+    setError('');
+    setStatus('');
+    try {
+      await parseJson(
+        await fetch('/api/admin/users/invite', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            displayName: invite.displayName,
+            email: invite.email,
+            resend: true,
+          }),
+        }),
+      );
+      setStatus(`Invite resent to ${invite.email}.`);
+      await refresh();
+    } catch (resendError) {
+      setError(resendError.message);
+    }
+  }
+
+  async function handleRevokeInvite(invite) {
+    if (!window.confirm(`Revoke invite for ${invite.email}?`)) {
+      return;
+    }
+
+    setError('');
+    try {
+      await parseJson(
+        await fetch('/api/admin/users/invite', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: invite.id }),
+        }),
+      );
+      await refresh();
+    } catch (revokeError) {
+      setError(revokeError.message);
     }
   }
 
@@ -162,7 +137,7 @@ export function AdminUsersPanel({ currentUser, onUserUpdated }) {
           body: JSON.stringify({ id: user.id, active: !user.active }),
         }),
       );
-      await refreshUsers();
+      await refresh();
     } catch (toggleError) {
       setError(toggleError.message);
     }
@@ -182,29 +157,9 @@ export function AdminUsersPanel({ currentUser, onUserUpdated }) {
           body: JSON.stringify({ id: user.id }),
         }),
       );
-      await refreshUsers();
+      await refresh();
     } catch (deleteError) {
       setError(deleteError.message);
-    }
-  }
-
-  async function handleResetPassword(user) {
-    const password = window.prompt(`New password for ${user.email} (min 8 characters)`);
-    if (!password) {
-      return;
-    }
-
-    setError('');
-    try {
-      await parseJson(
-        await fetch('/api/admin/users', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: user.id, password }),
-        }),
-      );
-    } catch (resetError) {
-      setError(resetError.message);
     }
   }
 
@@ -215,61 +170,13 @@ export function AdminUsersPanel({ currentUser, onUserUpdated }) {
   return (
     <div className="flex flex-col gap-6">
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
+      {status ? <p className="text-sm text-muted-foreground">{status}</p> : null}
 
-      <AdminPanel title="Your profile" description="Update the account shown in the sidebar.">
-        <form onSubmit={handleSaveProfile} className="grid gap-4 sm:grid-cols-2">
-          <AdminField label="Display name">
-            <Input value={profileName} onChange={(event) => setProfileName(event.target.value)} required />
-          </AdminField>
-          <AdminField label="Email">
-            <Input
-              type="email"
-              value={profileEmail}
-              onChange={(event) => setProfileEmail(event.target.value)}
-              required
-            />
-          </AdminField>
-          <div className="sm:col-span-2 flex items-center gap-3">
-            <Button type="submit" disabled={isSavingProfile}>
-              {isSavingProfile ? 'Saving…' : 'Save profile'}
-            </Button>
-            {profileMessage ? <p className="text-sm text-muted-foreground">{profileMessage}</p> : null}
-          </div>
-        </form>
-      </AdminPanel>
-
-      <AdminPanel title="Change password" description="Use your current password to set a new one.">
-        <form onSubmit={handleChangePassword} className="grid gap-4 sm:grid-cols-2">
-          <AdminField label="Current password">
-            <Input
-              type="password"
-              autoComplete="current-password"
-              value={currentPassword}
-              onChange={(event) => setCurrentPassword(event.target.value)}
-              required
-            />
-          </AdminField>
-          <AdminField label="New password" hint="At least 8 characters">
-            <Input
-              type="password"
-              autoComplete="new-password"
-              value={nextPassword}
-              onChange={(event) => setNextPassword(event.target.value)}
-              minLength={8}
-              required
-            />
-          </AdminField>
-          <div className="sm:col-span-2 flex items-center gap-3">
-            <Button type="submit" disabled={isSavingPassword}>
-              {isSavingPassword ? 'Updating…' : 'Update password'}
-            </Button>
-            {passwordMessage ? <p className="text-sm text-muted-foreground">{passwordMessage}</p> : null}
-          </div>
-        </form>
-      </AdminPanel>
-
-      <AdminPanel title="Admin users" description="Create and manage administrators for this dashboard.">
-        <form onSubmit={handleCreateUser} className="mb-6 grid gap-4 border-b pb-6 sm:grid-cols-3">
+      <AdminPanel
+        title="Invite admin"
+        description="Send an email invite. Admins set their own password when they accept."
+      >
+        <form onSubmit={handleInvite} className="grid gap-4 sm:grid-cols-2">
           <AdminField label="Display name">
             <Input value={newName} onChange={(event) => setNewName(event.target.value)} required />
           </AdminField>
@@ -281,22 +188,44 @@ export function AdminUsersPanel({ currentUser, onUserUpdated }) {
               required
             />
           </AdminField>
-          <AdminField label="Temporary password" hint="At least 8 characters">
-            <Input
-              type="password"
-              value={newPassword}
-              onChange={(event) => setNewPassword(event.target.value)}
-              minLength={8}
-              required
-            />
-          </AdminField>
-          <div className="sm:col-span-3">
-            <Button type="submit" disabled={isCreating}>
-              {isCreating ? 'Creating…' : 'Add admin user'}
+          <div className="sm:col-span-2">
+            <Button type="submit" disabled={isInviting}>
+              {isInviting ? 'Sending invite…' : 'Send invite'}
             </Button>
           </div>
         </form>
+      </AdminPanel>
 
+      {invites.length > 0 ? (
+        <AdminPanel title="Pending invites" description="Invites expire after 72 hours.">
+          <ul className="flex flex-col gap-3">
+            {invites.map((invite) => (
+              <li
+                key={invite.id}
+                className="flex flex-col gap-3 rounded-lg border border-border/60 p-4 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="min-w-0">
+                  <p className="truncate font-medium">{invite.displayName}</p>
+                  <p className="truncate text-sm text-muted-foreground">{invite.email}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Expires {new Date(invite.expiresAt).toLocaleString()}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button type="button" variant="outline" size="sm" onClick={() => handleResendInvite(invite)}>
+                    Resend
+                  </Button>
+                  <Button type="button" variant="outline" size="sm" onClick={() => handleRevokeInvite(invite)}>
+                    Revoke
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </AdminPanel>
+      ) : null}
+
+      <AdminPanel title="Admin users" description="Active and disabled administrators.">
         <ul className="flex flex-col gap-3">
           {users.map((user) => {
             const isSelf = currentUser?.id && currentUser.id === user.id;
@@ -315,9 +244,6 @@ export function AdminUsersPanel({ currentUser, onUserUpdated }) {
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <Button type="button" variant="outline" size="sm" onClick={() => handleResetPassword(user)}>
-                    Reset password
-                  </Button>
                   <Button
                     type="button"
                     variant="outline"

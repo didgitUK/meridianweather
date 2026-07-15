@@ -1,13 +1,6 @@
-import { PageSection } from '@/components/layout/PageSection';
-import { WeatherCardSkeleton } from '@/features/weather/components/WeatherCardSkeleton';
+import { BrandLoadingScreen } from '@/features/weather/components/CityDetailLoadingScreen';
 
 export default function CityLoading() {
-  return (
-    <PageSection>
-      <div className="flex flex-col gap-4">
-        <WeatherCardSkeleton />
-        <WeatherCardSkeleton />
-      </div>
-    </PageSection>
-  );
+  // Fixed stage — soft-progress must not cycle through "Checking alerts…" while RSC loads.
+  return <BrandLoadingScreen stageKey="loadingLocation" />;
 }

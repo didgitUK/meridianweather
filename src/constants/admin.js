@@ -12,18 +12,27 @@ export const ADMIN_SECTION_IDS = {
   adsense: 'adsense',
   emailConnectors: 'email-connectors',
   alertConnectors: 'alert-connectors',
+  emailDashboard: 'email-dashboard',
+  mailingLists: 'mailing-lists',
   emailTemplates: 'email-templates',
+  emailSettings: 'email-settings',
+  /** Legacy — aliased to emailTemplates */
+  authEmails: 'auth-emails',
+  /** Legacy — aliased to emailTemplates */
+  adminEmails: 'admin-emails',
   newsletter: 'newsletter',
   weeklyDigests: 'weekly-digests',
   alertSubscribers: 'alert-subscribers',
   policies: 'policies',
   documentation: 'documentation',
+  profile: 'profile',
   users: 'users',
 };
 
 /**
  * Grouped admin sidebar. Subheadings keep every option visible.
- * Connectors own all credential/integration panels; Alerts manages subscriber prefs.
+ * Connectors own credential/integration panels; Email owns mailing
+ * analytics, rosters, templates, and digest defaults.
  *
  * `icon` is a lucide icon name resolved in AdminSidebarNav.
  */
@@ -35,7 +44,7 @@ export const ADMIN_NAV_GROUPS = [
       {
         id: ADMIN_SECTION_IDS.overview,
         label: 'Dashboard',
-        hint: 'At-a-glance status and shortcuts',
+        hint: 'Analytics, API use, email lists, and AdSense',
         icon: 'LayoutDashboard',
       },
     ],
@@ -53,7 +62,7 @@ export const ADMIN_NAV_GROUPS = [
       {
         id: ADMIN_SECTION_IDS.platform,
         label: 'Platform limits',
-        hint: 'Saved-city caps and public platform controls',
+        hint: 'Maximum saved cities per device',
         icon: 'Gauge',
       },
       {
@@ -89,7 +98,7 @@ export const ADMIN_NAV_GROUPS = [
       {
         id: ADMIN_SECTION_IDS.emailConnectors,
         label: 'Email',
-        hint: 'Resend, SendGrid, and SES credentials',
+        hint: 'Resend, SendGrid, SES, and SMTP credentials',
         icon: 'Mail',
       },
       {
@@ -105,34 +114,28 @@ export const ADMIN_NAV_GROUPS = [
     label: 'Email',
     items: [
       {
-        id: ADMIN_SECTION_IDS.emailTemplates,
-        label: 'Templates',
-        hint: 'Edit transactional email HTML',
-        icon: 'FileText',
+        id: ADMIN_SECTION_IDS.emailDashboard,
+        label: 'Dashboard',
+        hint: 'Mailing list sizes and popularity',
+        icon: 'LayoutDashboard',
       },
       {
-        id: ADMIN_SECTION_IDS.newsletter,
-        label: 'Newsletter',
-        hint: 'Platform newsletter signups',
+        id: ADMIN_SECTION_IDS.mailingLists,
+        label: 'Mailing Lists',
+        hint: 'Newsletter, weekly digests, and alert subscriber rosters',
         icon: 'Newspaper',
       },
       {
-        id: ADMIN_SECTION_IDS.weeklyDigests,
-        label: 'Weekly digests',
-        hint: 'City weekly digest subscribers',
-        icon: 'CalendarDays',
+        id: ADMIN_SECTION_IDS.emailTemplates,
+        label: 'Email Templates',
+        hint: 'Mailing, auth, and admin reply templates with preview',
+        icon: 'FileText',
       },
-    ],
-  },
-  {
-    id: 'alerts',
-    label: 'Alerts',
-    items: [
       {
-        id: ADMIN_SECTION_IDS.alertSubscribers,
-        label: 'Subscribers',
-        hint: 'Per-location alert type preferences',
-        icon: 'Bell',
+        id: ADMIN_SECTION_IDS.emailSettings,
+        label: 'Settings',
+        hint: 'Digest frequency defaults and mailing preferences',
+        icon: 'Settings',
       },
     ],
   },
@@ -159,9 +162,15 @@ export const ADMIN_NAV_GROUPS = [
     label: 'Account',
     items: [
       {
+        id: ADMIN_SECTION_IDS.profile,
+        label: 'Profile',
+        hint: 'Your display name, email, and password',
+        icon: 'UserRound',
+      },
+      {
         id: ADMIN_SECTION_IDS.users,
         label: 'Users',
-        hint: 'Admin accounts and profile',
+        hint: 'Invite and manage admin accounts',
         icon: 'Users',
       },
     ],
@@ -177,9 +186,29 @@ export function getAdminSection(sectionId) {
 
 /** Redirect legacy section ids after nav reorganisation. */
 export const ADMIN_SECTION_ALIASES = {
-  'weather-alerts': ADMIN_SECTION_IDS.alertSubscribers,
-  subscribers: ADMIN_SECTION_IDS.newsletter,
+  'weather-alerts': ADMIN_SECTION_IDS.mailingLists,
+  'alert-subscribers': ADMIN_SECTION_IDS.mailingLists,
+  subscribers: ADMIN_SECTION_IDS.mailingLists,
+  newsletter: ADMIN_SECTION_IDS.mailingLists,
+  'weekly-digests': ADMIN_SECTION_IDS.mailingLists,
+  'auth-emails': ADMIN_SECTION_IDS.emailTemplates,
+  'admin-emails': ADMIN_SECTION_IDS.emailTemplates,
 };
+
+export const WEEKLY_DIGEST_FREQUENCY_OPTIONS = [
+  { value: 'weekly', label: 'Weekly' },
+  { value: 'daily', label: 'Daily' },
+];
+
+export const WEEKLY_DIGEST_DAY_OPTIONS = [
+  { value: 0, label: 'Sunday' },
+  { value: 1, label: 'Monday' },
+  { value: 2, label: 'Tuesday' },
+  { value: 3, label: 'Wednesday' },
+  { value: 4, label: 'Thursday' },
+  { value: 5, label: 'Friday' },
+  { value: 6, label: 'Saturday' },
+];
 
 export const INACCURACY_AUTO_DISMISS_DAY_OPTIONS = [
   { label: '1 day', value: 1 },

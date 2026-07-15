@@ -5,7 +5,35 @@ const SCRYPT_R = 8;
 const SCRYPT_P = 1;
 const KEYLEN = 64;
 
+export const MIN_PASSWORD_LENGTH = 8;
+export const MAX_PASSWORD_LENGTH = 128;
+
+/**
+ * @param {string} password
+ * @returns {{ ok: true } | { ok: false, message: string }}
+ */
+export function validatePasswordPolicy(password) {
+  if (!password || typeof password !== 'string') {
+    return { ok: false, message: `Password must be at least ${MIN_PASSWORD_LENGTH} characters` };
+  }
+
+  if (password.length < MIN_PASSWORD_LENGTH) {
+    return { ok: false, message: `Password must be at least ${MIN_PASSWORD_LENGTH} characters` };
+  }
+
+  if (password.length > MAX_PASSWORD_LENGTH) {
+    return { ok: false, message: `Password must be at most ${MAX_PASSWORD_LENGTH} characters` };
+  }
+
+  return { ok: true };
+}
+
 export function hashPassword(password) {
+  const policy = validatePasswordPolicy(password);
+  if (!policy.ok) {
+    throw new Error(policy.message);
+  }
+
   const salt = crypto.randomBytes(16).toString('base64url');
   const derived = crypto
     .scryptSync(password, salt, KEYLEN, { N: SCRYPT_N, r: SCRYPT_R, p: SCRYPT_P })
@@ -16,6 +44,10 @@ export function hashPassword(password) {
 
 export function verifyPassword(password, stored) {
   if (!password || !stored) {
+    return false;
+  }
+
+  if (password.length > MAX_PASSWORD_LENGTH) {
     return false;
   }
 

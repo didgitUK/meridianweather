@@ -24,8 +24,6 @@ export const ADMIN_CONNECTION_CHECK_MODE = {
   LIVE: 'live',
   /** Credentials / settings only until a live probe lands. */
   CONFIG: 'config',
-  /** Placeholder for integrations still being wired by other agents. */
-  STUB: 'stub',
 };
 
 export const ADMIN_CONNECTIONS = [
@@ -46,9 +44,29 @@ export const ADMIN_CONNECTIONS = [
   {
     id: 'email',
     label: 'Email',
-    description: 'Resend / SendGrid / Amazon SES',
+    description: 'Resend / SendGrid / Amazon SES / SMTP',
     kind: ADMIN_CONNECTION_KIND.GROUP,
     checkMode: ADMIN_CONNECTION_CHECK_MODE.CONFIG,
+  },
+  {
+    id: 'alert-feeds',
+    label: 'Alert feeds',
+    description: 'Open-Meteo warnings / US NWS',
+    kind: ADMIN_CONNECTION_KIND.GROUP,
+    checkMode: ADMIN_CONNECTION_CHECK_MODE.LIVE,
+  },
+];
+
+export const ADMIN_ALERT_FEED_CONNECTIONS = [
+  {
+    id: 'open-meteo',
+    label: 'Open-Meteo warnings',
+    description: 'Global national weather warnings',
+  },
+  {
+    id: 'nws',
+    label: 'US NWS',
+    description: 'US National Weather Service alerts',
   },
 ];
 
@@ -78,6 +96,9 @@ export const ADMIN_CONNECTION_SECTION = {
   'email-resend': ADMIN_SECTION_IDS.emailConnectors,
   'email-sendgrid': ADMIN_SECTION_IDS.emailConnectors,
   'email-ses': ADMIN_SECTION_IDS.emailConnectors,
+  'email-smtp': ADMIN_SECTION_IDS.emailConnectors,
+  'open-meteo': ADMIN_SECTION_IDS.alertConnectors,
+  nws: ADMIN_SECTION_IDS.alertConnectors,
 };
 
 export function getAdminConnectionSectionId(connectionId) {

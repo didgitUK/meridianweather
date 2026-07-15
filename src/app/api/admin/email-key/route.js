@@ -11,6 +11,7 @@ const PROVIDER_ACTIONS = {
   [EMAIL_PROVIDERS.resend]: 'resend_api_key_viewed',
   [EMAIL_PROVIDERS.sendgrid]: 'sendgrid_api_key_viewed',
   [EMAIL_PROVIDERS.ses]: 'ses_secret_access_key_viewed',
+  [EMAIL_PROVIDERS.smtp]: 'smtp_password_viewed',
 };
 
 export async function POST(request) {

@@ -1,8 +1,20 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { useLocale } from 'next-intl';
 import { WEATHER_CHECK_TRIGGERS } from '@/constants/weather-check-triggers';
+import { DASHBOARD_CURRENT_MAX_AGE_MS } from '@/constants/weather';
+import { resolveOpenWeatherLang } from '@/i18n/locales';
 import { buildCityId } from '@/lib/utils';
+import { cacheMeetsMaxAge } from '@/lib/weather-cache-age';
 import { useUserLocationProfile } from '@/features/cities/hooks/useUserLocationProfile';
 import {
   saveConfirmedHomeLocation,
@@ -12,6 +24,8 @@ import {
   prefetchWeatherBatch,
   readLocalWeatherCache,
 } from '@/features/weather/utils/weather-cache';
+
+const HomeLocationWeatherContext = createContext(null);
 
 function buildCityCandidate(profile, weather) {
   const name = profile?.name ?? weather?.city ?? null;
@@ -34,18 +48,18 @@ function buildCityCandidate(profile, weather) {
 }
 
 function homeCacheCityId(profile) {
-  if (profile?.name && profile?.country && profile?.lat != null) {
-    return buildCityId(profile.name, profile.country, profile.lat);
-  }
-
   if (profile?.lat == null || profile?.lon == null) {
     return null;
   }
 
+  // Coordinate-keyed so renaming the profile city does not fork L0 cache rows
+  // or force a second OpenWeather batch for the same place.
   return `home:${Number(profile.lat).toFixed(4)},${Number(profile.lon).toFixed(4)}`;
 }
 
-export function useHomeLocationWeather() {
+function useHomeLocationWeatherState() {
+  const locale = useLocale();
+  const weatherLang = resolveOpenWeatherLang(locale);
   const {
     profile,
     displayLabel,
@@ -59,17 +73,20 @@ export function useHomeLocationWeather() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const metaSyncedRef = useRef(null);
+  const loadedCoordsRef = useRef(null);
 
   const profileLat = profile?.lat ?? null;
   const profileLon = profile?.lon ?? null;
   const profileName = profile?.name ?? null;
   const profileCountry = profile?.country ?? null;
   const profileSource = profile?.source ?? null;
+  const profileState = profile?.state ?? null;
 
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
+
       if (isLocationLoading) {
         return;
       }
@@ -80,17 +97,21 @@ export function useHomeLocationWeather() {
           setWeather(null);
           setError(null);
           setIsLoading(false);
+          loadedCoordsRef.current = null;
         }
         return;
       }
 
-      setIsLoading(true);
+      const coordsKey = `${Number(profileLat).toFixed(4)},${Number(profileLon).toFixed(4)}`;
+      if (loadedCoordsRef.current !== coordsKey) {
+        setIsLoading(true);
+      }
       setError(null);
 
       const locationSnapshot = {
         name: profileName,
         country: profileCountry,
-        state: profile?.state ?? null,
+        state: profileState,
         lat: profileLat,
         lon: profileLon,
         source: profileSource,
@@ -103,10 +124,29 @@ export function useHomeLocationWeather() {
 
       const cacheId = homeCacheCityId(locationSnapshot);
       const cached = cacheId ? readLocalWeatherCache(cacheId, 'current') : null;
+      const cacheFresh = Boolean(
+        cached?.payload
+        && cacheMeetsMaxAge(
+          { meta: { fetchedAt: cached.fetchedAt } },
+          DASHBOARD_CURRENT_MAX_AGE_MS,
+        ),
+      );
 
       if (cached?.payload && !cancelled) {
         setCity(buildCityCandidate(locationSnapshot, cached.payload) ?? provisionalCity);
         setWeather(cached.payload);
+      }
+
+      // Local-first: reuse fresh L0 and skip OpenWeather when coords already warm.
+      if (cacheFresh && loadedCoordsRef.current === coordsKey && !cancelled) {
+        setIsLoading(false);
+        return;
+      }
+
+      if (cacheFresh && !cancelled) {
+        loadedCoordsRef.current = coordsKey;
+        setIsLoading(false);
+        return;
       }
 
       try {
@@ -116,6 +156,7 @@ export function useHomeLocationWeather() {
           cityId: cacheId,
           scopes: ['current'],
           trigger: WEATHER_CHECK_TRIGGERS.dashboardLoad,
+          lang: weatherLang,
         });
         const data = entry?.scopes?.current?.data ?? null;
 
@@ -124,6 +165,11 @@ export function useHomeLocationWeather() {
         }
 
         if (!data) {
+          if (cached?.payload) {
+            loadedCoordsRef.current = coordsKey;
+            setIsLoading(false);
+            return;
+          }
           setError('Unable to load local weather');
           setIsLoading(false);
           return;
@@ -131,8 +177,9 @@ export function useHomeLocationWeather() {
 
         setCity(buildCityCandidate(locationSnapshot, data));
         setWeather(data);
+        loadedCoordsRef.current = coordsKey;
 
-        const syncKey = `${profileLat},${profileLon}:${data.city ?? ''}`;
+        const syncKey = `${coordsKey}:${data.city ?? ''}`;
         if (
           data.city
           && profileSource !== 'confirmed'
@@ -149,7 +196,11 @@ export function useHomeLocationWeather() {
         }
       } catch (loadError) {
         if (!cancelled) {
-          setError(loadError.message ?? 'Unable to load local weather');
+          if (cached?.payload) {
+            loadedCoordsRef.current = coordsKey;
+          } else {
+            setError(loadError.message ?? 'Unable to load local weather');
+          }
         }
       } finally {
         if (!cancelled) {
@@ -170,8 +221,9 @@ export function useHomeLocationWeather() {
     profileName,
     profileCountry,
     profileSource,
-    profile?.state,
+    profileState,
     refreshProfile,
+    weatherLang,
   ]);
 
   const confirmHomeLocation = useCallback((selectedCity) => {
@@ -180,6 +232,7 @@ export function useHomeLocationWeather() {
     setWeather(null);
     setError(null);
     setIsLoading(true);
+    loadedCoordsRef.current = null;
     setCity({
       id: buildCityId(selectedCity.name, selectedCity.country, selectedCity.lat),
       name: selectedCity.name,
@@ -190,7 +243,7 @@ export function useHomeLocationWeather() {
     });
   }, [refreshProfile]);
 
-  return {
+  return useMemo(() => ({
     profile,
     displayLabel,
     sourceLabel,
@@ -202,5 +255,36 @@ export function useHomeLocationWeather() {
     isConfirmed: profileSource === 'confirmed',
     confirmHomeLocation,
     refreshProfile,
-  };
+  }), [
+    profile,
+    displayLabel,
+    sourceLabel,
+    city,
+    weather,
+    isLocationLoading,
+    isLoading,
+    error,
+    profileLat,
+    profileLon,
+    profileSource,
+    confirmHomeLocation,
+    refreshProfile,
+  ]);
+}
+
+export function HomeLocationWeatherProvider({ children }) {
+  const value = useHomeLocationWeatherState();
+  return (
+    <HomeLocationWeatherContext.Provider value={value}>
+      {children}
+    </HomeLocationWeatherContext.Provider>
+  );
+}
+
+export function useHomeLocationWeather() {
+  const context = useContext(HomeLocationWeatherContext);
+  if (!context) {
+    throw new Error('useHomeLocationWeather requires HomeLocationWeatherProvider');
+  }
+  return context;
 }

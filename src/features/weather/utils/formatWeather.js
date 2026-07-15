@@ -2,6 +2,7 @@ import {
   TEMPERATURE_UNIT,
   convertTemperatureFromCelsius,
   normalizeTemperatureUnit,
+  temperatureUnitSuffix,
 } from '@/constants/temperature-unit';
 
 export function formatWindDirection(degrees) {
@@ -13,9 +14,10 @@ export function formatWindDirection(degrees) {
 export function formatTemperature(value, unit = TEMPERATURE_UNIT.CELSIUS) {
   if (value == null) return '—';
 
-  const display = convertTemperatureFromCelsius(value, normalizeTemperatureUnit(unit));
+  const normalized = normalizeTemperatureUnit(unit);
+  const display = convertTemperatureFromCelsius(value, normalized);
 
-  return `${Math.round(display)}°`;
+  return `${Math.round(display)}${temperatureUnitSuffix(normalized)}`;
 }
 
 export function formatConditionLabel(description) {

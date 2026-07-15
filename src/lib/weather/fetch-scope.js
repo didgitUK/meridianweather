@@ -1,6 +1,5 @@
 import {
   WEATHER_CHECK_CACHE_OUTCOMES,
-  WEATHER_CHECK_TRIGGERS,
   mapCacheLayerToOutcome,
   normalizeWeatherCheckTrigger,
 } from '@/constants/weather-check-triggers';
@@ -14,6 +13,7 @@ import { buildSnapshotKey } from '@/lib/weather-snapshot-repo';
 import { recordServedWeatherCheck } from '@/lib/location-repo';
 import { readFromCaches, wrapSnapshot } from '@/lib/weather/cache-policy';
 import { persistAndReturn } from '@/lib/weather/persist';
+import { TARGET_DAILY_FORECAST_DAYS } from '@/lib/weather/daily-horizon';
 import {
   fetchCurrentFromUpstream,
   fetchScopedFromUpstream,
@@ -38,6 +38,12 @@ function recordCurrentCheckFromResponse(lat, lon, scope, response, trigger) {
   const cacheLayer = response.meta?.cacheLayer ?? 'upstream';
   const cacheOutcome = mapCacheLayerToOutcome(cacheLayer);
   const tokensUsed = cacheOutcome === WEATHER_CHECK_CACHE_OUTCOMES.upstream ? 1 : 0;
+  // Cache serves are not new lookups — only upstream spends quota and counts as a check.
+  const willRecord = cacheOutcome === WEATHER_CHECK_CACHE_OUTCOMES.upstream;
+
+  if (!willRecord) {
+    return;
+  }
 
   recordServedWeatherCheck({
     lat,
@@ -77,12 +83,18 @@ export async function fetchWeatherForScope(lat, lon, scope = 'current', options 
     ['hourly', 'daily'].includes(scope)
     && cached?.data?.source?.startsWith('forecast_2_5')
     && cached.data.points?.some((point) => point.uvi == null);
+  const cachedNeedsDailyHorizon =
+    scope === 'daily'
+    && Array.isArray(cached?.data?.points)
+    && cached.data.points.length > 0
+    && cached.data.points.length < TARGET_DAILY_FORECAST_DAYS;
   const cachedIsUsable =
     cached
     && !cached.emergency
     && cachedHasTimelinePoints
     && !cachedNeedsLegacySupplement
-    && !cachedNeedsTimelineEnrichment;
+    && !cachedNeedsTimelineEnrichment
+    && !cachedNeedsDailyHorizon;
   const cachedIsFreshEnough = cacheMeetsMaxAge(cached, maxAgeMs);
 
   if (cachedIsUsable && cachedIsFreshEnough) {
@@ -110,12 +122,13 @@ export async function fetchWeatherForScope(lat, lon, scope = 'current', options 
   }
 
   const promise = (async () => {
+    const usageMeta = enrichUsageMeta(lat, lon, scope, trigger);
     const tracked = await trackUpstreamCall(
       scope === 'current' ? 'onecall_current' : `onecall_${scope}`,
       () => (scope === 'current'
-        ? fetchCurrentFromUpstream(lat, lon, lang)
-        : fetchScopedFromUpstream(lat, lon, scope, lang)),
-      enrichUsageMeta(lat, lon, scope, trigger),
+        ? fetchCurrentFromUpstream(lat, lon, lang, usageMeta)
+        : fetchScopedFromUpstream(lat, lon, scope, lang, usageMeta)),
+      usageMeta,
     );
 
     if (tracked.blocked) {
@@ -188,6 +201,3 @@ export async function fetchWeatherBatch(cities, options = {}) {
 
   return { cities: results };
 }
-
-// Re-export for tests / callers that need the default unknown constant.
-export { WEATHER_CHECK_TRIGGERS };

@@ -1,6 +1,14 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useConsent } from '@/providers/ConsentProvider';
 import { getCountryLabel } from '@/lib/geo/country-labels';
 import {
@@ -10,6 +18,8 @@ import {
   toGeocodeContext,
   writeUserLocationMeta,
 } from '@/features/cities/utils/user-location-profile';
+
+const UserLocationProfileContext = createContext(null);
 
 function requestBrowserLocation() {
   return new Promise((resolve, reject) => {
@@ -35,7 +45,22 @@ function requestBrowserLocation() {
   });
 }
 
-export function useUserLocationProfile() {
+/** Shared across the app so Strict Mode remounts do not re-hit the region API. */
+let regionHintPromise = null;
+let autoGpsLock = false;
+
+function loadRegionHintOnce() {
+  if (!regionHintPromise) {
+    regionHintPromise = fetch('/api/location/region')
+      .then((response) => response.json())
+      .then((payload) => payload?.region ?? null)
+      .catch(() => null);
+  }
+
+  return regionHintPromise;
+}
+
+function useUserLocationProfileState() {
   const { consent } = useConsent();
   const [profile, setProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,15 +77,9 @@ export function useUserLocationProfile() {
     async function bootstrap() {
       setIsLoading(true);
 
-      try {
-        const response = await fetch('/api/location/region');
-        const payload = await response.json();
-
-        if (!cancelled && payload.region) {
-          writeUserLocationMeta({ ipHint: payload.region });
-        }
-      } catch {
-        // Ignore network hint failures.
+      const region = await loadRegionHintOnce();
+      if (!cancelled && region) {
+        writeUserLocationMeta({ ipHint: region });
       }
 
       if (!cancelled) {
@@ -118,7 +137,7 @@ export function useUserLocationProfile() {
   }, [consent.functional]);
 
   useEffect(() => {
-    if (isLoading || !consent.functional || gpsDenied || autoGpsRequestedRef.current) {
+    if (isLoading || !consent.functional || gpsDenied || autoGpsRequestedRef.current || autoGpsLock) {
       return;
     }
 
@@ -128,6 +147,7 @@ export function useUserLocationProfile() {
     }
 
     autoGpsRequestedRef.current = true;
+    autoGpsLock = true;
     Promise.resolve().then(() => {
       void requestPreciseLocation();
     });
@@ -148,7 +168,7 @@ export function useUserLocationProfile() {
 
   const displayLabel = profile?.label ?? getCountryLabel(profile?.country);
 
-  return {
+  return useMemo(() => ({
     profile,
     geocodeContext,
     displayLabel,
@@ -157,5 +177,31 @@ export function useUserLocationProfile() {
     gpsDenied,
     requestPreciseLocation,
     refreshProfile,
-  };
+  }), [
+    profile,
+    geocodeContext,
+    displayLabel,
+    sourceLabel,
+    isLoading,
+    gpsDenied,
+    requestPreciseLocation,
+    refreshProfile,
+  ]);
+}
+
+export function UserLocationProfileProvider({ children }) {
+  const value = useUserLocationProfileState();
+  return (
+    <UserLocationProfileContext.Provider value={value}>
+      {children}
+    </UserLocationProfileContext.Provider>
+  );
+}
+
+export function useUserLocationProfile() {
+  const context = useContext(UserLocationProfileContext);
+  if (!context) {
+    throw new Error('useUserLocationProfile requires UserLocationProfileProvider');
+  }
+  return context;
 }

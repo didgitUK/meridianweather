@@ -1,7 +1,7 @@
 import { POPULAR_CITIES } from '@/constants/popular-cities';
 import { haversineKm } from '@/lib/geo/distance';
 
-const GEOCODE_RESULT_LIMIT = 8;
+const GEOCODE_RESULT_LIMIT = 10;
 
 function buildLabel(result) {
   return [result.name, result.county, result.state, result.country].filter(Boolean).join(', ');
@@ -74,21 +74,21 @@ export function scoreGeocodeResult(result, query, context = null) {
   let score = nameScore + populationScore + curatedBoost;
 
   if (!context?.country) {
-    return score;
-  }
-
-  if (result.country?.toUpperCase() === context.country.toUpperCase()) {
+    // Still apply distance when coordinates are known without a country context.
+  } else if (result.country?.toUpperCase() === context.country.toUpperCase()) {
     score += 450;
   }
 
   if (
-    context.lat != null
-    && context.lon != null
+    context?.lat != null
+    && context?.lon != null
     && result.lat != null
     && result.lon != null
   ) {
     const distanceKm = haversineKm(context.lat, context.lon, result.lat, result.lon);
-    score += Math.max(0, 350 - distanceKm * 0.75);
+    // Exact name matches stay name-dominant; prefix/partial prefer nearer places.
+    const distanceWeight = nameScore >= 1_000 ? 0.75 : 1.45;
+    score += Math.max(0, 400 - distanceKm * distanceWeight);
   }
 
   return score;

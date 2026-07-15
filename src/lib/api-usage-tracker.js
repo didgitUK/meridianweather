@@ -27,6 +27,12 @@ function pruneMinuteWindow() {
 
 export function recordCacheHit(endpoint, meta = {}) {
   resetIfNeeded();
+  // Memory hits fire on every SSR/client remount. Persisting them to SQLite makes
+  // meridian.db churn under NextCloud / file watchers and feels like constant reloads.
+  if (meta?.layer === 'memory') {
+    return;
+  }
+
   logApiCall({
     id: uuidv4(),
     timestamp: new Date().toISOString(),

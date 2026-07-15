@@ -1,8 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { PageSection } from '@/components/layout/PageSection';
 import { RecentChecksSection } from '@/features/weather/components/RecentChecksSection';
+import { HomeBlogSection } from '@/features/weather/components/HomeBlogSection';
 import { RemoveCityDialog } from '@/features/cities/components/RemoveCityDialog';
 import { useSavedCities } from '@/features/cities/hooks/useSavedCities';
 import { useClientId } from '@/features/cities/hooks/useClientId';
@@ -16,10 +18,14 @@ import {
   DASHBOARD_LOCATIONS_SECTION_ID,
   DASHBOARD_RECENT_CHECKS_SECTION_ID,
 } from '@/features/weather/components/DashboardHeroActions';
+import { SHOW_HOME_STRETCH_SECTIONS } from '@/constants/platform';
 import { SPACING, TYPOGRAPHY } from '@/constants/design-tokens';
+import { singleFlight } from '@/lib/client/single-flight';
 import { cn } from '@/lib/utils';
 
-export function DashboardPage({ initialRecentChecks = null }) {
+export function DashboardPage({ heroImage = null }) {
+  const t = useTranslations('Dashboard.locations');
+  const tCommon = useTranslations('Common');
   const clientId = useClientId();
   const { savedCities, isHydrated, removeCity } = useSavedCities();
   const { registry, hydrateFromServer } = useLocalSubscriptions();
@@ -32,14 +38,26 @@ export function DashboardPage({ initialRecentChecks = null }) {
   useEffect(() => {
     if (!clientId || !isHydrated) return;
 
-    fetch(`/api/subscriptions?clientId=${encodeURIComponent(clientId)}`)
-      .then((response) => response.json())
+    let cancelled = false;
+    singleFlight(`subscriptions-hydrate:${clientId}`, async () => {
+      const response = await fetch(
+        `/api/subscriptions?clientId=${encodeURIComponent(clientId)}`,
+      );
+      if (!response.ok) {
+        return null;
+      }
+      return response.json();
+    })
       .then((payload) => {
-        if (payload.subscriptions) {
+        if (!cancelled && payload?.subscriptions) {
           hydrateFromServer(payload.subscriptions, savedCities);
         }
       })
       .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
   }, [clientId, hydrateFromServer, isHydrated, savedCities]);
 
   const handleRequestRemove = useCallback(
@@ -57,28 +75,19 @@ export function DashboardPage({ initialRecentChecks = null }) {
   if (!isHydrated) {
     return (
       <PageSection>
-        <p className="text-sm text-muted-foreground">Loading your locations…</p>
+        <p className="text-sm text-muted-foreground">{tCommon('loadingLocations')}</p>
       </PageSection>
     );
   }
 
   return (
     <>
-      <PageSection tone="muted">
-        <section
-          id={DASHBOARD_RECENT_CHECKS_SECTION_ID}
-          className="scroll-mt-[calc(var(--site-header-height,4.5rem)+1rem)]"
-        >
-          <RecentChecksSection initialChecks={initialRecentChecks} />
-        </section>
-      </PageSection>
-
-      <PageSection className="border-b-0">
+      <PageSection>
         <section id={DASHBOARD_LOCATIONS_SECTION_ID} className={cn('flex scroll-mt-[calc(var(--site-header-height,4.5rem)+1rem)] flex-col', SPACING.stack6)}>
           <div>
-            <h2 className={cn(TYPOGRAPHY.displaySm, TYPOGRAPHY.heading)}>Your locations</h2>
+            <h2 className={cn(TYPOGRAPHY.displaySm, TYPOGRAPHY.heading)}>{t('title')}</h2>
           <p className={cn('mt-1', TYPOGRAPHY.muted)}>
-            Cities you have pinned from a check.
+            {t('description')}
           </p>
           </div>
           <WeatherGrid
@@ -95,9 +104,37 @@ export function DashboardPage({ initialRecentChecks = null }) {
         </section>
       </PageSection>
 
-      <PageSection tone="muted" innerClassName="py-8 sm:py-10">
-        <AdSlot placement="dashboard" />
+      <PageSection tone="muted">
+        <section
+          id={DASHBOARD_RECENT_CHECKS_SECTION_ID}
+          className="scroll-mt-[calc(var(--site-header-height,4.5rem)+1rem)]"
+        >
+          <RecentChecksSection />
+        </section>
       </PageSection>
+
+      {SHOW_HOME_STRETCH_SECTIONS ? (
+        <>
+          <PageSection tone="muted" className="border-b-0" innerClassName="py-8 sm:py-10">
+            <AdSlot
+              placement="dashboard"
+              imageUrl={
+                typeof heroImage?.landscape?.imageUrl === 'string'
+                && /^https?:\/\//.test(heroImage.landscape.imageUrl)
+                  ? heroImage.landscape.imageUrl
+                  : null
+              }
+            />
+          </PageSection>
+
+          <PageSection
+            className="border-b-0 bg-[#f7f7f7] dark:bg-background"
+            innerClassName="!pb-[calc(var(--space-section-block)*2)]"
+          >
+            <HomeBlogSection />
+          </PageSection>
+        </>
+      ) : null}
 
       <RemoveCityDialog
         city={pendingCity}

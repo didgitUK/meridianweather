@@ -1,13 +1,13 @@
 export const forecastsDoc = {
   slug: 'forecasts',
   title: 'Forecasts & cache',
-  lastUpdated: '2026-07-09',
+  lastUpdated: '2026-07-15',
   sections: [
     {
       id: 'scopes',
       title: 'Weather scopes',
       body:
-        'Client-requestable scopes: current (now), hourly (timeline), daily (timeline), minutely (precipitation). Server-only scopes: geocode (city search cache keyed geocode:{query}), alert (individual alert payloads). Each scope has its own cache key {lat},{lon},{scope} except geocode.',
+        'Client-requestable scopes: current (now), hourly (timeline), daily (timeline), minutely (precipitation). Server-only scopes: geocode (city search cache keyed geocode:{query}), alert (individual alert payloads). Each weather scope uses cache key {lat},{lon},{scope}; geocode keys by query string.',
     },
     {
       id: 'layers',
@@ -31,13 +31,13 @@ export const forecastsDoc = {
       id: 'upstream',
       title: 'OpenWeather integration',
       body:
-        'Primary: One Call API 4.0 (onecall/current, timeline/1h, timeline/1day, timeline/1min). Current scope falls back to API 2.5 /weather if One Call current fails. Geocode uses OpenWeather geocoding API. Normalisation in src/lib/one-call.js produces consistent UI payloads.',
+        'Primary: One Call API 4.0 (onecall/current, timeline/1h, timeline/1day, timeline/1min). Current scope falls back to API 2.5 /weather if One Call current fails. Geocode uses OpenWeather geocoding API (limit 5). Normalisation in src/lib/one-call.js produces consistent UI payloads.',
     },
     {
       id: 'batch',
       title: 'Batch fetching',
       body:
-        'POST /api/weather/batch accepts {cities: [{lat, lon}], scopes: []}. Dashboard loads current for all cities, then idle-loads daily per card. City detail batches current+hourly+daily+minutely. Batch handler spaces requests ~100ms apart to avoid burst rate limits.',
+        'POST /api/weather/batch accepts { cities: [{ lat, lon, scopes?: string[], id?, lang?, maxAgeMs?, trigger? }], trigger?, lang? }. Scopes are per-city (city.scopes), not a top-level scopes array. Dashboard loads current + daily together in one batch (no requestIdleCallback). City detail batches current + hourly + daily only. The handler spaces cities ~100ms apart to avoid burst rate limits.',
     },
     {
       id: 'headers',
@@ -49,7 +49,13 @@ export const forecastsDoc = {
       id: 'quota',
       title: 'Quota interaction',
       body:
-        'When daily or per-minute limits are exceeded, upstream calls stop and emergency stale L2 data is returned if available. Forecast scopes load lazily on cards to reduce quota use. Reopening a city within TTL costs zero upstream calls.',
+        'When daily or per-minute limits are exceeded, upstream calls stop and emergency stale L2 data is returned if available. Reopening a city within TTL costs zero upstream calls.',
+    },
+    {
+      id: 'logging',
+      title: 'Cache hit logging',
+      body:
+        'L2 database cache hits log to api_call_log with cache_hit=1 and do not increment the daily upstream counter. L1 memory hits are served but intentionally not persisted to SQLite — they fire on every SSR/client remount and would churn meridian.db under file watchers.',
     },
     {
       id: 'payload-fields',

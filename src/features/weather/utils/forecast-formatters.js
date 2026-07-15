@@ -2,7 +2,9 @@ import {
   TEMPERATURE_UNIT,
   convertTemperatureFromCelsius,
   normalizeTemperatureUnit,
+  temperatureUnitSuffix,
 } from '@/constants/temperature-unit';
+import { getActiveDateLocale } from '@/features/weather/utils/forecast-date-locale';
 
 export function formatPrecipMm(value) {
   if (value == null) {
@@ -41,7 +43,7 @@ export function formatSunTime(timestamp, timezone = null) {
     return '—';
   }
 
-  return new Date(timestamp * 1000).toLocaleTimeString('en-GB', {
+  return new Date(timestamp * 1000).toLocaleTimeString(getActiveDateLocale(), {
     hour: '2-digit',
     minute: '2-digit',
     timeZone: timezone ?? undefined,
@@ -84,15 +86,139 @@ export function formatMoonPhase(phase) {
 
 export function formatDayLabel(timestamp, timezone = null) {
   const date = new Date(timestamp * 1000);
-  return date.toLocaleDateString('en-GB', {
+  return date.toLocaleDateString(getActiveDateLocale(), {
     weekday: 'short',
     timeZone: timezone ?? undefined,
   });
 }
 
+export function formatDayWithDate(timestamp, timezone = null) {
+  const date = new Date(timestamp * 1000);
+  const weekday = date.toLocaleDateString(getActiveDateLocale(), {
+    weekday: 'short',
+    timeZone: timezone ?? undefined,
+  });
+  const dayMonth = date.toLocaleDateString(getActiveDateLocale(), {
+    day: 'numeric',
+    month: 'short',
+    timeZone: timezone ?? undefined,
+  });
+  return { weekday, dayMonth };
+}
+
+/**
+ * Calendar day key (YYYY-MM-DD) for a unix timestamp in the location zone.
+ * Prefer numeric OpenWeather timezone_offset; else IANA; else UTC.
+ */
+export function localCalendarDayKey(timestamp, timezoneOffsetSeconds = null, timezone = null) {
+  if (timestamp == null) {
+    return null;
+  }
+
+  if (timezoneOffsetSeconds != null && Number.isFinite(Number(timezoneOffsetSeconds))) {
+    const local = new Date(timestamp * 1000 + Number(timezoneOffsetSeconds) * 1000);
+    const year = local.getUTCFullYear();
+    const month = String(local.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(local.getUTCDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  if (timezone) {
+    const parts = new Intl.DateTimeFormat(getActiveDateLocale(), {
+      timeZone: timezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).formatToParts(new Date(timestamp * 1000));
+    const year = parts.find((part) => part.type === 'year')?.value;
+    const month = parts.find((part) => part.type === 'month')?.value;
+    const day = parts.find((part) => part.type === 'day')?.value;
+    if (year && month && day) {
+      return `${year}-${month}-${day}`;
+    }
+  }
+
+  const utc = new Date(timestamp * 1000);
+  const year = utc.getUTCFullYear();
+  const month = String(utc.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(utc.getUTCDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+export function shiftCalendarDayKey(dateKey, days) {
+  const [year, month, day] = String(dateKey).split('-').map(Number);
+  const shifted = new Date(Date.UTC(year, month - 1, day));
+  shifted.setUTCDate(shifted.getUTCDate() + days);
+  const nextYear = shifted.getUTCFullYear();
+  const nextMonth = String(shifted.getUTCMonth() + 1).padStart(2, '0');
+  const nextDay = String(shifted.getUTCDate()).padStart(2, '0');
+  return `${nextYear}-${nextMonth}-${nextDay}`;
+}
+
+/** Labels from a Y-M-D key — weekday / date never depend on browser TZ. */
+export function formatCalendarDayKey(dateKey) {
+  const [year, month, day] = String(dateKey).split('-').map(Number);
+  const noonUtc = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+  return {
+    dateKey,
+    weekday: noonUtc.toLocaleDateString(getActiveDateLocale(), { weekday: 'short', timeZone: 'UTC' }),
+    dayMonth: noonUtc.toLocaleDateString(getActiveDateLocale(), {
+      day: 'numeric',
+      month: 'short',
+      timeZone: 'UTC',
+    }),
+    year: String(year),
+  };
+}
+
+/**
+ * Always return `count` consecutive calendar days from the first forecast point
+ * (no skipped Sundays / jumped Mondays from timezone drift).
+ */
+export function buildConsecutiveDailyRows(
+  points = [],
+  {
+    count = 7,
+    timezone = null,
+    timezoneOffset = null,
+  } = {},
+) {
+  const valid = (Array.isArray(points) ? points : []).filter((point) => point?.dt != null);
+  if (valid.length === 0 || count <= 0) {
+    return [];
+  }
+
+  const offset = timezoneOffset != null ? Number(timezoneOffset) : null;
+  const byKey = new Map();
+
+  for (const point of valid) {
+    const key = localCalendarDayKey(point.dt, offset, timezone);
+    if (key && !byKey.has(key)) {
+      byKey.set(key, point);
+    }
+  }
+
+  const startKey = localCalendarDayKey(valid[0].dt, offset, timezone);
+  if (!startKey) {
+    return [];
+  }
+
+  const rows = [];
+  for (let index = 0; index < count; index += 1) {
+    const dateKey = shiftCalendarDayKey(startKey, index);
+    const labels = formatCalendarDayKey(dateKey);
+    rows.push({
+      ...labels,
+      point: byKey.get(dateKey) ?? null,
+    });
+  }
+
+  return rows;
+}
+
 export function getLocalHour(timestamp, timezone = null, timezoneOffsetSeconds = null) {
   if (timezone) {
-    const parts = new Intl.DateTimeFormat('en-GB', {
+    const parts = new Intl.DateTimeFormat(getActiveDateLocale(), {
       hour: '2-digit',
       hour12: false,
       timeZone: timezone,
@@ -110,7 +236,7 @@ export function getLocalHour(timestamp, timezone = null, timezoneOffsetSeconds =
 
 export function formatHourLabel(timestamp, timezone = null, timezoneOffsetSeconds = null) {
   if (timezone) {
-    return new Date(timestamp * 1000).toLocaleTimeString('en-GB', {
+    return new Date(timestamp * 1000).toLocaleTimeString(getActiveDateLocale(), {
       hour: '2-digit',
       minute: '2-digit',
       timeZone: timezone,
@@ -125,7 +251,7 @@ export function formatHourLabel(timestamp, timezone = null, timezoneOffsetSecond
     return `${hour}:${minute}`;
   }
 
-  return new Date(timestamp * 1000).toLocaleTimeString('en-GB', {
+  return new Date(timestamp * 1000).toLocaleTimeString(getActiveDateLocale(), {
     hour: '2-digit',
     minute: '2-digit',
   });
@@ -144,13 +270,15 @@ function formatTempValue(value, unit = TEMPERATURE_UNIT.CELSIUS) {
 }
 
 export function formatTempRange(min, max, unit = TEMPERATURE_UNIT.CELSIUS) {
-  const minDisplay = formatTempValue(min, unit);
-  const maxDisplay = formatTempValue(max, unit);
+  const normalized = normalizeTemperatureUnit(unit);
+  const suffix = temperatureUnitSuffix(normalized);
+  const minDisplay = formatTempValue(min, normalized);
+  const maxDisplay = formatTempValue(max, normalized);
 
   if (minDisplay == null && maxDisplay == null) return '—';
-  if (minDisplay == null) return `${maxDisplay}°`;
-  if (maxDisplay == null) return `${minDisplay}°`;
-  return `${minDisplay}° / ${maxDisplay}°`;
+  if (minDisplay == null) return `${maxDisplay}${suffix}`;
+  if (maxDisplay == null) return `${minDisplay}${suffix}`;
+  return `${minDisplay}${suffix} / ${maxDisplay}${suffix}`;
 }
 
 export function formatPop(value) {
@@ -163,14 +291,17 @@ export function formatWind(speedKmh, deg = null) {
     return '—';
   }
 
+  const speed = Number(speedKmh);
+  const speedLabel = Number.isFinite(speed) ? speed.toFixed(2) : String(speedKmh);
+
   if (deg == null) {
-    return `${speedKmh} km/h`;
+    return `${speedLabel} km/h`;
   }
 
   const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
   const direction = directions[Math.round(deg / 45) % 8];
 
-  return `${speedKmh} km/h ${direction}`;
+  return `${speedLabel} km/h ${direction}`;
 }
 
 export function formatPressure(hpa) {
@@ -221,7 +352,7 @@ export function toDateInputValueWithOffset(timestamp, timezoneOffsetSeconds) {
 
 export function toDateInputValue(timestamp, timezone = null) {
   const date = new Date(timestamp * 1000);
-  const parts = new Intl.DateTimeFormat('en-CA', {
+  const parts = new Intl.DateTimeFormat(getActiveDateLocale(), {
     timeZone: timezone ?? undefined,
     year: 'numeric',
     month: '2-digit',

@@ -10,8 +10,9 @@ import {
   fetchUviForecast,
   supplementLegacyCurrent,
 } from '@/lib/weather-2-5-supplement';
+import { extendDailyPayloadToHorizon } from '@/lib/weather/extend-daily-horizon';
 
-async function fetchCurrentWeather(lat, lon, lang = 'en') {
+async function fetchCurrentWeather(lat, lon, lang = 'en', usageMeta = {}) {
   const key = getApiKey();
   const oneCallUrl = `https://api.openweathermap.org/data/4.0/onecall/current?lat=${lat}&lon=${lon}&units=metric&lang=${lang}&appid=${key}`;
 
@@ -46,6 +47,7 @@ async function fetchCurrentWeather(lat, lon, lang = 'en') {
         }),
         lat,
         lon,
+        { usageMeta },
       ),
       source: 'weather_2_5',
       durationMs,
@@ -144,11 +146,11 @@ async function fetchScopedWeatherFromOneCall3(lat, lon, scope, lang = 'en') {
   };
 }
 
-async function fetchDailyFromForecast25(lat, lon) {
+async function fetchDailyFromForecast25(lat, lon, usageMeta = {}, lang = 'en') {
   const [daily16Data, uviForecast, currentUvi] = await Promise.all([
-    fetchForecastDaily16Data(lat, lon).catch(() => null),
-    fetchUviForecast(lat, lon),
-    fetchCurrentUvi(lat, lon),
+    fetchForecastDaily16Data(lat, lon, usageMeta, lang).catch(() => null),
+    fetchUviForecast(lat, lon, usageMeta),
+    fetchCurrentUvi(lat, lon, usageMeta),
   ]);
 
   if (daily16Data?.list?.length) {
@@ -179,7 +181,7 @@ async function fetchDailyFromForecast25(lat, lon) {
     }
   }
 
-  const data = await fetchForecast25Data(lat, lon);
+  const data = await fetchForecast25Data(lat, lon, usageMeta, lang);
   const payload = normalizeWeatherResponse({
     scope: 'daily',
     data,
@@ -209,11 +211,11 @@ async function fetchDailyFromForecast25(lat, lon) {
   };
 }
 
-async function fetchHourlyFromForecast25(lat, lon) {
+async function fetchHourlyFromForecast25(lat, lon, usageMeta = {}, lang = 'en') {
   const [data, uviForecast, currentUvi] = await Promise.all([
-    fetchForecast25Data(lat, lon),
-    fetchUviForecast(lat, lon),
-    fetchCurrentUvi(lat, lon),
+    fetchForecast25Data(lat, lon, usageMeta, lang),
+    fetchUviForecast(lat, lon, usageMeta),
+    fetchCurrentUvi(lat, lon, usageMeta),
   ]);
   const payload = normalizeWeatherResponse({
     scope: 'hourly',
@@ -264,12 +266,12 @@ export async function runUpstreamStrategies(strategies) {
   throw lastError ?? new Error('No upstream weather strategy succeeded');
 }
 
-export async function fetchCurrentFromUpstream(lat, lon, lang = 'en') {
-  return fetchCurrentWeather(lat, lon, lang);
+export async function fetchCurrentFromUpstream(lat, lon, lang = 'en', usageMeta = {}) {
+  return fetchCurrentWeather(lat, lon, lang, usageMeta);
 }
 
-export async function fetchScopedFromUpstream(lat, lon, scope, lang = 'en') {
-  return runUpstreamStrategies([
+export async function fetchScopedFromUpstream(lat, lon, scope, lang = 'en', usageMeta = {}) {
+  const result = await runUpstreamStrategies([
     async () => {
       const oneCall4 = await fetchScopedWeatherFromOneCall4(lat, lon, scope, lang);
       if (!oneCall4.payload.points?.length) {
@@ -280,12 +282,24 @@ export async function fetchScopedFromUpstream(lat, lon, scope, lang = 'en') {
     () => fetchScopedWeatherFromOneCall3(lat, lon, scope, lang),
     async () => {
       if (scope === 'daily') {
-        return fetchDailyFromForecast25(lat, lon);
+        return fetchDailyFromForecast25(lat, lon, usageMeta, lang);
       }
       if (scope === 'hourly') {
-        return fetchHourlyFromForecast25(lat, lon);
+        return fetchHourlyFromForecast25(lat, lon, usageMeta, lang);
       }
       throw new Error(`No ${scope} forecast data returned`);
     },
   ]);
+
+  if (scope === 'daily' && result?.payload) {
+    result.payload = await extendDailyPayloadToHorizon(
+      result.payload,
+      lat,
+      lon,
+      usageMeta,
+      { lang },
+    );
+  }
+
+  return result;
 }

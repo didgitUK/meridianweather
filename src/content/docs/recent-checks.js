@@ -1,43 +1,37 @@
 export const recentChecksDoc = {
   slug: 'recent-checks',
   title: 'Recent checks & seeding',
-  lastUpdated: '2026-07-09',
+  lastUpdated: '2026-07-15',
   sections: [
     {
       id: 'purpose',
       title: 'What recent checks are',
       body:
-        'Recent checks show what meridian has looked up across the platform — aggregated from server-side weather_snapshots (current scope), not your personal search history. They demonstrate live conditions for locations the platform has recently fetched.',
+        'Recent checks on the home page show platform-wide popular searches — locations ranked by how often users selected or previewed them via search — not your personal search history and not a raw dump of the weather snapshot cache.',
     },
     {
       id: 'api',
       title: 'API behaviour',
       body:
-        'GET /api/recent-checks returns up to forty deduplicated coordinate lookups ordered by fetched_at descending. Each check includes lat, lon, temperature, description, condition, icon code, city name and country when stored in payload, fetchedAt, and source. Response field source is platform when DB rows exist, or showcase when falling back.',
+        'GET /api/recent-checks calls getRecentChecksPayload(), which reads location_weather_checks (joined to locations) via listPopularSearchChecks. Default limit is 20. Triggers counted are search_select and search_preview. Response shape is { checks, source } where source is popular when rows exist, or empty when none. There is no showcase fallback.',
     },
     {
-      id: 'showcase-fallback',
-      title: 'Showcase fallback',
+      id: 'ui',
+      title: 'Home UI',
       body:
-        'When SQLite has no current snapshots, the API hydrates four PLATFORM_SHOWCASE_CITIES: London (GB), Dubai (AE), New York (US), Tokyo (JP) by calling the weather orchestrator. This ensures the strip is never empty on a fresh install.',
+        'RecentChecksSection shows two columns (“Near you” and “Popular searches”), up to five cards each. Cards use Meteocons icons, temperature, description, and city label. When coordinates exist, cards link to /city/[cityId]. There is no recent-checks AdSlot on the home page.',
     },
     {
       id: 'seed-script',
-      title: 'Seeding demo data',
+      title: 'Seeding weather snapshots (not the strip)',
       body:
-        'Run npm run seed:checks with OPENWEATHER_API_KEY set. The script fetches current weather for forty-three locations across Cumbria and the North East of England (see src/constants/seed-locations.js), writes SQLite snapshots with staggered fetched_at timestamps (four minutes apart), and enriches payloads with city names. Takes about one minute with rate-limit delays.',
+        'Run npm run seed:checks with OPENWEATHER_API_KEY set. The script fetches current weather for forty-three locations across Cumbria and the North East of England (see src/constants/seed-locations.js), writes SQLite weather_snapshots with staggered fetched_at timestamps, and enriches payloads with city names. That populates the L2 cache for demos — it does not insert search-triggered location_weather_checks rows, so it will not fill the recent-checks / popular searches strip.',
     },
     {
       id: 'persistence',
       title: 'Persistence',
       body:
-        'Seeded data lives in DATABASE_PATH (default ./data/meridian.db). Re-running the script upserts by cache_key so coordinates update in place. Clearing the database or deleting data/meridian.db resets to showcase fallback.',
-    },
-    {
-      id: 'ui',
-      title: 'UI notes',
-      body:
-        'Recent check cards use Meteocons icons, temperature, description, city label, and “Checked X ago”. They do not link to city detail (those cities may not be on your device). A recent-checks ad placement sits below the strip when AdSense and consent allow.',
+        'Seeded snapshots live in DATABASE_PATH (default ./data/meridian.db). Re-running the script upserts by cache_key. Popular-search rows accumulate as real searches are recorded; clearing the database empties both snapshots and check history (the strip shows empty until new searches occur).',
     },
   ],
 };
