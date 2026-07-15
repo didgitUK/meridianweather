@@ -19,7 +19,7 @@ export const deploymentDoc = {
       id: 'env-hero',
       title: 'Hero image environment',
       body:
-        'UNSPLASH_ACCESS_KEY — optional; first photo provider for location heroes (server-only, cached in hero_image_cache). PEXELS_API_KEY — optional third provider after Unsplash and Wikimedia Commons. NEXT_PUBLIC_CITY_HERO_OSM — set to 0 to disable satellite map header (default on). NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 — opt-in Google Street View when OSM is off. NEXT_PUBLIC_GOOGLE_MAPS_API_KEY — optional Maps Embed API key for Street View iframes.',
+        'Dashboard and city-detail heroes default to Esri World Imagery (Leaflet). Set NEXT_PUBLIC_CITY_HERO_OSM=0 to prefer photos. UNSPLASH_ACCESS_KEY / PEXELS_API_KEY — optional photo providers for journal, photo-mode heroes, and some placeholders (server-only, cached in hero_image_cache; Wikimedia is keyless). NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 — opt-in Google Street View when the map hero is off. NEXT_PUBLIC_GOOGLE_MAPS_API_KEY — optional Maps Embed API key for Street View iframes. Cloud/precip map overlays use the OpenWeather tile proxy and need OPENWEATHER_API_KEY.',
     },
     {
       id: 'env-email',

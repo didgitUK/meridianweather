@@ -96,7 +96,7 @@ SQLite (`src/lib/db/index.js`) — core plus stretch tables:
 | `locations` / `location_weather_checks` | Admin location history and check audit |
 | `admin_users` / admin invite+reset tokens | Admin accounts and auth flows |
 | `email_templates` | Editable branded HTML templates |
-| `hero_image_cache` | Dual-orientation location hero URLs |
+| `hero_image_cache` | Dual-orientation photo URLs (journal / photo-mode; map heroes use Esri) |
 | `cms_pages` | Editable legal/docs copy |
 | `blog_posts` | Editable journal articles (EN CMS; seed from `HOME_BLOG_POSTS`) |
 | `site_analytics_events` | First-party analytics (beacon ingest) |

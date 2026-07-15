@@ -37,10 +37,13 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# local editor / agent scratch (omit from submission)
+# local editor / agent scratch
 .cursor/
 AGENTS.md
 CLAUDE.md
+SCOPE.md
+REVIEWER.md
+docs/STUDY-BACKEND.md
 
 # env files (can opt-in for committing if needed)
 .env*

@@ -90,7 +90,7 @@ export const BLOG_POSTS_I18N = [
     imageAlt: 'Visualisation abstraite de globe et réseau de données',
     body: [
       'Le free tier OpenWeather est généreux pour une démo ciblée et fragile si chaque survol devient un appel réseau. Meridian traite la clé comme un budget partagé : cacher les payloads météo, debouncer les refreshes, formater en local quand seuls unités ou onglets changent.',
-      'Cartes et fiches réutilisent les snapshots déjà fetchés. Refresh manuel quand vous savez que les conditions ont changé ; les polls de fond restent prudents pour qu’une salle d’interview n’épuise pas le quota avant le déjeuner.',
+      'Cartes et fiches réutilisent les snapshots déjà fetchés. Refresh manuel quand vous savez que les conditions ont changé ; les polls de fond restent prudents pour que le quota gratuit tienne toute la journée.',
       'Geocode et One Call comptent séparément en pratique — une faute de frappe de recherche ne doit pas coûter un pull météo complet. Les échecs upstream deviennent des erreurs UI honnêtes plutôt que des retries silencieux en boucle.',
       'Pour un fork à fort trafic, les premiers upgrades sont une clé privée, un cache serveur plus fort et moins de prefetch showcase — pas supprimer la conscience rate-limit qui a façonné ce code.',
     ],

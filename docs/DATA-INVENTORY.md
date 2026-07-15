@@ -79,7 +79,7 @@ Functional consent gates **localStorage** L0 weather-cache writes. Analytics con
 | Nominatim / popular-cities | query (server-side merge in `GET /api/geocode` / `fetchGeocode`) | Geocode soft-fallback paths |
 | Open-Meteo / NWS | location context | Weather-alert evaluation (cron) |
 | Resend / SendGrid / SES / SMTP | email, template content | Subscription emails via active connector |
-| Unsplash / Wikimedia / Pexels | location search terms | Hero image resolution |
+| Unsplash / Wikimedia / Pexels | location search terms | Journal / photo-mode imagery (map heroes use Esri tiles) |
 | Google AdSense | page context, ad cookies | Advertising consent + env configured |
 | Google Analytics (GA4) | page context, GA cookies | `analytics` consent + measurement ID configured |
 

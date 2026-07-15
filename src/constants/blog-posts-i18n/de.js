@@ -90,7 +90,7 @@ export const BLOG_POSTS_I18N = [
     imageAlt: 'Abstrakte Globus- und Datennetz-Visualisierung',
     body: [
       'OpenWeathers Free-Tier ist großzügig für eine fokussierte Demo und fragil, wenn jeder Hover ein Netzwerkanruf wird. Meridian behandelt den Key als gemeinsames Budget: Wetter-Payloads cachen, Refreshes entprellen, lokal formatieren, wenn nur Einheiten oder Tabs wechseln.',
-      'Stadt-Karten und Detailseiten nutzen geladene Snapshots wo möglich. Manueller Refresh, wenn Sie wissen, dass sich Bedingungen ändern; Hintergrund-Polls bleiben konservativ, damit ein Interview-Raum die Tagesquote nicht vor dem Mittagessen ausgeschöpft.',
+      'Stadt-Karten und Detailseiten nutzen geladene Snapshots wo möglich. Manueller Refresh, wenn Sie wissen, dass sich Bedingungen ändern; Hintergrund-Polls bleiben konservativ, damit das Free-Tier-Kontingent den Tag überhält.',
       'Geocode und One Call zählen in der Praxis getrennt — Tippfehler in der Suche sollen keinen vollen Wetterzug kosten. Fehlgeschlagene Upstream-Antworten werden als ehrliche UI-Fehler statt stiller Retry-Schleifen gezeigt.',
       'Für Heavy-Traffic-Forks sind die ersten Upgrades privater Key, stärkerer Server-Cache und weniger Showcase-Prefetch — nicht das Entfernen der Rate-Limit-Achtsamkeit, die diesen Code geprägt hat.',
     ],

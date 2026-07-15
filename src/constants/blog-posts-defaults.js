@@ -94,7 +94,7 @@ export const HOME_BLOG_POSTS = Object.freeze([
     imageAlt: 'Abstract globe and data network visualization',
     body: Object.freeze([
       'OpenWeather’s free tier is generous for a focused demo and fragile if every hover becomes a network call. Meridian treats the key as a shared budget: cache weather payloads, debounce refreshes, and prefer local formatting when the user only changes units or tabs.',
-      'City cards and detail pages reuse fetched snapshots where possible. Manual refresh is available when you know conditions changed; background polls stay conservative so a classroom of interviewers does not exhaust the daily allotment before lunch.',
+      'City cards and detail pages reuse fetched snapshots where possible. Manual refresh is available when you know conditions changed; background polls stay conservative so free-tier call budgets last through the day.',
       'Geocode and One Call endpoints count separately in practice — search typos should not cost a full weather pull. Failed upstream responses surface as honest UI errors instead of silent retries in a loop.',
       'If you fork the project for heavier traffic, the first upgrades are a private key, stronger server cache, and dialling back showcase prefetch — not removing the rate-limit awareness that shaped this code.',
     ]),

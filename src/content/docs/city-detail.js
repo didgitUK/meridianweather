@@ -55,7 +55,7 @@ export const cityDetailDoc = {
       id: 'operators',
       title: 'For site operators',
       body:
-        'resolveCity() always serves five PLATFORM_SHOWCASE_CITIES (London, Dubai, New York, Tokyo, Sydney) plus rows with city_slug. Default hero: OSM when isCityHeroOsmEnabled() (NEXT_PUBLIC_CITY_HERO_OSM unset or not "0"); photos when OSM off (Unsplash → Wikimedia → Pexels). Street View opt-in: NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 with Maps key. Client batch: current, hourly, daily only — no minutely UI. History: GET /api/weather/history. First successful current check can mark the city indexable for sitemap/SEO.',
+        'resolveCity() always serves five PLATFORM_SHOWCASE_CITIES (London, Dubai, New York, Tokyo, Sydney) plus rows with city_slug. Default hero: Esri satellite map via Leaflet when isCityHeroOsmEnabled() (NEXT_PUBLIC_CITY_HERO_OSM unset or not "0"). Photos only when the map hero is off (Unsplash → Wikimedia → Pexels), mainly the same cascade used for journal imagery. Street View opt-in: NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 with Maps key. Client batch: current, hourly, daily only — no minutely UI. History: GET /api/weather/history. First successful current check can mark the city indexable for sitemap/SEO.',
     },
   ],
 };

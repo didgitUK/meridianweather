@@ -6,7 +6,7 @@ This is a **responsive website** for phones and desktops. Footer store badges hi
 
 **Live site:** [https://meridianweather.co.uk](https://meridianweather.co.uk)
 
-**Further reading:** [SCOPE.md](SCOPE.md) (what must work vs stretch) · [REVIEWER.md](REVIEWER.md) (5-minute walkthrough) · [docs/STUDY-BACKEND.md](docs/STUDY-BACKEND.md) (cache, quota, API flow) · [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) (logs, audit trails, Playwright)
+**Further reading:** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/DECISIONS.md](docs/DECISIONS.md) · [docs/SECURITY.md](docs/SECURITY.md) · [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md)
 
 ![Home dashboard — search, Your locations, near you, ad placeholders, journal](docs/screenshots/01-home-dashboard.png)
 
@@ -19,7 +19,7 @@ This is a **responsive website** for phones and desktops. Footer store badges hi
 | **OpenWeather API key** | Free tier — [openweathermap.org/api](https://openweathermap.org/api). Required to load live weather. |
 | **Build tools** | `better-sqlite3` compiles a native addon — Python 3 + `make`/`g++` (Linux/macOS), or Visual Studio Build Tools (Windows) |
 
-Optional keys (Unsplash, email ESPs, AdSense, admin, cron) power stretch features. The core demo runs with **only** `OPENWEATHER_API_KEY`.
+Optional keys (Unsplash/Pexels for journal photos, email ESPs, AdSense, admin, cron) power extras. Core weather runs with **only** `OPENWEATHER_API_KEY`.
 
 ## Quick start
 
@@ -57,7 +57,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - **Ads in the first viewport** — square + banner high on home/city (demo placeholders until AdSense env + advertising consent).
 - **Pin → toast → Your locations** — preview on city detail, then save with clear feedback.
 - **7 locales** (`en`, `en-GB`, `de`, `fr`, `es`, `ja`, `ar`); US English (`en`) defaults to **°F**, others to **°C**.
-- **Location-aware** — reverse-IP / region hint, confirm dialog, map-style hero when resolved.
+- **Location-aware** — reverse-IP / region hint, confirm dialog, **satellite map hero** (Esri via Leaflet) when coords resolve.
 - **Email updates** — weekly digest + alerts; **22** optional alert types (needs an email connector to actually send).
 - **Cookies + accessibility** — Settings sheet.
 - **Legal + journal** — in-product policies and long-form posts (SEO + trust); schema-style side anchors.
@@ -253,7 +253,8 @@ If weather cards fail after install, check that `.env.local` has a valid `OPENWE
 - City “add” is **pin from city detail** after search (preview before saving).
 - Default weather refresh mode is **manual** (`meridian:weather-refresh-mode`) — cards reuse local cache until refresh.
 - Functional cookie consent gates **localStorage** writes to `meridian:weather-cache` (in-memory session cache still works).
-- Hero photos cascade Unsplash → Wikimedia Commons (keyless) → Pexels; static SVGs in `public/hero/` are last resort.
+- Dashboard and city-detail heroes default to an **Esri World Imagery** satellite map (Leaflet). Cloud/precip overlays use the OpenWeather tile proxy when the API key is set. Set `NEXT_PUBLIC_CITY_HERO_OSM=0` to prefer photos instead.
+- Photo cascade (Unsplash → Wikimedia → Pexels, then static `public/hero/` SVGs) is for **journal/blog imagery**, ad placeholders, and photo-mode heroes — not the default map hero.
 - Without AdSense env/consent, slots show branded demo placeholders in `public/ads/`.
 - Home ads + journal teaser are **on by default**; set `NEXT_PUBLIC_SHOW_HOME_STRETCH=0` for a leaner UI focused on search → pin → cards.
 - Popular-searches strip can seed showcase cities when empty (`NEXT_PUBLIC_SHOW_DEMO_POPULAR_SEARCHES=0` disables that).
@@ -264,8 +265,9 @@ If weather cards fail after install, check that `.env.local` has a valid `OPENWE
 | Variable | Purpose |
 | --- | --- |
 | `OPENWEATHER_API_KEY` | **Required** — weather and primary geocode |
-| `UNSPLASH_ACCESS_KEY` | Optional — live location hero photos |
-| `PEXELS_API_KEY` | Optional — third hero provider after Unsplash + Wikimedia |
+| `UNSPLASH_ACCESS_KEY` | Optional — journal / photo-mode imagery (not required for map heroes) |
+| `PEXELS_API_KEY` | Optional — third photo provider after Unsplash + Wikimedia |
+| `NEXT_PUBLIC_CITY_HERO_OSM` | Optional — set `0` to disable satellite map heroes (default on) |
 | `DATABASE_PATH` | SQLite path (default `./data/meridian.db`) |
 | `RESEND_*` / `SENDGRID_*` / `AWS_*` / `SMTP_*` | Optional email connectors |
 | `NEXT_PUBLIC_APP_URL` | Production base URL (SEO, email links, invites) |
@@ -321,9 +323,9 @@ npm run start
 - Caching + quota tracking (1000/day default)
 - Responsive layout; 7 public locales
 
-### Stretch (optional — see SCOPE.md)
+### Optional extras
 
-- Hero photos, near-you / popular-searches strips, city detail forecasts/alerts, journal
+- Near-you / popular-searches strips, fuller city-detail forecasts/alerts, journal
 - Newsletter / digests / alerts (Resend, SendGrid, SES, or SMTP + cron), AdSense (or demo placeholders)
 - Admin at `/login` → `/admin`, legal + docs pages, first-party analytics + optional GA4
 
@@ -331,21 +333,18 @@ npm run start
 
 - Premium / minutely precipitation UI is not wired (tier is always free).
 - Email and cron need external config (`CRON_SECRET` + a connector); there is no in-repo scheduler.
-- Legal pages are demo templates, not counsel.
+- Legal pages are product templates, not counsel.
 - Store badges are not published native apps.
 
 ## Documentation map
 
 | Doc | Use when |
 | --- | --- |
-| [REVIEWER.md](REVIEWER.md) | Walking the demo or mapping criteria to files |
-| [SCOPE.md](SCOPE.md) | Core vs freeze / stretch boundaries |
-| [docs/STUDY-BACKEND.md](docs/STUDY-BACKEND.md) | Lifecycle, errors, cache TTLs |
-| [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) | Error log, process/email audit, `data/logs/`, Playwright |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Folder map and data flows |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Why choices were made (ADRs) |
 | [docs/SECURITY.md](docs/SECURITY.md) | Threat model and production checklist |
 | [docs/DATA-INVENTORY.md](docs/DATA-INVENTORY.md) | What is stored client- vs server-side |
+| [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) | Error log, process/email audit, `data/logs/`, Playwright |
 | [docs/EMAIL-TEMPLATE-SHORTCODES.md](docs/EMAIL-TEMPLATE-SHORTCODES.md) | Email template tokens |
 
 ## Stack

@@ -8,7 +8,7 @@ export const PLATFORM_SHOWCASE_CITIES = [
 
 /**
  * When true, home also renders ads + journal teaser below the core grid.
- * Default on. Set NEXT_PUBLIC_SHOW_HOME_STRETCH=0 to hide for a leaner demo.
+ * Default on. Set NEXT_PUBLIC_SHOW_HOME_STRETCH=0 for a leaner UI.
  */
 export const SHOW_HOME_STRETCH_SECTIONS =
   process.env.NEXT_PUBLIC_SHOW_HOME_STRETCH !== '0';

@@ -1,6 +1,6 @@
 # Architecture decisions
 
-> **Scope note:** Stretch ADRs below (admin, email, ads, etc.) are historical product exploration. Interview delivery authority is [`SCOPE.md`](../SCOPE.md) — core weather dashboard first; frozen areas stay frozen unless the home demo is broken.
+> **Note:** ADRs below include optional product surfaces (admin, email, ads, dual-orientation photo heroes). Core dashboard and city heroes default to satellite maps; photo providers remain for journal/photo mode.
 
 ## ADR-001: OpenWeather One Call 4.0 with 2.5 fallback
 
@@ -100,13 +100,13 @@
 
 **Trade-off:** Banner “Accept all” does not enable analytics — operators must disclose that GA/beacon need an explicit analytics toggle.
 
-## ADR-013: Dual-orientation Unsplash hero backgrounds
+## ADR-013: Dual-orientation photo heroes (journal / photo mode)
 
-**Context:** Location-based dashboard heroes were a single Unsplash landscape URL cropped for every viewport, with weak geometry gates (`width >= height` plus `results[0]` fallback). Random photos often looked poorly framed.
+**Context:** Photo-based location heroes (and journal imagery) previously used a single Unsplash landscape URL cropped for every viewport, with weak geometry gates (`width >= height` plus `results[0]` fallback). Random photos often looked poorly framed. Dashboard and city-detail heroes later moved to Esri satellite maps by default; this ADR still governs the photo cascade when maps are off or photos are requested.
 
-**Decision:** Resolve and cache **landscape** (~16:9 aspect band, min width 1600) and **portrait** (~9:16 aspect band, min height 1600) variants per region. Search queries prefer landmark → monument → skyline → cityscape → country landscape. Reject candidates outside aspect/size gates (no weak fallback). Deliver via Unsplash `urls.raw` with `fit=crop&crop=entropy` Imgix params. UI serves portrait below `sm`, landscape from `sm` up. Cache rows require `dual_resolved` so legacy single-URL entries re-fetch.
+**Decision:** Resolve and cache **landscape** (~16:9 aspect band, min width 1600) and **portrait** (~9:16 aspect band, min height 1600) variants per region. Search queries prefer landmark → monument → skyline → cityscape → country landscape. Reject candidates outside aspect/size gates (no weak fallback). Cascade Unsplash → Wikimedia → Pexels. Deliver via Unsplash `urls.raw` with `fit=crop&crop=entropy` Imgix params when Unsplash wins. UI serves portrait below `sm`, landscape from `sm` up. Cache rows require `dual_resolved` so legacy single-URL entries re-fetch.
 
-**Trade-off:** Up to two Unsplash searches per cache miss (parallel); either orientation may be null and the hero falls back to the gradient for that slot.
+**Trade-off:** Up to two Unsplash searches per cache miss (parallel); either orientation may be null and the UI falls back to gradient or static SVGs for that slot.
 
 ## ADR-014: AdSense Management API for admin earnings
 
@@ -126,7 +126,7 @@
 
 ## ADR-016: Security hardening without new infra
 
-**Context:** Stretch admin/email/cron surfaces shipped with several production-unsafe defaults (open cron when secret unset, `ADMIN_PASSWORD` reuse as HMAC key, no auth rate limits, no security headers). SCOPE forbids Redis/MFA/RBAC product expansion.
+**Context:** Stretch admin/email/cron surfaces shipped with several production-unsafe defaults (open cron when secret unset, `ADMIN_PASSWORD` reuse as HMAC key, no auth rate limits, no security headers). Redis/MFA/RBAC product expansion is out of scope for this app.
 
 **Decision:**
 - Split `ADMIN_SECRET` (signing + AES) from `ADMIN_PASSWORD` (root login only); fail-closed cron in production; explicit `ALLOW_DEV_ADMIN_BYPASS=1` for local bypass.
