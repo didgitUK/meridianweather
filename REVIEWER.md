@@ -1,39 +1,39 @@
 # Reviewer guide — meridian
 
-**Start here for a demo walkthrough.** Binding interview scope: [`SCOPE.md`](SCOPE.md).
+**Start here for a short demo walkthrough.** Product brief (core vs stretch): [`SCOPE.md`](SCOPE.md). Setup: [`README.md`](README.md).
 
-**Demo only needs `OPENWEATHER_API_KEY`.** Everything else (admin, AdSense, email, cron) is **stretch** and optional.
+**To run the core demo you only need `OPENWEATHER_API_KEY`.** Admin, AdSense, email, and cron are stretch extras.
 
-Candidate cue sheet: [`docs/STUDY-BACKEND.md`](docs/STUDY-BACKEND.md) → *Interview cue card*.
+Backend talking points: [`docs/STUDY-BACKEND.md`](docs/STUDY-BACKEND.md).
 
-## 5-minute review path
+## 5-minute path
 
 1. Skim [`SCOPE.md`](SCOPE.md) §3 (in-scope demo) and §4 (stretch / freeze).
-2. Read this file (core demo script below — stop after step 4 unless reviewing stretch).
-3. Skim [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) if you want cache/quota depth; [`docs/DECISIONS.md`](docs/DECISIONS.md) stretch ADRs are optional.
-4. `src/app/[locale]/page.js` → `DashboardPage` — search, city grid, loading/empty states (core brief).
-5. `src/lib/weather-fetch-orchestrator.js` (facade) → `src/lib/weather/*` — cache policy, upstream strategies, persist (rate-limit mindfulness).
-6. `npm run test` (or `npm run verify` before submission).
+2. Follow the core demo script below (stop after step 4 unless exploring stretch).
+3. Skim [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for cache/quota depth; [`docs/DECISIONS.md`](docs/DECISIONS.md) ADRs are optional.
+4. Entry UI: `src/app/[locale]/page.js` → `DashboardPage` — search, city grid, loading/empty states.
+5. Weather path: `src/lib/weather-fetch-orchestrator.js` → `src/lib/weather/*` — cache policy, upstream strategies, persist.
+6. `npm run test` (or `npm run verify` for lint + test + build).
 
 ## Criterion mapping
 
 | Criterion | Where to look | Verify |
 | --- | --- | --- |
-| Functionality | `src/features/cities/`, `src/features/weather/`, `src/app/api/weather/`, `src/app/api/geocode/` | Search/add/remove cities, cards, localStorage persistence, empty state ([`SCOPE.md`](SCOPE.md) §3) |
+| Functionality | `src/features/cities/`, `src/features/weather/`, `src/app/api/weather/`, `src/app/api/geocode/` | Search/pin/unpin, cards, localStorage, empty state ([`SCOPE.md`](SCOPE.md) §3) |
 | Code quality | `src/lib/weather/`, `src/lib/client/fetch-json.js`, `src/lib/server/api-response.js` | Domain packages, shared client fetch, `{ error, message }` envelope, `npm run test` |
 | React patterns | hooks, providers | `useSavedCities`, `useWeatherData` / `weather-batch-client` |
 | Problem solving | `lib/weather/*`, api-usage-tracker | Cache layers, strategy fallbacks, batch throttle (1000 calls/day) |
 | UX | DashboardPage, WeatherCard, empty/loading/error states | Skeletons, empty instructions, Meteocons icons, responsive layout |
-| Readability | Feature modules + weather package seams | Clear core path; stretch (admin/email/ads) is optional — see [`SCOPE.md`](SCOPE.md) §4 |
+| Readability | Feature modules + weather package seams | Clear core path; stretch is optional — see [`SCOPE.md`](SCOPE.md) §4 |
 
 ## Demo script (core)
 
-1. `npm install && cp .env.example .env.local` — set **`OPENWEATHER_API_KEY` only**. (`better-sqlite3` needs a normal Node native-build toolchain — see [README Troubleshooting](README.md#troubleshooting-install).)
-2. `npm run dev` → localhost:3000
-3. Search **London** → open city detail → **pin** → back to home (card shows data).
-4. Reload → city still pinned (localStorage). Unpin → empty state instructions visible.
+1. `npm install && cp .env.example .env.local` — set **`OPENWEATHER_API_KEY` only**. (`better-sqlite3` needs a Node native-build toolchain — see [README Troubleshooting](README.md#troubleshooting-install).)
+2. `npm run dev` → [http://localhost:3000](http://localhost:3000)
+3. Search **London** → open city detail → **pin** → home card shows data.
+4. Reload → city still pinned (localStorage). Unpin → empty-state instructions visible.
 
-That is the interview brief. Stop here unless exploring stretch.
+That covers the brief. Stop here unless exploring stretch.
 
 ## Stretch demos (optional)
 
@@ -65,7 +65,7 @@ That is the interview brief. Stop here unless exploring stretch.
 | Recent checks | `src/lib/weather/recent-checks.js`, `src/app/api/recent-checks/route.js` |
 | Icons | `src/features/weather/utils/weather-icon.js`, `public/weather-icons/` |
 | AdSense (stretch) | `src/providers/AdSenseProvider.jsx`, `src/lib/server/adsense.js` |
-| Seed (stretch/cache demo) | `scripts/seed-recent-checks.mjs` |
+| Seed (cache demo) | `scripts/seed-recent-checks.mjs` |
 | Subscriptions (stretch) | `src/app/api/subscriptions/route.js`, `src/emails/` |
 | Docs | `src/content/docs/*.js`, `src/app/[locale]/docs/[slug]/page.js` |
 
@@ -79,7 +79,7 @@ Covers validators, usage tracker, formatters, weather-icon mapping, cache policy
 
 ## Deployment notes
 
-- See [README Deploy](README.md#deploy) for the Vercel / env checklist.
-- Persistent `DATABASE_PATH` for SQLite when possible.
-- `NEXT_PUBLIC_APP_URL` for production canonicals, email unsubscribe, invites.
-- Stretch: `GOOGLE_ADSENSE_*`, `CRON_SECRET`, `ADMIN_*` only if exploring those surfaces.
+- See [README Deploy](README.md#deploy) for the env checklist.
+- Prefer a persistent `DATABASE_PATH` for SQLite when the host allows it.
+- Set `NEXT_PUBLIC_APP_URL` in production for canonicals, sitemap/robots, email unsubscribe, and invites.
+- Stretch only when needed: `GOOGLE_ADSENSE_*`, `CRON_SECRET`, `ADMIN_*`.

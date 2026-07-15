@@ -1,30 +1,28 @@
-# meridian — Backend study sheet (interview)
+# meridian — Backend overview
 
-Rehearse this before the interview demo. Binding scope: [`SCOPE.md`](../SCOPE.md). Architecture detail: [`ARCHITECTURE.md`](ARCHITECTURE.md).
+How weather requests, cache, quota, and errors work in this repo. Binding product brief: [`SCOPE.md`](../SCOPE.md). Folder map and deeper flows: [`ARCHITECTURE.md`](ARCHITECTURE.md). Run instructions: [`README.md`](../README.md).
 
-## Interview cue card (≤1 screen)
+## Quick answers
 
-Memorize these short answers; they match what SCOPE §5 says you should discuss.
+Useful when walking through architecture or answering “why this shape?”
 
 | Question | Answer |
 | --- | --- |
 | Why API routes? | OpenWeather key stays on the server; the browser only hits `/api/weather` and `/api/geocode`. |
-| Why localStorage *and* SQLite? | **localStorage** holds the user’s pinned city list (brief requirement). **SQLite** (+ memory) is shared server cache and quota accounting so we don’t burn the free tier. |
-| Why caching + manual refresh? | Free tier is ~**1000 calls/day**. L0/L1/L2 reuse snapshots; default refresh is **manual** so a page reload doesn’t force upstream. |
-| How do you show errors? | Rename/blank `OPENWEATHER_API_KEY` and retry a card, or DevTools → Offline. Cards show an Alert + Retry; search soft-falls when appropriate. |
-| What about admin / email / ads? | Stretch exploration. Evaluation focus is the **weather dashboard** brief — search → pin → cards. |
+| Why localStorage *and* SQLite? | **localStorage** holds the user’s pinned city list. **SQLite** (+ memory) is shared server cache and quota accounting so free-tier calls are not wasted. |
+| Why caching + manual refresh? | Free tier is ~**1000 calls/day**. L0/L1/L2 reuse snapshots; default refresh is **manual** so a page reload does not force upstream. |
+| How are errors shown? | Blank/invalid `OPENWEATHER_API_KEY` and retry a card, or DevTools → Offline. Cards show an Alert + Retry; search soft-falls when appropriate. |
+| What about admin / email / ads? | Stretch extras. Core path is search → pin → dashboard cards. |
 
-Elevator (30s): Next.js API routes proxy OpenWeather so the key never hits the browser. Cities live in localStorage. Shared cache + quota protect the free tier. Manual refresh keeps demos cheap.
+Summary: Next.js API routes proxy OpenWeather so the key never hits the browser. Cities live in localStorage. Shared cache + quota protect the free tier. Manual refresh keeps demos cheap.
 
 ## Core vs stretch
 
-| Keep for demo | Freeze (don’t expand; optional env) |
+| Core path | Stretch (optional env) |
 | --- | --- |
 | Search, pin/unpin, cards, localStorage | Admin, email/cron, AdSense live, CMS |
 | `/api/weather`, `/batch`, `/api/geocode` | PWA polish, CMS product work |
-| Cache + quota (`lib/weather/*`) | Recent-checks seed as product |
-
-Interview line: “Stretch exists as exploration; evaluation focus is the dashboard brief.”
+| Cache + quota (`lib/weather/*`) | Recent-checks seed as a product feature |
 
 ## Request lifecycle — Add London
 
@@ -45,7 +43,7 @@ Interview line: “Stretch exists as exploration; evaluation focus is the dashbo
 | Quota paused | Emergency SQLite stale if available; else rate-limit message |
 | City detail failure | Alert + Retry (not an empty hero) |
 
-`ApiError` codes/status now flow through `apiErrorFromCaught` (404 stays 404).
+`ApiError` codes/status flow through `apiErrorFromCaught` (404 stays 404).
 
 ## Loading & data
 
@@ -57,14 +55,14 @@ Interview line: “Stretch exists as exploration; evaluation focus is the dashbo
 - L0 localStorage writes require functional consent; in-memory session L0 still works without it
 - Non-`en` weather L2 keys append `,{lang}`
 
-## Stretch backends (optional study)
+## Stretch backends (optional)
 
 - Cron: `Authorization: Bearer CRON_SECRET` (`weather-alerts`, `weekly-digests`); fail-closed in production when unset
 - Admin: HttpOnly cookie `meridian_admin_session`; multi-ESP email (Resend / SendGrid / SES / SMTP)
 - Analytics: `POST /api/analytics/collect` when analytics consent; optional GA4
 - Popular searches: `GET /api/recent-checks` from `location_weather_checks` (not `seed:checks` snapshots)
 
-## Heroes & ads (portable deploys)
+## Heroes & ads
 
 - Unsplash when `UNSPLASH_ACCESS_KEY` is set; else Wikimedia / Pexels / committed `public/hero/*` SVGs
 - AdSense when configured + advertising consent; else branded `public/ads/*` PNG placeholders (sr-only overlay)
@@ -83,23 +81,22 @@ Interview line: “Stretch exists as exploration; evaluation focus is the dashbo
 9. `src/features/weather/hooks/useWeatherData.js`
 10. `src/lib/db/index.js` (skim schema)
 
-## React talking points
+## React patterns in use
 
 - Feature folders + hooks (`useSavedCities`, `useWeatherData`)
 - `useSyncExternalStore` for localStorage without hydration mismatch
 - Cache-first then network; batch isolates per-city errors
 - City search combobox supports Arrow/Enter keyboard navigation
 
-## Testing honesty
+## Testing
 
 - `npm run test` — validators, cache policy, ApiError mapper, geocode ranking, repos, icons, `/api/weather` + `/api/geocode` route tests
 - Manual: search → pin → reload → remove → break key → mobile width
 
-## Demo checklist
+## Manual checklist
 
 1. `OPENWEATHER_API_KEY` only → `npm run dev`
 2. Search London → pin → card on dashboard
 3. Reload → cities persist
 4. Remove → empty state with search open
-5. Optional stretch: `/admin` API usage panel (not a Settings → weather toggle — refresh mode lives in code/provider defaults)
-6. Optional: `/admin` for usage (not Ctrl+Shift+L — that shortcut is not wired)
+5. Optional stretch: `/admin` API usage panel (refresh mode is provider/code defaults — not a Settings weather toggle)

@@ -1,6 +1,6 @@
 # Security posture — meridian
 
-Interview exercise + stretch admin surface. Controls below harden what already ships; they do not claim SOC2/ISO certification.
+Security notes for the weather dashboard and stretch admin surface. Controls below harden what already ships; they do not claim SOC2/ISO certification.
 
 ## Threat model (brief)
 

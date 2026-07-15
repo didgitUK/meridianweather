@@ -1,6 +1,7 @@
-# SCOPE.md — Project brief (interview delivery)
+# SCOPE.md — Project brief
 
-> **Authority:** When stretch ADRs or exploratory extras conflict with delivering the Weather Dashboard brief, this document wins.
+> **Start here to run the app:** [`README.md`](README.md). This file defines what is in scope vs frozen stretch — useful for reviewers and anyone extending the code.
+> **Authority:** When stretch ADRs or exploratory extras conflict with the Weather Dashboard brief, this document wins.
 > **Product name in repo:** meridian (Weather Dashboard coding exercise).
 > **Expected effort bar:** 4–6 hours worth of *scoped* product — working, well-structured, demoable. Not a SaaS platform.
 
@@ -8,7 +9,7 @@
 
 ## 1. Why this exists
 
-This submission is an **interview coding challenge**. All code may be discarded after interview. Reviewers will judge:
+This repo is an **interview coding challenge** delivery: a working weather dashboard (plus optional stretch). Evaluation typically looks at:
 
 | Criterion | What “good” means here |
 | --- | --- |
@@ -116,13 +117,13 @@ These exist in the repo as **over-scope extras**. They may remain for the interv
 
 ## 5. What “done” means for delivery
 
-Submission is delivery-ready when:
+The project meets the brief when:
 
-1. Core flows in §3 work reliably on a clean machine with only `OPENWEATHER_API_KEY`.
+1. Core flows in §3 work on a clean machine with only `OPENWEATHER_API_KEY`.
 2. README matches reality (setup/run/assumptions).
-3. Code for the core path is readable without needing to understand admin/email/ads.
-4. There is evidence of testing (`npm run test` for key units and/or a short manual test note in README).
-5. You can discuss: localStorage, API routes vs client, caching/rate limits, error/loading UX, component structure.
+3. Code for the core path is readable without understanding admin/email/ads.
+4. There is evidence of testing (`npm run test` and/or a short manual check in the README).
+5. Key choices are explainable: localStorage, API routes vs client, caching/rate limits, error/loading UX, component structure.
 
 Non-goals for “done”: perfect admin, AdSense live earnings, multi-ESP email, full locale parity.
 
