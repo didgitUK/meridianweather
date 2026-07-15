@@ -1,19 +1,21 @@
 import { DOCS_PAGE_DEFAULTS } from '@/content/docs';
 import { LEGAL_POLICY_DEFAULTS } from '@/content/legal';
-import { HOME_BLOG_POSTS } from '@/constants/blog-posts';
+import { listBlogPostSlugs } from '@/lib/cms/blog-post-repo';
 import { listIndexableCities } from '@/lib/location-repo';
 import { getShowcaseCities } from '@/lib/resolve-city';
 import { routing } from '@/i18n/routing';
 
-const STATIC_PATHS = [
-  '',
-  '/docs',
-  '/journal',
-  '/search',
-  ...HOME_BLOG_POSTS.map((post) => post.href),
-  ...DOCS_PAGE_DEFAULTS.map((page) => `/docs/${page.slug}`),
-  ...LEGAL_POLICY_DEFAULTS.map((policy) => `/legal/${policy.slug}`),
-];
+function getStaticPaths() {
+  return [
+    '',
+    '/docs',
+    '/journal',
+    '/search',
+    ...listBlogPostSlugs().map((slug) => `/journal/${slug}`),
+    ...DOCS_PAGE_DEFAULTS.map((page) => `/docs/${page.slug}`),
+    ...LEGAL_POLICY_DEFAULTS.map((policy) => `/legal/${policy.slug}`),
+  ];
+}
 
 export function getCitySitemapEntries() {
   const entries = new Map();
@@ -41,12 +43,13 @@ export function getCitySitemapEntries() {
 
 export function getLocalizedSitemapEntries() {
   const cityPaths = getCitySitemapEntries();
+  const staticPaths = getStaticPaths();
   const entries = [];
 
   for (const locale of routing.locales) {
     const prefix = locale === routing.defaultLocale ? '' : `/${locale}`;
 
-    for (const path of STATIC_PATHS) {
+    for (const path of staticPaths) {
       const localizedPath = `${prefix}${path}`;
       const languages = Object.fromEntries(
         routing.locales.map((entryLocale) => {

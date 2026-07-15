@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
+import { CmsBody } from '@/components/cms/CmsBody';
 import { PageSection } from '@/components/layout/PageSection';
 import { AdSlot } from '@/components/monetization/AdSlot';
 import { JsonLd } from '@/components/seo/JsonLd';
@@ -124,11 +125,11 @@ export async function JournalPostPage({ post, relatedPosts = [], locale = 'en' }
         <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,1fr)_17.5rem] lg:gap-12">
           <div className="flex min-w-0 flex-col gap-10">
             <article className={cn('flex w-full flex-col', SPACING.stack6)}>
-              <div className="flex flex-col gap-5 text-base leading-relaxed text-foreground/90">
-                {post.body?.map((paragraph) => (
-                  <p key={paragraph.slice(0, 48)}>{paragraph}</p>
-                ))}
-              </div>
+              <CmsBody
+                html={post.bodyHtml}
+                paragraphs={post.body}
+                className="flex flex-col gap-5 text-base leading-relaxed text-foreground/90 [&_a]:text-primary [&_a]:underline [&_h2]:font-heading [&_h2]:text-2xl [&_h3]:font-heading [&_h3]:text-xl [&_li]:ms-5 [&_ol]:list-decimal [&_ul]:list-disc"
+              />
             </article>
 
             <JournalPostComments slug={post.id} />

@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AdminSidebar } from '@/features/admin/components/shell/AdminSidebar';
 import { CMS_COLLECTION } from '@/constants/cms';
 import { AdminAdSensePanel } from '@/features/admin/components/adsense/AdminAdSensePanel';
+import { AdminBlogPostsPanel } from '@/features/admin/components/AdminBlogPostsPanel';
 import { AdminCmsPagesPanel } from '@/features/admin/components/AdminCmsPagesPanel';
 import { AdminEmailConnectorsPanel } from '@/features/admin/components/email-connectors/AdminEmailConnectorsPanel';
 import { AdminInaccuraciesPanel } from '@/features/admin/components/AdminInaccuraciesPanel';
@@ -250,6 +251,8 @@ export function AdminDashboard() {
             description="Edit platform documentation pages shown under /docs."
           />
         );
+      case 'blog':
+        return <AdminBlogPostsPanel />;
       case 'inaccuracies':
         return (
           <AdminInaccuraciesPanel

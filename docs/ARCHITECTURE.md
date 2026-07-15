@@ -98,6 +98,7 @@ SQLite (`src/lib/db/index.js`) — core plus stretch tables:
 | `email_templates` | Editable branded HTML templates |
 | `hero_image_cache` | Dual-orientation location hero URLs |
 | `cms_pages` | Editable legal/docs copy |
+| `blog_posts` | Editable journal articles (EN CMS; seed from `HOME_BLOG_POSTS`) |
 | `site_analytics_events` | First-party analytics (beacon ingest) |
 | `admin_audit_log` | Admin action audit trail |
 | `weather_observations` | Upstream-only observation archive |
@@ -118,4 +119,4 @@ Additional migrations may exist; treat `src/lib/db/index.js` as source of truth.
 
 ## User documentation
 
-In-app docs at `/docs/*` — **11** pages from `DOCS_PAGES` in `src/content/docs/defaults.js` (re-exported via `index.js`), resolved through CMS/`getDocBySlug`. File defaults seed and reset SQLite `cms_pages`.
+In-app docs at `/docs/*` — **11** pages from `DOCS_PAGES` in `src/content/docs/defaults.js` (re-exported via `index.js`), resolved through CMS/`getDocBySlug`. File defaults seed and reset SQLite `cms_pages`. Journal articles for the default locale resolve from SQLite `blog_posts` (admin Content → Blog Articles); other locales use `blog-posts-i18n` packs.

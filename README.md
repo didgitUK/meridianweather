@@ -137,6 +137,71 @@ Mobile- and desktop-optimised **web**. Store badges are roadmap placeholders onl
 
 ![Footer store badges — future native signal](docs/screenshots/16-store-badges.png)
 
+## Admin portal (stretch)
+
+Everything below is **bonus** relative to the core weather dashboard. Auth is a single role — **Admin** — at `/login` → `/admin` (needs `ADMIN_SECRET`, `ADMIN_PASSWORD`, and `ADMIN_EMAIL`). Profile and Users pages manage those accounts (screenshots omitted).
+
+### Four overview dashboards
+
+The Dashboard hub tabs cover Analytics, API use, Email lists, and AdSense income. Supporting pages live under Operations, Connectors, and Email. AdSense earnings charts need a live domain plus AdSense OAuth to verify end-to-end.
+
+![Admin analytics dashboard](docs/screenshots/20-admin-dashboard-analytics.png)
+
+![Admin API dashboard](docs/screenshots/21-admin-dashboard-api.png)
+
+![Admin email lists dashboard](docs/screenshots/22-admin-dashboard-email-lists.png)
+
+![Admin AdSense income dashboard](docs/screenshots/23-admin-dashboard-adsense.png)
+
+### Inaccuracy reports
+
+Visitors can report inaccurate measures from city detail. Admins review open issues, dismiss manually, or enable auto-dismiss after N days.
+
+![Inaccuracy issues](docs/screenshots/24-admin-inaccuracy.png)
+
+### Connectors
+
+- **Weather API** — OpenWeather key, refresh interval, and limits
+- **AdSense API** — publisher ID, slots, and Management API connection
+- **Email** — Resend, SendGrid, Amazon SES, or custom SMTP (**only one active** at a time)
+- **Alert feeds** — Open-Meteo Warnings and US National Weather Service for real severe alerts (e.g. tornadoes)
+
+A footer pop-out summarises connector health at a glance.
+
+![Weather API connector](docs/screenshots/25-admin-weather-api.png)
+
+![AdSense API connector](docs/screenshots/26-admin-adsense-connector.png)
+
+![Email connectors](docs/screenshots/27-admin-email-connectors.png)
+
+![Alert feeds](docs/screenshots/28-admin-alert-feeds.png)
+
+![Connector status overview](docs/screenshots/34-admin-connector-status.png)
+
+### Mailing lists
+
+Drill into newsletter, digests, or any alert type and **remove** subscribers. New subscriptions only come from the public site.
+
+![Mailing lists](docs/screenshots/29-admin-mailing-lists.png)
+
+### Email templates
+
+HTML templates with dynamic shortcodes, plus an HTML preview dialog. Defaults are functional; template design can still be refined further. See [docs/EMAIL-TEMPLATE-SHORTCODES.md](docs/EMAIL-TEMPLATE-SHORTCODES.md).
+
+![Email templates](docs/screenshots/30-admin-email-templates.png)
+
+![Email template HTML preview](docs/screenshots/31-admin-email-preview.png)
+
+### Content CMS
+
+Policies, Documentation, and **Blog Articles** are editable in admin (rich-text editor). File defaults seed the database; public `en` pages read from SQLite. Non-English locales still use content packs where provided.
+
+![Policies content](docs/screenshots/32-admin-content-policies.png)
+
+![Documentation content](docs/screenshots/33-admin-content-docs.png)
+
+Security notes for admin sessions and cron: [docs/SECURITY.md](docs/SECURITY.md).
+
 ---
 
 ## Troubleshooting install

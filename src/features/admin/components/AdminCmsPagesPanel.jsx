@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AdminField, AdminPanel } from '@/features/admin/components/AdminPanel';
+import { AdminRichTextEditor } from '@/features/admin/components/AdminRichTextEditor';
 import { cn } from '@/lib/utils';
 
 function createEmptySection() {
@@ -249,11 +250,10 @@ export function AdminCmsPagesPanel({
                   />
                 </AdminField>
                 <AdminField label="Body">
-                  <textarea
+                  <AdminRichTextEditor
+                    key={`${activeSlug}-${section.id}-${index}`}
                     value={section.body}
-                    onChange={(event) => updateSection(index, { body: event.target.value })}
-                    rows={5}
-                    className="min-h-28 w-full rounded-md border border-input bg-background px-3 py-2 text-sm leading-relaxed"
+                    onChange={(body) => updateSection(index, { body })}
                   />
                 </AdminField>
               </div>

@@ -25,6 +25,7 @@ export const ADMIN_SECTION_IDS = {
   alertSubscribers: 'alert-subscribers',
   policies: 'policies',
   documentation: 'documentation',
+  blog: 'blog',
   profile: 'profile',
   users: 'users',
 };
@@ -154,6 +155,12 @@ export const ADMIN_NAV_GROUPS = [
         label: 'Documentation',
         hint: 'Public /docs pages',
         icon: 'BookOpen',
+      },
+      {
+        id: ADMIN_SECTION_IDS.blog,
+        label: 'Blog Articles',
+        hint: 'Public /journal posts',
+        icon: 'Newspaper',
       },
     ],
   },

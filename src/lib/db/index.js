@@ -198,6 +198,19 @@ CREATE TABLE IF NOT EXISTS cms_pages (
   PRIMARY KEY (collection, slug)
 );
 
+CREATE TABLE IF NOT EXISTS blog_posts (
+  slug TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  excerpt TEXT NOT NULL,
+  category TEXT NOT NULL,
+  date_iso TEXT NOT NULL,
+  date_label TEXT NOT NULL,
+  image_url TEXT NOT NULL,
+  image_alt TEXT NOT NULL,
+  body_html TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS admin_users (
   id TEXT PRIMARY KEY,
   email TEXT NOT NULL UNIQUE,
