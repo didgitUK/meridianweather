@@ -4,6 +4,12 @@ export const apiLimitsDoc = {
   lastUpdated: '2026-07-15',
   sections: [
     {
+      id: 'audience',
+      title: 'Who this page is for',
+      body:
+        'This page is for people running the site. Visited weather data is shared and cache-friendly so free-tier OpenWeather limits (default 1000 calls/day) are less likely to be burned.',
+    },
+    {
       id: 'quota',
       title: 'Daily and per-minute quota',
       body:

@@ -7,7 +7,7 @@ export const apiReferenceDoc = {
       id: 'overview',
       title: 'Overview',
       body:
-        'All API routes are Next.js App Router handlers under src/app/api/. Weather and geocode require OPENWEATHER_API_KEY. Cron routes require Authorization: Bearer CRON_SECRET. Admin routes require an authenticated admin session cookie (meridian_admin_session) after login at /login, unless dev bypass applies.',
+        'This page is for developers and operators integrating with meridian APIs — everyday visitors can skip it. All API routes are Next.js App Router handlers under src/app/api/. Weather and geocode require OPENWEATHER_API_KEY. Cron routes require Authorization: Bearer CRON_SECRET. Admin routes require an authenticated admin session cookie (meridian_admin_session) after login at /login, unless ALLOW_DEV_ADMIN_BYPASS applies in development.',
     },
     {
       id: 'weather',
@@ -37,7 +37,7 @@ export const apiReferenceDoc = {
       id: 'recent-checks',
       title: 'GET /api/recent-checks',
       body:
-        'No params. Returns { checks, source } where source is popular when search-triggered rows exist, or empty when none. Default limit 20 from location_weather_checks ranked by search volume (search_select and search_preview triggers). No showcase fallback.',
+        'No params. Returns { checks, source } where source is popular when search-triggered rows exist, or empty when none. Default limit 20 from location_weather_checks ranked by search volume (search_select and search_preview triggers). API has no showcase fallback — the home UI may still show demo popular cities when empty if SHOW_DEMO_POPULAR_SEARCHES is on. Near you column does not use this route.',
     },
     {
       id: 'subscriptions',

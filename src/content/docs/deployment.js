@@ -4,10 +4,16 @@ export const deploymentDoc = {
   lastUpdated: '2026-07-15',
   sections: [
     {
+      id: 'audience',
+      title: 'Who this page is for',
+      body:
+        'This page is for people deploying meridian. Everyday visitors do not need these settings. A working demo needs only OPENWEATHER_API_KEY; everything else is optional stretch.',
+    },
+    {
       id: 'env-required',
       title: 'Required environment',
       body:
-        'OPENWEATHER_API_KEY — required for weather and geocode. DATABASE_PATH — SQLite file (default ./data/meridian.db); must be persistent volume in production so cache and subscriptions survive restarts.',
+        'OPENWEATHER_API_KEY — required for weather and geocode. DATABASE_PATH — SQLite file (default ./data/meridian.db); must be persistent volume in production so cache and subscriptions survive restarts. NEXT_PUBLIC_SHOW_HOME_STRETCH=0 hides dashboard ad + Journal (on by default). NEXT_PUBLIC_SHOW_DEMO_POPULAR_SEARCHES=0 disables demo popular cities when the API is empty.',
     },
     {
       id: 'env-hero',

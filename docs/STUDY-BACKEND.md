@@ -68,7 +68,7 @@ Interview line: “Stretch exists as exploration; evaluation focus is the dashbo
 
 - Unsplash when `UNSPLASH_ACCESS_KEY` is set; else Wikimedia / Pexels / committed `public/hero/*` SVGs
 - AdSense when configured + advertising consent; else branded `public/ads/*` PNG placeholders (sr-only overlay)
-- Home ads / journal teaser stay off unless `NEXT_PUBLIC_SHOW_HOME_STRETCH=1`
+- Home ads / journal teaser are on by default; set `NEXT_PUBLIC_SHOW_HOME_STRETCH=0` to hide
 
 ## Top files to open
 

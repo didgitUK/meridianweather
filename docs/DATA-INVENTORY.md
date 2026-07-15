@@ -71,7 +71,7 @@ Functional consent gates **localStorage** L0 weather-cache writes. Analytics con
 | Service | Data sent | When |
 | --- | --- | --- |
 | OpenWeather | lat, lon, geocode query | Weather/geocode requests |
-| Nominatim / popular-cities | query (client-side merge) | Geocode soft-fallback paths |
+| Nominatim / popular-cities | query (server-side merge in `GET /api/geocode` / `fetchGeocode`) | Geocode soft-fallback paths |
 | Open-Meteo / NWS | location context | Weather-alert evaluation (cron) |
 | Resend / SendGrid / SES / SMTP | email, template content | Subscription emails via active connector |
 | Unsplash / Wikimedia / Pexels | location search terms | Hero image resolution |

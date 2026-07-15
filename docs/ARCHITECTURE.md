@@ -2,7 +2,7 @@
 
 ## Overview
 
-meridian is a Next.js 16 App Router application (JavaScript). The browser stores user preferences (cities, theme, consent, weather L0 cache, and related settings). Runtime tier is always free (`meridian:tier` is reserved/unused). Server routes proxy OpenWeather, enforce quota limits, persist weather snapshots and platform settings in SQLite, send email via the active connector (Resend, SendGrid, SES, or SMTP), ingest first-party analytics, and serve AdSense configuration.
+meridian is a Next.js 16 App Router application (JavaScript). The browser stores user preferences (cities, theme, consent, weather L0 cache, and related settings). Runtime tier is always free (`meridian:tier` is reserved/unused). Server routes proxy OpenWeather, enforce quota limits, persist weather snapshots and platform settings in SQLite, send email via the active connector (Resend, SendGrid, SES, or SMTP), ingest first-party analytics when `consent.analytics` is on, and serve AdSense configuration.
 
 ```mermaid
 flowchart LR
@@ -56,10 +56,10 @@ Route handlers return `{ error, message }` via `src/lib/server/api-response.js`.
 
 ## Data flow — recent checks
 
-1. `GET /api/recent-checks` calls `getRecentChecksPayload()` → `listPopularSearchChecks` on `location_weather_checks` (triggers `search_select` / `search_preview`), default limit **20**.
-2. Response `{ checks, source }` where `source` is `popular` or `empty`. There is **no** showcase fallback.
-3. Home UI (`RecentChecksSection`) shows two columns (“Near you” + “Popular searches”), up to **5** cards each; cards link to city detail when coordinates exist.
-4. `npm run seed:checks` writes North England `weather_snapshots` for cache demos — it does **not** populate `/api/recent-checks` (that needs search-triggered check rows).
+1. Home UI (`RecentChecksSection`) shows two columns (up to **5** cards each): **Near you** (nearby places from the home location + current weather batch) and **Popular searches**.
+2. Popular searches data: `GET /api/recent-checks` → `getRecentChecksPayload()` → `listPopularSearchChecks` on `location_weather_checks` (triggers `search_select` / `search_preview`), default limit **20**, `{ checks, source: popular|empty }`. The **API** has no showcase fallback.
+3. When the API returns empty and `SHOW_DEMO_POPULAR_SEARCHES` is true (default; disable with `NEXT_PUBLIC_SHOW_DEMO_POPULAR_SEARCHES=0`), the **UI** fills Popular searches from `PLATFORM_SHOWCASE_CITIES`.
+4. `npm run seed:checks` writes North England `weather_snapshots` for cache demos — it does **not** populate `/api/recent-checks`.
 
 ## Data flow — subscriptions
 

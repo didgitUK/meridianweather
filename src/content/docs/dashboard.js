@@ -5,45 +5,51 @@ export const dashboardDoc = {
   sections: [
     {
       id: 'layout',
-      title: 'Page layout',
+      title: 'What you see on the home page',
       body:
-        'The home page bands: (1) Hero — product intro, location weather check, and a square hero ad. (2) Recent checks — two columns (“Near you” and “Popular searches”). (3) Your locations — pinned-city weather cards. (4) Dashboard ad placeholder/unit. (5) Journal — six blog-style article cards in a left/right carousel linking to `/journal/[slug]` posts.',
+        'Top to bottom:\n\n1. Hero — welcome text, search, and a quick location weather check.\n2. Your locations — weather cards for the places you pinned.\n3. Nearby & popular — two columns: Near you and Popular searches.\n4. A dashboard ad placeholder (or live AdSense when configured).\n5. Journal — a short article carousel.\n\nOperators can hide the ad and Journal with NEXT_PUBLIC_SHOW_HOME_STRETCH=0 for a leaner home page.',
     },
     {
       id: 'cards',
-      title: 'Weather cards',
+      title: 'Your location cards',
       body:
-        'Each card shows city name, region/country, current temperature, condition description, Meteocons weather icon, feels-like temperature, humidity, and wind. Cards link to the city detail page. Hover prefetches the detail route and weather data.',
+        'Each card shows the place name, temperature, condition, weather icon, feels-like, humidity, and wind. Tap a card to open the full city page. While weather loads you see a placeholder; if a fetch fails you get Retry and Remove.',
     },
     {
       id: 'forecast-strip',
-      title: 'Seven-day mini forecast',
+      title: 'Seven-day strip',
       body:
-        'Below the main reading, each card shows a seven-day outlook (day label, icon, min/max). Current and daily scopes load together in one dashboard batch request — there is no separate idleCallback daily fetch. The strip shows day label, icon, and min/max temperature range.',
+        'Under the main reading, each card shows a seven-day outlook (day name, icon, high and low). Current conditions and that outlook load together so you are not waiting on a second step.',
     },
     {
       id: 'card-actions',
-      title: 'Card actions',
+      title: 'Subscribe and remove',
       body:
-        'Subscribe opens a modal for weekly digest and weather alert emails for that city. Remove (X) deletes the city from localStorage and clears its browser weather cache. If you have active email subscriptions for that city, a dialog offers to unsubscribe before removal.',
+        'Subscribe opens email options for a weekly digest and weather alerts for that city. Remove takes the city off Your locations and clears its saved weather on this device. If you still have email alerts for that city, you will be asked whether to cancel them too.',
     },
     {
       id: 'states',
-      title: 'Loading and error states',
+      title: 'Empty dashboard',
       body:
-        'While weather loads, a skeleton card is shown. On upstream failure, the card displays an error alert with Retry and Remove actions. An empty grid shows guidance to search and pin your first city from the city detail page.',
+        'With no pinned cities, the grid explains how to search and pin your first place from the city page.',
     },
     {
       id: 'refresh',
-      title: 'Refresh behaviour',
+      title: 'When readings update',
       body:
-        'By default, Your locations uses manual refresh (`meridian:weather-refresh-mode`): the dashboard serves the last reading stored in this browser on page load, and only fetches when you tap refresh on a card (or when a city has no local cache yet). There is no Settings → Weather panel in the current UI; the key exists for programmatic / future use. Data is also cached server-side (memory + SQLite). See Forecasts & cache for TTL details.',
+        'By default Your locations prefer the last reading saved on this device. Tap refresh on a card for a fresh check (new cities without a saved reading also fetch automatically). There is no Settings → Weather switch in the current UI.',
     },
     {
       id: 'recent-checks',
-      title: 'Recent checks',
+      title: 'Near you and Popular searches',
       body:
-        'Two columns show up to five cards each from GET /api/recent-checks (popular searches from location_weather_checks, API limit 20, source popular|empty). Cards link to city detail when coordinates exist. npm run seed:checks fills weather_snapshots only — it does not populate this strip. See Recent checks & seeding.',
+        'Near you — places around your home or region, with current conditions. These are not “your past searches.”\n\nPopular searches — places many people on this site have searched, up to five cards. On a quiet or brand-new install you may see a few demo cities until real search activity builds up.\n\nCards link to the city page when we have coordinates. See Nearby & popular for more detail.',
+    },
+    {
+      id: 'operators',
+      title: 'For site operators',
+      body:
+        'Home stretch (dashboard AdSlot + Journal): on by default; set NEXT_PUBLIC_SHOW_HOME_STRETCH=0 to hide. Demo popular cities when the API has no rows: SHOW_DEMO_POPULAR_SEARCHES (default on; set NEXT_PUBLIC_SHOW_DEMO_POPULAR_SEARCHES=0 to disable). Popular searches API: GET /api/recent-checks (limit 20, source popular|empty). Near you does not use that API. Seed script npm run seed:checks fills weather_snapshots only — it does not fill Popular searches.',
     },
   ],
 };

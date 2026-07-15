@@ -86,11 +86,11 @@
 
 **Context:** Dashboard should show platform activity without framing a personal search history.
 
-**Decision (current):** `GET /api/recent-checks` → `getRecentChecksPayload()` → `listPopularSearchChecks` on `location_weather_checks` filtered to `search_select` / `search_preview`, default limit **20**, `source: popular|empty`. Home UI shows “Near you” + “Popular searches” (5 cards each); cards link to city detail when coords exist. No showcase hydration. `npm run seed:checks` still seeds `weather_snapshots` for cache demos and does **not** feed this API.
+**Decision (current):** Home UI shows “Near you” (nearby places + current weather) and “Popular searches” (5 cards each). Popular searches data: `GET /api/recent-checks` → `getRecentChecksPayload()` → `listPopularSearchChecks` on `location_weather_checks` (`search_select` / `search_preview`), default limit **20**, `source: popular|empty`. The API does not showcase-hydrate. When empty, the UI may demo-fill Popular searches from `PLATFORM_SHOWCASE_CITIES` while `SHOW_DEMO_POPULAR_SEARCHES` is on (default). `npm run seed:checks` seeds `weather_snapshots` only and does **not** feed this API.
 
-**Superseded:** Earlier v1 used deduped `weather_snapshots` + `PLATFORM_SHOWCASE_CITIES` fallback (`listRecentPlatformChecks` remains dead code).
+**Superseded:** Earlier v1 used deduped `weather_snapshots` + API-level showcase fallback (`listRecentPlatformChecks` remains dead code).
 
-**Trade-off:** Strip can be empty on a fresh install until users search; seed script must not be sold as populating recent checks.
+**Trade-off:** Demo popular cities avoid making the strip look broken on fresh installs; operators should disable the flag for production honesty. Seed script must not be sold as populating Popular searches.
 
 ## ADR-012: Consent model — functional L0 writes gated; analytics consent-gated
 

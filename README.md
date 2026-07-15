@@ -48,7 +48,7 @@ Open [http://localhost:3000](http://localhost:3000).
 2. **localStorage** for the user’s pinned city list (brief requirement).
 3. **Caching** (browser L0 + memory L1 + SQLite L2) and a daily quota tracker (default 1000/day, 60/min; warning 800; soft-block 950).
 4. **JavaScript** (not TypeScript) for this delivery. Public UI ships **7 locales** via `next-intl` (`en`, `en-GB`, `de`, `fr`, `es`, `ja`, `ar`); admin/auth stay English-first.
-5. Stretch (admin, email, AdSense) is optional for the interview brief. In development, unset admin secrets may grant a local admin bypass; cron is fail-closed in production when `CRON_SECRET` is unset.
+5. Stretch (admin, email, AdSense) is optional for the interview brief. Local admin bypass needs `ALLOW_DEV_ADMIN_BYPASS=1` with `NODE_ENV=development` and no `ADMIN_SECRET`. Cron is fail-closed in production when `CRON_SECRET` is unset.
 
 ## Assumptions & decisions
 
@@ -57,7 +57,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - Functional cookie consent gates **localStorage** writes to `meridian:weather-cache` (in-memory session cache still works).
 - Hero photos cascade Unsplash → Wikimedia Commons (keyless) → Pexels; static SVGs in `public/hero/` are last resort.
 - Without AdSense env/consent, slots show branded demo placeholders in `public/ads/` (overlay text is sr-only).
-- Home ads + journal teaser stay **off** unless `NEXT_PUBLIC_SHOW_HOME_STRETCH=1` (keeps the interview path on search → pin → cards).
+- Home ads + journal teaser are **on by default**; set `NEXT_PUBLIC_SHOW_HOME_STRETCH=0` for a leaner demo focused on search → pin → cards.
 - Popular-searches strip seeds showcase cities when empty (disable with `NEXT_PUBLIC_SHOW_DEMO_POPULAR_SEARCHES=0`).
 - Set `NEXT_PUBLIC_APP_URL` in production for SEO canonicals, email unsubscribe, admin invite/reset links, and AdSense OAuth callback fallback.
 
@@ -79,7 +79,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | `CRON_SECRET` | Bearer for `/api/cron/*` (**required in production** if cron is used) |
 | `ADMIN_SECRET` | Session HMAC + connector encryption (**required** for admin login cookies) |
 | `ADMIN_PASSWORD` / `ADMIN_EMAIL` | Root admin login |
-| `ALLOW_DEV_ADMIN_BYPASS` | Optional `1` — local admin bypass when `NODE_ENV=development` and no `ADMIN_SECRET` |
+| `ALLOW_DEV_ADMIN_BYPASS` | Optional `1` — required (with `NODE_ENV=development` and no `ADMIN_SECRET`) for local admin bypass |
 | `GOOGLE_ADSENSE_CLIENT_ID` | AdSense publisher ID (`ca-pub-…`) |
 | `GOOGLE_ADSENSE_SLOT_DASHBOARD` / `_HERO` / `_RECENT` / `_CITY_DETAIL` / `_DEFAULT` | Display unit IDs |
 | `GOOGLE_ADSENSE_OAUTH_*` | Optional — AdSense Management API for admin earnings |
@@ -96,7 +96,7 @@ Suggested host: **Vercel** (or any Node host that can build native modules / sup
 | `NEXT_PUBLIC_APP_URL` | Required in prod | Canonical URLs, email/unsubscribe, invites |
 | `DATABASE_PATH` | Recommended | Point at persistent storage when the host allows it. Ephemeral disk is acceptable for a short interview demo (cache/quota reset on redeploy). |
 
-**Stretch only** (skip unless showing those surfaces): `ADMIN_SECRET`, `ADMIN_PASSWORD`, `ADMIN_EMAIL`, `CRON_SECRET`, AdSense keys, email provider keys, `NEXT_PUBLIC_SHOW_HOME_STRETCH=1`.
+**Stretch only** (skip unless showing those surfaces): `ADMIN_SECRET`, `ADMIN_PASSWORD`, `ADMIN_EMAIL`, `CRON_SECRET`, AdSense keys, email provider keys. Hide home ads/journal with `NEXT_PUBLIC_SHOW_HOME_STRETCH=0`.
 
 After deploy, paste the live URL under **Live demo** at the top of this README.
 
@@ -133,7 +133,7 @@ After deploy, paste the live URL under **Live demo** at the top of this README.
 ## What we’d improve with more time
 
 - Paste a production deploy URL once hosted
-- Live AdSense / email stretch surfaces when demoing monetization (set `NEXT_PUBLIC_SHOW_HOME_STRETCH=1`)
+- Live AdSense / email stretch surfaces when demoing monetization (home ads/journal on by default)
 
 ## Reviewers
 

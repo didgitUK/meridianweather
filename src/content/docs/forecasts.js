@@ -4,16 +4,22 @@ export const forecastsDoc = {
   lastUpdated: '2026-07-15',
   sections: [
     {
+      id: 'audience',
+      title: 'Who this page is for',
+      body:
+        'Everyday visitors can skip this page. It explains how the site stores and refreshes weather data for people who run or integrate meridian. In plain terms: your browser remembers a recent reading; the server also remembers shared readings so we do not call the weather provider on every click.',
+    },
+    {
       id: 'scopes',
       title: 'Weather scopes',
       body:
-        'Client-requestable scopes: current (now), hourly (timeline), daily (timeline), minutely (precipitation). Server-only scopes: geocode (city search cache keyed geocode:{query}), alert (individual alert payloads). Each weather scope uses cache key {lat},{lon},{scope}; geocode keys by query string.',
+        'Client-requestable scopes: current (now), hourly (timeline), daily (timeline), minutely (precipitation — API only; city detail does not load minutely today). Server-only scopes: geocode (city search cache keyed geocode:{query}), alert (individual alert payloads). Each weather scope uses cache key {lat},{lon},{scope}; geocode keys by query string.',
     },
     {
       id: 'layers',
       title: 'Cache layers',
       body:
-        'L0 — browser localStorage meridian:weather-cache, structure {cityId: {scope: {payload, fetchedAt}}}. L1 — in-memory Map on the server process. L2 — SQLite weather_snapshots with fetched_at, expires_at, stale_until. Reads check L0 → API → L1/L2 → upstream OpenWeather.',
+        'L0 — browser localStorage meridian:weather-cache, structure {cityId: {scope: {payload, fetchedAt}}} (writes need functional consent). L1 — in-memory Map on the server process. L2 — SQLite weather_snapshots with fetched_at, expires_at, stale_until. Client reads L0 then calls the API; the server reads L1 then L2 then upstream OpenWeather.',
     },
     {
       id: 'freshness',

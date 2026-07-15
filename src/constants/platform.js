@@ -8,11 +8,10 @@ export const PLATFORM_SHOWCASE_CITIES = [
 
 /**
  * When true, home also renders ads + journal teaser below the core grid.
- * Default off so the interview demo path stays search → pin → cards.
- * Set NEXT_PUBLIC_SHOW_HOME_STRETCH=1 to restore the stretch sections.
+ * Default on. Set NEXT_PUBLIC_SHOW_HOME_STRETCH=0 to hide for a leaner demo.
  */
 export const SHOW_HOME_STRETCH_SECTIONS =
-  process.env.NEXT_PUBLIC_SHOW_HOME_STRETCH === '1';
+  process.env.NEXT_PUBLIC_SHOW_HOME_STRETCH !== '0';
 
 /**
  * Fresh installs show showcase cities in the popular-searches strip until real

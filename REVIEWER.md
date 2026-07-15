@@ -38,8 +38,8 @@ That is the interview brief. Stop here unless exploring stretch.
 ## Stretch demos (optional)
 
 5. `npm run seed:checks` — populates L2 `weather_snapshots` for cache demos (does **not** fill the popular-searches strip; that needs real search-triggered checks).
-6. AdSense placeholders / live units: Settings FAB → Cookies → Advertising (needs env + consent). Home ads stay off unless `NEXT_PUBLIC_SHOW_HOME_STRETCH=1`.
-7. Admin: `/login` then `/admin` (`ADMIN_PASSWORD` / `ADMIN_SECRET`; or local dev bypass when those are unset in development).
+6. AdSense placeholders / live units: Settings FAB → Cookies → Advertising (needs env + consent). Home ads + journal teaser are on by default (`NEXT_PUBLIC_SHOW_HOME_STRETCH=0` hides them).
+7. Admin: `/login` then `/admin` (`ADMIN_PASSWORD` / `ADMIN_SECRET`; or local bypass with `ALLOW_DEV_ADMIN_BYPASS=1` when `NODE_ENV=development` and `ADMIN_SECRET` is unset).
 8. `/docs` — documentation via `src/app/[locale]/docs/[slug]/page.js` + `src/content/docs/`.
 9. Newsletter subscribe; cron with `CRON_SECRET`; React Email templates under `src/emails/`.
 

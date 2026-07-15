@@ -1,10 +1,14 @@
 # Email template shortcodes
 
-Use these tokens in admin email template editors:
+Editable email HTML lives in **Admin → Email**. You do not need to be a developer: type `{{likeThis}}` in the template body, and Meridian replaces it when the email is sent or previewed.
+
+Where to edit:
 
 - **Email → Mailing Lists** — welcome, weekly digest, weather alerts
 - **Email → Auth Emails** — admin invite / welcome / password emails
 - **Email → Admin Emails** — contact, DPO, complaint, and support replies
+
+Some tokens (such as `{{logoUrl}}`, `{{appUrl}}`, `{{brandName}}`, `{{brandDomain}}`, `{{brandTagline}}`) are always filled in at send time even if they do not appear in the admin “chips” list for that template. Prefer the prebuilt HTML blocks (`{{locationsHtml}}`, `{{currentCardHtml}}`, `{{dailyForecastHtml}}`) when you want a full weather layout without assembling every field yourself.
 
 ## Branded layout (v2)
 
@@ -13,12 +17,10 @@ Every default template shares the Meridian shell:
 1. **Black header** with `{{logoUrl}}` (`/brand/logo-on-dark.png`)
 2. **Accent bar + eyebrow** unique per alert type or email reason
 3. **Image band** — location `{{heroImageUrl}}` on weather alerts; atmospheric brand image on welcome / digest / auth / admin replies
-4. **Body** — shortcode-driven copy (Helvetica stack)
+4. **Body** — shortcode-driven copy
 5. **Dark footer** — brand tagline; `{{unsubscribeUrl}}` on mailing alerts/digest/welcome; app link on auth/admin
 
 Defaults are built from `src/constants/email-template-themes.js` and `src/lib/email-templates/branded-email-layout.js`. Stored rows without the `<!-- meridian-email-layout:2 -->` marker are upgraded to the new defaults on seed/send.
-
-Always inject `{{logoUrl}}` and `{{appUrl}}` at send time (and in admin preview). Brand helpers may also inject `{{brandName}}`, `{{brandDomain}}`, and `{{brandTagline}}` from `buildEmailBrandVars`.
 
 ## Syntax
 
@@ -63,7 +65,7 @@ One email per address covering all subscribed digest locations.
 | `{{temperature}}` | `14°C` | First location, formatted °C |
 | `{{condition}}` | `Partly cloudy` | First location |
 | `{{humidity}}` | `62` | First location, percent number |
-| `{{windSpeed}}` | `4.2` | First location (legacy field; prefer building from `locationsHtml`) |
+| `{{windSpeed}}` | `4.2` | First location only; value is **m/s** (legacy — prefer `{{locationsHtml}}`) |
 
 ---
 
@@ -93,12 +95,12 @@ Each type has a **unique eyebrow, accent colour, and lead sentence** in the defa
 | --- | --- | --- |
 | `{{temperature}}` | `14°C` | Rounded display (°C) |
 | `{{temperatureC}}` | `14.2` | Raw Celsius number as string |
-| `{{feelsLike}}` | `12°` | Feels-like, formatted |
+| `{{feelsLike}}` | `12°C` | Feels-like, formatted with unit |
 | `{{description}}` | `Light rain` | Long description |
 | `{{weatherCondition}}` | `Rain` | Short OpenWeather main group |
 | `{{humidity}}` | `82` | Percent (no `%` suffix) |
 | `{{pressure}}` | `1013` | hPa |
-| `{{dewPoint}}` | `9` | °C |
+| `{{dewPoint}}` | `9°C` | Dew point with unit |
 | `{{visibilityKm}}` | `10` | km |
 | `{{clouds}}` | `75` | Percent |
 | `{{windSpeedKmh}}` | `15` | km/h |

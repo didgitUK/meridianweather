@@ -5,75 +5,57 @@ export const cityDetailDoc = {
   sections: [
     {
       id: 'access',
-      title: 'Who can view a city page',
+      title: 'Opening a city page',
       body:
-        'City detail pages live at /city/[cityId]. resolveCity() always serves the five PLATFORM_SHOWCASE_CITIES (London, Dubai, New York, Tokyo, Sydney). Any location row with a city_slug also resolves. Parsed IDs of the form {name}-{country}-{lat} match when lat/country exist in SQLite. Unknown or malformed slugs return 404. You do not need to pin a city to open its page.',
+        'Search results and home cards open a page for that place. You do not need to pin a city to view it. Pinning only adds it to Your locations on the home page. A few showcase cities and places already known to the site always open; unknown addresses show a helpful empty state or 404.',
     },
     {
       id: 'tabs',
       title: 'Forecast tabs',
       body:
-        'Sticky tabs: Today, Hourly, 10-Day, and History. Deep-link with ?tab=hourly, ?tab=daily, or ?tab=history. Legacy ?tab=next-hour redirects to Today. Up to three OpenWeather alert banners render above the hero when alertIds are present. A city-detail AdSlot sits directly under the tabs.',
+        'Use the tabs to move between:\n\n• Today — current conditions and quick facts\n• Hourly — the next hours\n• 10-Day — the longer outlook\n• History — past days when we have stored them\n\nYou can share a link that opens a tab (for example with ?tab=hourly). Up to three weather alert banners may appear above the page when alerts exist. An ad unit may sit under the tabs.',
     },
     {
       id: 'header',
-      title: 'Page header and hero',
+      title: 'Map or photo at the top',
       body:
-        'By default the header uses an OSM satellite map backdrop when isCityHeroOsmEnabled() is true (NEXT_PUBLIC_CITY_HERO_OSM unset or not "0"). Set NEXT_PUBLIC_CITY_HERO_OSM=0 to prefer photos. Photo mode cascades Unsplash → Wikimedia Commons → Pexels via getHeroImageForRegion, with static SVG fallbacks when keys are missing. Optional Google Street View applies when OSM is off and NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1.',
+        'By default the header shows a satellite map of the area. Operators can switch to location photos instead (from photo providers when available, otherwise a simple brand image). Optional Street View is an operator setting when the map backdrop is off.',
     },
     {
       id: 'today',
-      title: 'Today tab',
+      title: 'Today',
       body:
-        'Current conditions hero, metric tiles with Meteocon icons, and Current conditions / Location / Sun times accordions. Hourly preview for the rest of today when hourly data is available.',
+        'Current temperature and condition, metric tiles (humidity, wind, and similar), and expanders for more detail. A short hourly preview for the rest of the day when available.',
     },
     {
       id: 'hourly',
-      title: 'Hourly tab',
+      title: 'Hourly',
       body:
-        'Next-12-hour card list (one column) for near-term temperature, precipitation chance, and wind.',
+        'The next twelve hours: temperature, chance of rain, and wind at a glance.',
     },
     {
       id: 'daily',
-      title: '10-Day tab',
+      title: '10-Day',
       body:
-        'Daily outlook list (up to ten days): weekday, icon, description/summary, min/max, rain chance, wind, UV. Selecting a day opens the metric chart for that date.',
+        'Up to ten days with high/low, conditions, rain chance, wind, and UV. Select a day to focus the chart.',
     },
     {
       id: 'history',
-      title: 'History tab',
+      title: 'History',
       body:
-        'Past days from stored observations and archived forecasts via GET /api/weather/history, with day picker and chart.',
-    },
-    {
-      id: 'alerts',
-      title: 'Weather alerts',
-      body:
-        'When OpenWeather returns alerts, AlertBanner shows at most three above the hero. Full alert text is available via GET /api/alerts/[alertId].',
-    },
-    {
-      id: 'data',
-      title: 'Data loading',
-      body:
-        'SSR hydrates current, daily, and hourly when available from getCityWeatherForSeo. The client hook useCityWeather batch-fetches DETAIL_SCOPES = [current, hourly, daily] via POST /api/weather/batch — minutely is not requested. Premium / MinutelyPrecipStrip is not wired.',
+        'Past days from stored observations when available, with a day picker and chart.',
     },
     {
       id: 'subscribe',
-      title: 'Pin and subscribe',
+      title: 'Pin and email',
       body:
-        'The Options menu on the header provides Pin to your locations and Subscribe (weekly digest + weather alerts) — the same flows as dashboard cards. Pin saves to meridian:saved-cities; subscribe opens SubscribeDialog.',
+        'The Options menu lets you Pin to your locations or Subscribe for a weekly digest and weather alerts for this place.',
     },
     {
-      id: 'prefetch',
-      title: 'Prefetch',
+      id: 'operators',
+      title: 'For site operators',
       body:
-        'Hovering a dashboard weather card prefetches /city/[cityId] and warms L0 cache via prefetchCityDetail so detail pages open faster.',
-    },
-    {
-      id: 'seo',
-      title: 'Search and discovery',
-      body:
-        'When a location receives its first successful current-weather check, markLocationIndexable sets city_slug and indexable_at, adds the city to the sitemap, and server-renders SEO metadata plus a summary block on the city page.',
+        'resolveCity() always serves five PLATFORM_SHOWCASE_CITIES (London, Dubai, New York, Tokyo, Sydney) plus rows with city_slug. Default hero: OSM when isCityHeroOsmEnabled() (NEXT_PUBLIC_CITY_HERO_OSM unset or not "0"); photos when OSM off (Unsplash → Wikimedia → Pexels). Street View opt-in: NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 with Maps key. Client batch: current, hourly, daily only — no minutely UI. History: GET /api/weather/history. First successful current check can mark the city indexable for sitemap/SEO.',
     },
   ],
 };

@@ -10,18 +10,18 @@ import { apiReferenceDoc } from '@/content/docs/api-reference';
 import { weatherIconsDoc } from '@/content/docs/weather-icons';
 import { deploymentDoc } from '@/content/docs/deployment';
 
-/** File-backed defaults used to seed and reset CMS documentation pages. */
+/** File-backed defaults used to seed and reset CMS documentation pages. User-first order. */
 export const DOCS_PAGES = [
   gettingStartedDoc,
   dashboardDoc,
   cityDetailDoc,
-  forecastsDoc,
-  recentChecksDoc,
   subscriptionsDoc,
   monetizationDoc,
+  weatherIconsDoc,
+  recentChecksDoc,
+  forecastsDoc,
   apiLimitsDoc,
   apiReferenceDoc,
-  weatherIconsDoc,
   deploymentDoc,
 ];
 

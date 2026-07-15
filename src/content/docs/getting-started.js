@@ -5,45 +5,39 @@ export const gettingStartedDoc = {
   sections: [
     {
       id: 'overview',
-      title: 'Overview',
+      title: 'What meridian is',
       body:
-        'meridian is a multi-city weather dashboard. You search for locations, pin up to ten cities in your browser, and monitor current conditions, short forecasts, and optional email updates. No account is required — all city lists and preferences are stored per device in localStorage.',
-    },
-    {
-      id: 'requirements',
-      title: 'Requirements',
-      body:
-        'The dashboard needs a server-side OpenWeather API key (OPENWEATHER_API_KEY). Without it, weather and geocode requests return errors. Email subscriptions, cron jobs, and AdSense are optional and activate only when their environment variables / connectors are configured. SQLite (better-sqlite3) always runs for cache and quota.',
+        'meridian is a weather dashboard for several places at once. Search for a city, open its page, pin it to Your locations, and keep an eye on temperature, conditions, and short forecasts. You do not need an account. Your pinned cities and most preferences stay on this device.',
     },
     {
       id: 'add-city',
-      title: 'Pinning a city',
+      title: 'How to pin a city',
       body:
-        'Use the search field on the home page hero or in the header. Type at least two characters; results appear after a 300ms debounce. Select a geocode result to open the city detail page. Use Pin to your locations on that page to save the city to Your locations. Duplicates are rejected. Each city receives a stable ID: {slugified-name}-{country}-{latitude to four decimals}, used in URLs like /city/london-gb-51.5073.',
+        '1. Type at least two characters in the search field on the home page or in the header. Results appear after a short pause.\n2. Choose a place from the list — that opens the city page.\n3. Tap Pin to your locations to save it. You can unpin later from the same menu or remove the city from the home grid.\n\nPinned places appear under Your locations on the home page. You can pin up to ten. City page addresses look like /city/london-GB-51.5073.',
     },
     {
       id: 'city-limit',
-      title: 'City limit',
+      title: 'Ten-city limit',
       body:
-        'You may pin up to ten cities (MAX_SAVED_CITIES). When the limit is reached, pin another city only after removing one from your grid.',
+        'Your locations can hold up to ten pinned cities. If you are at the limit, remove one before pinning another.',
     },
     {
       id: 'first-visit',
-      title: 'First visit: cookies and theme',
+      title: 'Cookies, ads, and theme',
       body:
-        'On first visit a cookie banner explains local storage use. Buttons: Accept all (functional + advertising), Accept functional, Essential only, and Manage preferences. Reopen cookie settings anytime via the floating Settings control (Cookies tab). The floating theme toggle switches light or dark preference (stored in meridian:theme).',
+        'On a first visit a banner asks how you want storage and advertising to work:\n\n• Accept all — useful site features plus advertising\n• Accept functional — useful features without advertising\n• Essential only — the basics needed for the site to work\n• Manage preferences — pick categories yourself\n\n“Accept all” does not turn on Google Analytics or our optional usage analytics — switch Analytics on separately under preferences if offered.\n\nYou can reopen Cookie preferences from the floating Settings control (gear). That control may hide while you scroll down, and may be hidden when your device asks for reduced motion. Theme (light / dark) has its own floating control.',
     },
     {
       id: 'navigation',
       title: 'Where to go next',
       body:
-        'Dashboard explains the home page layout. City detail covers full forecast pages. Forecasts & cache explains TTLs and caching layers. Subscriptions covers email. API limits and API reference document server behaviour. Documentation is also served at docs.localhost:3000 when using local dev (middleware rewrite). CMS-edited docs may diverge until reset to file defaults.',
+        'Dashboard explains the home page. City detail covers forecast tabs. Subscriptions covers email digests and alerts. Monetization & consent explains ads and privacy choices. Later pages (Forecasts & cache, API reference, Deployment) are mainly for people who run the site.',
     },
     {
-      id: 'verify',
-      title: 'For developers',
+      id: 'operators',
+      title: 'For site operators',
       body:
-        'Run npm run verify to lint, test, and build. Run npm run dev and open localhost:3000. Optional: sign in at /login then open /admin for usage diagnostics and platform settings (dev bypass may apply when ADMIN_SECRET is unset in development).',
+        'Live weather needs OPENWEATHER_API_KEY on the server. Email, cron jobs, and AdSense are optional. SQLite (better-sqlite3) stores shared cache and usage limits. Run npm run verify to lint, test, and build. Admin: sign in at /login then open /admin. Dev bypass only when NODE_ENV=development, ALLOW_DEV_ADMIN_BYPASS=1, and ADMIN_SECRET is unset. CMS-edited docs may differ until reset to file defaults. Local docs subdomain: docs.localhost:3000.',
     },
   ],
 };

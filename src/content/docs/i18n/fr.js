@@ -7,45 +7,39 @@ export const DOCS_PAGES_I18N = [
     sections: [
       {
         id: 'overview',
-        title: 'Vue d\'ensemble',
+        title: 'Ce qu’est meridian',
         body:
-          'meridian est un tableau de bord météo multi-villes. Vous recherchez des lieux, épinglez jusqu\'à dix villes dans votre navigateur et suivez les conditions actuelles, les prévisions courtes et les mises à jour par e-mail optionnelles. Aucun compte requis — toutes les listes de villes et préférences sont stockées par appareil dans localStorage.',
-      },
-      {
-        id: 'requirements',
-        title: 'Prérequis',
-        body:
-          'Le tableau de bord nécessite une clé API OpenWeather côté serveur (OPENWEATHER_API_KEY). Sans elle, les requêtes météo et géocodage renvoient des erreurs. Les abonnements e-mail, les tâches cron et AdSense sont optionnels et ne s\'activent que lorsque leurs variables d\'environnement / connecteurs sont configurés. SQLite (better-sqlite3) tourne toujours pour le cache et les quotas.',
+          'meridian est un tableau de bord météo pour plusieurs lieux à la fois. Recherchez une ville, ouvrez sa page, épinglez-la dans Vos lieux et suivez température, conditions et courtes prévisions. Aucun compte requis. Vos villes épinglées et la plupart des préférences restent sur cet appareil.',
       },
       {
         id: 'add-city',
-        title: 'Épingler une ville',
+        title: 'Comment épingler une ville',
         body:
-          'Utilisez le champ de recherche dans le hero de la page d\'accueil ou dans l\'en-tête. Saisissez au moins deux caractères ; les résultats apparaissent après un debounce de 300 ms. Sélectionnez un résultat de géocodage pour ouvrir la page détail ville. Utilisez Épingler à vos lieux sur cette page pour enregistrer la ville dans Vos lieux. Les doublons sont rejetés. Chaque ville reçoit un ID stable : {slugified-name}-{country}-{latitude to four decimals}, utilisé dans des URL comme /city/london-gb-51.5073.',
+          '1. Saisissez au moins deux caractères dans le champ de recherche de l’accueil ou de l’en-tête. Les résultats apparaissent après une courte pause.\n2. Choisissez un lieu dans la liste — cela ouvre la page ville.\n3. Appuyez sur Épingler à vos lieux pour l’enregistrer. Vous pourrez la retirer plus tard dans le même menu ou supprimer la ville de la grille d’accueil.\n\nLes lieux épinglés apparaissent sous Vos lieux sur l’accueil. Vous pouvez en épingler jusqu’à dix. Les adresses des pages ville ressemblent à /city/london-GB-51.5073.',
       },
       {
         id: 'city-limit',
-        title: 'Limite de villes',
+        title: 'Limite de dix villes',
         body:
-          'Vous pouvez épingler jusqu\'à dix villes (MAX_SAVED_CITIES). Lorsque la limite est atteinte, épinglez une autre ville uniquement après en avoir retiré une de votre grille.',
+          'Vos lieux peuvent contenir jusqu’à dix villes épinglées. Si vous êtes à la limite, retirez-en une avant d’en épingler une autre.',
       },
       {
         id: 'first-visit',
-        title: 'Première visite : cookies et thème',
+        title: 'Cookies, publicité et thème',
         body:
-          'Lors de la première visite, une bannière cookies explique l\'utilisation du stockage local. Boutons : Tout accepter (fonctionnel + publicité), Accepter fonctionnel, Essentiel uniquement et Gérer les préférences. Rouvrez les paramètres cookies à tout moment via le contrôle flottant Paramètres (onglet Cookies). Le basculeur de thème flottant change la préférence clair ou sombre (stockée dans meridian:theme).',
+          'Lors d’une première visite, une bannière demande comment vous souhaitez gérer le stockage et la publicité :\n\n• Tout accepter — fonctionnalités utiles plus publicité\n• Accepter fonctionnel — fonctionnalités utiles sans publicité\n• Essentiel uniquement — le minimum pour que le site fonctionne\n• Gérer les préférences — choisir les catégories vous-même\n\n« Tout accepter » n’active ni Google Analytics ni notre analyse d’usage optionnelle — activez Analytics séparément dans les préférences si proposé.\n\nVous pouvez rouvrir Préférences cookies via le contrôle flottant Paramètres (engrenage). Ce contrôle peut se masquer en défilant vers le bas et peut être masqué si votre appareil demande une réduction des animations. Le thème (clair / sombre) a son propre contrôle flottant.',
       },
       {
         id: 'navigation',
         title: 'Où aller ensuite',
         body:
-          'Dashboard explique la mise en page de l\'accueil. City detail couvre les pages de prévision complètes. Forecasts & cache explique les TTL et les couches de cache. Subscriptions traite l\'e-mail. API limits et API reference documentent le comportement serveur. La documentation est aussi servie sur docs.localhost:3000 en développement local (réécriture middleware). La documentation éditée via CMS peut diverger jusqu\'à réinitialisation aux valeurs par défaut des fichiers.',
+          'Tableau de bord explique la page d’accueil. Détail de la ville couvre les onglets de prévision. Abonnements traite des e-mails récapitulatifs et alertes. Monétisation et consentement explique publicité et choix de confidentialité. Les pages suivantes (Prévisions et cache, Référence API, Déploiement) s’adressent surtout aux personnes qui gèrent le site.',
       },
       {
-        id: 'verify',
-        title: 'Pour les développeurs',
+        id: 'operators',
+        title: 'Pour les opérateurs du site',
         body:
-          'Exécutez npm run verify pour lint, tests et build. Lancez npm run dev et ouvrez localhost:3000. Optionnel : connectez-vous sur /login puis ouvrez /admin pour les diagnostics d\'usage et les paramètres plateforme (un contournement dev peut s\'appliquer si ADMIN_SECRET n\'est pas défini en développement).',
+          'La météo en direct nécessite OPENWEATHER_API_KEY sur le serveur. E-mail, tâches cron et AdSense sont optionnels. SQLite (better-sqlite3) stocke le cache partagé et les limites d’usage. Exécutez npm run verify pour lint, tests et build. Admin : connexion sur /login puis ouvrir /admin. Contournement dev uniquement quand NODE_ENV=development, ALLOW_DEV_ADMIN_BYPASS=1 et ADMIN_SECRET non défini. La doc modifiée via CMS peut différer jusqu’à réinitialisation aux valeurs fichier. Sous-domaine docs local : docs.localhost:3000.',
       },
     ],
   },
@@ -56,228 +50,112 @@ export const DOCS_PAGES_I18N = [
     sections: [
       {
         id: 'layout',
-        title: 'Mise en page',
+        title: 'Ce que vous voyez sur l’accueil',
         body:
-          'Les bandes de la page d\'accueil : (1) Hero — présentation produit, vérification météo de localisation et une annonce hero carrée. (2) Consultations récentes — deux colonnes (« Près de vous » et « Recherches populaires »). (3) Vos lieux — cartes météo des villes épinglées. (4) Emplacement/unité publicitaire du tableau de bord. (5) Journal — six cartes d\'articles style blog dans un carrousel gauche/droite liant vers des publications `/journal/[slug]`.',
+          'De haut en bas :\n\n1. Hero — texte de bienvenue, recherche et vérification météo rapide de votre position.\n2. Vos lieux — cartes météo pour les endroits épinglés.\n3. À proximité et populaire — deux colonnes : Près de vous et Recherches populaires.\n4. Une publicité sous Vos lieux (placeholder ou AdSense).\n5. Journal — carrousel d’articles.\n\nMasquer l’annonce et le Journal avec NEXT_PUBLIC_SHOW_HOME_STRETCH=0.',
       },
       {
         id: 'cards',
-        title: 'Cartes météo',
+        title: 'Vos cartes de lieux',
         body:
-          'Chaque carte affiche le nom de ville, région/pays, température actuelle, description des conditions, icône météo Meteocons, température ressentie, humidité et vent. Les cartes lient vers la page détail ville. Le survol précharge la route détail et les données météo.',
+          'Chaque carte affiche le nom du lieu, la température, la condition, l’icône météo, le ressenti, l’humidité et le vent. Appuyez sur une carte pour ouvrir la page ville complète. Pendant le chargement, un placeholder s’affiche ; en cas d’échec, vous avez Réessayer et Supprimer.',
       },
       {
         id: 'forecast-strip',
-        title: 'Mini-prévision sur sept jours',
+        title: 'Bandeau sept jours',
         body:
-          'Sous la lecture principale, chaque carte affiche une perspective sur sept jours (libellé du jour, icône, min/max). Les scopes current et daily se chargent ensemble dans une requête batch du tableau de bord — il n\'y a pas de fetch daily idleCallback séparé. La bande affiche le libellé du jour, l\'icône et la plage de température min/max.',
+          'Sous la lecture principale, chaque carte montre une perspective sur sept jours (nom du jour, icône, max et min). Les conditions actuelles et cette perspective se chargent ensemble pour éviter une seconde étape.',
       },
       {
         id: 'card-actions',
-        title: 'Actions des cartes',
+        title: 'S’abonner et supprimer',
         body:
-          'S\'abonner ouvre une modale pour le digest hebdomadaire et les e-mails d\'alertes météo pour cette ville. Supprimer (X) retire la ville de localStorage et vide son cache météo navigateur. Si vous avez des abonnements e-mail actifs pour cette ville, une boîte de dialogue propose de se désabonner avant la suppression.',
+          'S’abonner ouvre les options e-mail pour un récapitulatif hebdomadaire et des alertes météo pour cette ville. Supprimer retire la ville de Vos lieux et efface sa météo enregistrée sur cet appareil. Si vous avez encore des alertes e-mail pour cette ville, on vous demandera si vous souhaitez aussi les annuler.',
       },
       {
         id: 'states',
-        title: 'États de chargement et d\'erreur',
+        title: 'Tableau de bord vide',
         body:
-          'Pendant le chargement météo, une carte squelette s\'affiche. En cas d\'échec upstream, la carte affiche une alerte d\'erreur avec les actions Réessayer et Supprimer. Une grille vide affiche des instructions pour rechercher et épingler votre première ville depuis la page détail ville.',
+          'Sans villes épinglées, la grille explique comment rechercher et épingler votre premier lieu depuis la page ville.',
       },
       {
         id: 'refresh',
-        title: 'Comportement d\'actualisation',
+        title: 'Quand les relevés se mettent à jour',
         body:
-          'Par défaut, Vos lieux utilise l\'actualisation manuelle (`meridian:weather-refresh-mode`) : le tableau de bord sert la dernière lecture stockée dans ce navigateur au chargement de page, et ne récupère que lorsque vous appuyez sur actualiser sur une carte (ou quand une ville n\'a pas encore de cache local). Il n\'y a pas de panneau Paramètres → Météo dans l\'UI actuelle ; la clé existe pour un usage programmatique / futur. Les données sont aussi mises en cache côté serveur (mémoire + SQLite). Voir Forecasts & cache pour les détails TTL.',
+          'Par défaut, Vos lieux préfèrent le dernier relevé enregistré sur cet appareil. Appuyez sur actualiser sur une carte pour une nouvelle vérification (les nouvelles villes sans relevé enregistré se chargent aussi automatiquement). Il n’y a pas de commutateur Paramètres → Météo dans l’interface actuelle.',
       },
       {
         id: 'recent-checks',
-        title: 'Consultations récentes',
+        title: 'Près de vous et Recherches populaires',
         body:
-          'Deux colonnes affichent jusqu\'à cinq cartes chacune depuis GET /api/recent-checks (recherches populaires depuis location_weather_checks, limite API 20, source popular|empty). Les cartes lient vers le détail ville lorsque des coordonnées existent. npm run seed:checks remplit uniquement weather_snapshots — il ne peuple pas cette bande. Voir Recent checks & seeding.',
+          'Près de vous — lieux autour de votre domicile ou région, avec conditions actuelles. Ce ne sont pas « vos recherches passées ».\n\nRecherches populaires — lieux que beaucoup de personnes sur ce site ont recherchés, jusqu’à cinq cartes. Sur une installation calme ou toute neuve, vous pouvez voir quelques villes de démo jusqu’à ce que l’activité de recherche réelle s’accumule.\n\nLes cartes mènent à la page ville quand nous avons les coordonnées. Voir À proximité et populaire pour plus de détails.',
+      },
+      {
+        id: 'operators',
+        title: 'Pour les opérateurs du site',
+        body:
+          'Home stretch (AdSlot tableau de bord + Journal) : NEXT_PUBLIC_SHOW_HOME_STRETCH=0 (default on; set 0 to hide). Villes populaires de démo quand l’API n’a pas de lignes : SHOW_DEMO_POPULAR_SEARCHES (activé par défaut ; NEXT_PUBLIC_SHOW_DEMO_POPULAR_SEARCHES=0 pour désactiver). API Recherches populaires : GET /api/recent-checks (limit 20, source popular|empty). Près de vous n’utilise pas cette API. Script seed npm run seed:checks remplit uniquement weather_snapshots — pas Recherches populaires.',
       },
     ],
   },
   {
     slug: 'city-detail',
-    title: 'Détail ville',
+    title: 'Détail de la ville',
     lastUpdated: '2026-07-15',
     sections: [
       {
         id: 'access',
-        title: 'Qui peut voir une page ville',
+        title: 'Ouvrir une page ville',
         body:
-          'Les pages détail ville sont sur /city/[cityId]. resolveCity() sert toujours les cinq PLATFORM_SHOWCASE_CITIES (London, Dubai, New York, Tokyo, Sydney). Toute ligne de lieu avec un city_slug se résout aussi. Les ID parsés de la forme {name}-{country}-{lat} correspondent quand lat/country existent dans SQLite. Les slugs inconnus ou mal formés renvoient 404. Vous n\'avez pas besoin d\'épingler une ville pour ouvrir sa page.',
+          'Les résultats de recherche et les cartes d’accueil ouvrent une page pour ce lieu. Vous n’avez pas besoin d’épingler une ville pour la consulter. L’épinglage l’ajoute seulement à Vos lieux sur l’accueil. Quelques villes vitrine et les lieux déjà connus du site s’ouvrent toujours ; les adresses inconnues affichent un état vide utile ou une 404.',
       },
       {
         id: 'tabs',
         title: 'Onglets de prévision',
         body:
-          'Onglets fixes : Aujourd\'hui, Horaire, 10 jours et Historique. Lien profond avec ?tab=hourly, ?tab=daily ou ?tab=history. Le legacy ?tab=next-hour redirige vers Aujourd\'hui. Jusqu\'à trois bannières d\'alerte OpenWeather s\'affichent au-dessus du hero lorsque alertIds sont présents. Un AdSlot city-detail se trouve directement sous les onglets.',
+          'Utilisez les onglets pour passer entre :\n\n• Aujourd’hui — conditions actuelles et faits rapides\n• Horaire — les prochaines heures\n• 10 jours — perspective plus longue\n• Historique — jours passés quand nous les avons stockés\n\nVous pouvez partager un lien ouvrant un onglet (par exemple avec ?tab=hourly). Jusqu’à trois bannières d’alerte météo peuvent apparaître au-dessus de la page quand des alertes existent. Une unité publicitaire peut se trouver sous les onglets.',
       },
       {
         id: 'header',
-        title: 'En-tête de page et hero',
+        title: 'Carte ou photo en haut',
         body:
-          'Par défaut, l\'en-tête utilise une carte satellite OSM en arrière-plan quand isCityHeroOsmEnabled() est true (NEXT_PUBLIC_CITY_HERO_OSM non défini ou différent de "0"). Définissez NEXT_PUBLIC_CITY_HERO_OSM=0 pour préférer les photos. Le mode photo enchaîne Unsplash → Wikimedia Commons → Pexels via getHeroImageForRegion, avec des replis SVG statiques si les clés manquent. Google Street View optionnel s\'applique quand OSM est désactivé et NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1.',
+          'Par défaut, l’en-tête affiche une carte satellite de la zone. Les opérateurs peuvent passer aux photos de lieu (fournisseurs photo quand disponibles, sinon une image de marque simple). Street View optionnel est un réglage opérateur quand la carte de fond est désactivée.',
       },
       {
         id: 'today',
-        title: 'Onglet Aujourd\'hui',
+        title: 'Aujourd’hui',
         body:
-          'Hero des conditions actuelles, tuiles métriques avec icônes Meteocon, et accordéons Conditions actuelles / Lieu / Heures de soleil. Aperçu horaire pour le reste de la journée lorsque des données horaires sont disponibles.',
+          'Température et condition actuelles, tuiles métriques (humidité, vent, etc.) et sections dépliables pour plus de détails. Un court aperçu horaire pour le reste de la journée quand disponible.',
       },
       {
         id: 'hourly',
-        title: 'Onglet Horaire',
+        title: 'Horaire',
         body:
-          'Liste de cartes sur les 12 prochaines heures (une colonne) pour température à court terme, probabilité de précipitations et vent.',
+          'Les douze prochaines heures : température, risque de pluie et vent en un coup d’œil.',
       },
       {
         id: 'daily',
-        title: 'Onglet 10 jours',
+        title: '10 jours',
         body:
-          'Liste de perspective quotidienne (jusqu\'à dix jours) : jour de semaine, icône, description/résumé, min/max, probabilité de pluie, vent, UV. La sélection d\'un jour ouvre le graphique métrique pour cette date.',
+          'Jusqu’à dix jours avec max/min, conditions, risque de pluie, vent et UV. Sélectionnez un jour pour focaliser le graphique.',
       },
       {
         id: 'history',
-        title: 'Onglet Historique',
+        title: 'Historique',
         body:
-          'Jours passés depuis les observations stockées et prévisions archivées via GET /api/weather/history, avec sélecteur de jour et graphique.',
-      },
-      {
-        id: 'alerts',
-        title: 'Alertes météo',
-        body:
-          'Quand OpenWeather renvoie des alertes, AlertBanner en affiche au plus trois au-dessus du hero. Le texte complet d\'alerte est disponible via GET /api/alerts/[alertId].',
-      },
-      {
-        id: 'data',
-        title: 'Chargement des données',
-        body:
-          'Le SSR hydrate current, daily et hourly lorsqu\'ils sont disponibles depuis getCityWeatherForSeo. Le hook client useCityWeather récupère en batch DETAIL_SCOPES = [current, hourly, daily] via POST /api/weather/batch — minutely n\'est pas demandé. Premium / MinutelyPrecipStrip n\'est pas branché.',
+          'Jours passés à partir d’observations stockées quand disponibles, avec sélecteur de jour et graphique.',
       },
       {
         id: 'subscribe',
-        title: 'Épingler et s\'abonner',
+        title: 'Épingler et e-mail',
         body:
-          'Le menu Options de l\'en-tête propose Épingler à vos lieux et S\'abonner (digest hebdomadaire + alertes météo) — les mêmes flux que les cartes du tableau de bord. Épingler enregistre dans meridian:saved-cities ; s\'abonner ouvre SubscribeDialog.',
+          'Le menu Options permet d’Épingler à vos lieux ou de S’abonner pour un récapitulatif hebdomadaire et des alertes météo pour ce lieu.',
       },
       {
-        id: 'prefetch',
-        title: 'Prefetch',
+        id: 'operators',
+        title: 'Pour les opérateurs du site',
         body:
-          'Survoler une carte météo du tableau de bord précharge /city/[cityId] et réchauffe le cache L0 via prefetchCityDetail pour que les pages détail s\'ouvrent plus vite.',
-      },
-      {
-        id: 'seo',
-        title: 'Recherche et découverte',
-        body:
-          'Lorsqu\'un lieu reçoit sa première vérification météo current réussie, markLocationIndexable définit city_slug et indexable_at, ajoute la ville au sitemap, et rend côté serveur les métadonnées SEO plus un bloc résumé sur la page ville.',
-      },
-    ],
-  },
-  {
-    slug: 'forecasts',
-    title: 'Prévisions & cache',
-    lastUpdated: '2026-07-15',
-    sections: [
-      {
-        id: 'scopes',
-        title: 'Scopes météo',
-        body:
-          'Scopes demandables par le client : current (maintenant), hourly (chronologie), daily (chronologie), minutely (précipitations). Scopes serveur uniquement : geocode (cache de recherche ville clé geocode:{query}), alert (charges utiles d\'alerte individuelles). Chaque scope météo utilise la clé de cache {lat},{lon},{scope} ; geocode par chaîne de requête.',
-      },
-      {
-        id: 'layers',
-        title: 'Couches de cache',
-        body:
-          'L0 — localStorage navigateur meridian:weather-cache, structure {cityId: {scope: {payload, fetchedAt}}}. L1 — Map en mémoire sur le processus serveur. L2 — SQLite weather_snapshots avec fetched_at, expires_at, stale_until. Les lectures vérifient L0 → API → L1/L2 → upstream OpenWeather.',
-      },
-      {
-        id: 'freshness',
-        title: 'États de fraîcheur',
-        body:
-          'fresh — dans expires_at. acceptable — après expires mais dans stale_until (peut encore être servi). expired — au-delà de stale_until, déclenche l\'upstream si le quota le permet. emergency — quota bloqué mais snapshot L2 expiré/acceptable servi quand même pour que les utilisateurs voient encore des données.',
-      },
-      {
-        id: 'ttl-table',
-        title: 'Valeurs TTL par défaut (SCOPE_TTL)',
-        body:
-          'current — fresh 1h, stale 2h (remplacé par platform_settings.refresh_interval_ms et stale_cache_max_ms ; l\'admin peut définir 10m–2h). hourly — fresh 2h, stale 6h. daily — fresh 6h, stale 12h. minutely — fresh 15m, stale 30m. geocode — fresh 7d, stale 30d. alert — fresh 1h, stale 6h.',
-      },
-      {
-        id: 'upstream',
-        title: 'Intégration OpenWeather',
-        body:
-          'Principal : One Call API 4.0 (onecall/current, timeline/1h, timeline/1day, timeline/1min). Le scope current bascule sur API 2.5 /weather si One Call current échoue. Le géocodage utilise l\'API de géocodage OpenWeather (limit 5). La normalisation dans src/lib/one-call.js produit des charges utiles UI cohérentes.',
-      },
-      {
-        id: 'batch',
-        title: 'Récupération par lot',
-        body:
-          'POST /api/weather/batch accepte { cities: [{ lat, lon, scopes?: string[], id?, lang?, maxAgeMs?, trigger? }], trigger?, lang? }. Les scopes sont par ville (city.scopes), pas un tableau scopes de niveau supérieur. Le tableau de bord charge current + daily ensemble dans un batch (sans requestIdleCallback). Le détail ville batch uniquement current + hourly + daily. Le gestionnaire espace les villes d\'environ 100 ms pour éviter les limites de débit en rafale.',
-      },
-      {
-        id: 'headers',
-        title: 'Métadonnées de réponse',
-        body:
-          'Les réponses API incluent meta : cacheLayer (memory, database, upstream), freshness, fetchedAt, ageMs, upstreamCallAvoided, source. L\'en-tête X-Cache reflète hit/miss le cas échéant. « Mis à jour il y a X » dans l\'UI utilise meta.fetchedAt.',
-      },
-      {
-        id: 'quota',
-        title: 'Interaction avec le quota',
-        body:
-          'Lorsque les limites quotidiennes ou par minute sont dépassées, les appels upstream s\'arrêtent et des données L2 emergency stale sont renvoyées si disponibles. Rouvrir une ville dans le TTL coûte zéro appel upstream.',
-      },
-      {
-        id: 'logging',
-        title: 'Journalisation des hits cache',
-        body:
-          'Les hits cache base de données L2 sont journalisés dans api_call_log avec cache_hit=1 et n\'incrémentent pas le compteur upstream quotidien. Les hits mémoire L1 sont servis mais intentionnellement non persistés dans SQLite — ils se déclenchent à chaque remontage SSR/client et feraient tourner meridian.db sous les file watchers.',
-      },
-      {
-        id: 'payload-fields',
-        title: 'Champs de charge utile current',
-        body:
-          'temperature, feelsLike, description, condition, icon (code OpenWeather), humidity, pressure, dewPoint, uvi, clouds, visibility, windSpeedKmh, windGustKmh, windDeg, sunrise, sunset, alertIds, city, country, timezone, updatedAt, source.',
-      },
-    ],
-  },
-  {
-    slug: 'recent-checks',
-    title: 'Consultations récentes & seeding',
-    lastUpdated: '2026-07-15',
-    sections: [
-      {
-        id: 'purpose',
-        title: 'Ce que sont les consultations récentes',
-        body:
-          'Les consultations récentes sur la page d\'accueil affichent les recherches populaires à l\'échelle de la plateforme — lieux classés selon la fréquence à laquelle les utilisateurs les ont sélectionnés ou prévisualisés via la recherche — pas votre historique de recherche personnel ni un dump brut du cache de snapshots météo.',
-      },
-      {
-        id: 'api',
-        title: 'Comportement API',
-        body:
-          'GET /api/recent-checks appelle getRecentChecksPayload(), qui lit location_weather_checks (joint à locations) via listPopularSearchChecks. La limite par défaut est 20. Les déclencheurs comptés sont search_select et search_preview. La forme de réponse est { checks, source } où source vaut popular quand des lignes existent, ou empty quand il n\'y en a pas. Il n\'y a pas de repli showcase.',
-      },
-      {
-        id: 'ui',
-        title: 'UI de l\'accueil',
-        body:
-          'RecentChecksSection affiche deux colonnes (« Près de vous » et « Recherches populaires »), jusqu\'à cinq cartes chacune. Les cartes utilisent des icônes Meteocons, température, description et libellé de ville. Lorsque des coordonnées existent, les cartes lient vers /city/[cityId]. Il n\'y a pas d\'AdSlot recent-checks sur la page d\'accueil.',
-      },
-      {
-        id: 'seed-script',
-        title: 'Seeding des snapshots météo (pas la bande)',
-        body:
-          'Exécutez npm run seed:checks avec OPENWEATHER_API_KEY défini. Le script récupère la météo actuelle pour quarante-trois lieux à travers Cumbria et le Nord-Est de l\'Angleterre (voir src/constants/seed-locations.js), écrit des weather_snapshots SQLite avec des horodatages fetched_at échelonnés, et enrichit les charges utiles avec les noms de ville. Cela peuple le cache L2 pour les démos — cela n\'insère pas de lignes location_weather_checks déclenchées par recherche, donc cela ne remplit pas la bande recent-checks / recherches populaires.',
-      },
-      {
-        id: 'persistence',
-        title: 'Persistance',
-        body:
-          'Les snapshots seedés vivent dans DATABASE_PATH (défaut ./data/meridian.db). Relancer le script fait un upsert par cache_key. Les lignes de recherche populaire s\'accumulent au fil des recherches réelles ; vider la base de données vide à la fois les snapshots et l\'historique des consultations (la bande reste vide jusqu\'à de nouvelles recherches).',
+          'resolveCity() sert toujours cinq PLATFORM_SHOWCASE_CITIES (London, Dubai, New York, Tokyo, Sydney) plus les lignes avec city_slug. Hero par défaut : OSM quand isCityHeroOsmEnabled() (NEXT_PUBLIC_CITY_HERO_OSM unset ou pas "0") ; photos quand OSM off (Unsplash → Wikimedia → Pexels). Opt-in Street View : NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 avec clé Maps. Batch client : current, hourly, daily uniquement — pas d’UI minutely. Historique : GET /api/weather/history. Une première vérification current réussie peut rendre la ville indexable pour sitemap/SEO.',
       },
     ],
   },
@@ -288,124 +166,205 @@ export const DOCS_PAGES_I18N = [
     sections: [
       {
         id: 'overview',
-        title: 'Vue d\'ensemble',
+        title: 'Mises à jour par e-mail (optionnel)',
         body:
-          'meridian prend en charge l\'e-mail optionnel : newsletter plateforme (mises à jour produit) et digests hebdomadaires par ville plus alertes météo. Tous les abonnements exigent un opt-in explicite. Pas de compte — un UUID clientId anonyme dans meridian:client-id lie l\'UI navigateur aux lignes serveur.',
+          'Vous pouvez demander à meridian de vous envoyer des e-mails — sans connexion. Choisissez une newsletter sur le produit, un récapitulatif hebdomadaire pour une ville épinglée et/ou des alertes météo quand les conditions correspondent à ce qui vous intéresse. Tout est sur inscription volontaire ; chaque e-mail inclut un moyen de se désabonner.',
       },
       {
         id: 'types',
-        title: 'Types d\'abonnement',
+        title: 'À quoi vous pouvez vous inscrire',
         body:
-          'newsletter — mises à jour produit meridian depuis NewsletterSignup du pied de page. city_weekly — e-mail digest hebdomadaire pour une ville enregistrée. city_alerts — notifications quand les types d\'alerte activés correspondent (voir règles d\'alerte). Les types sont stockés dans SQLite subscriptions.type et reflétés dans le registre local meridian:subscriptions.',
-      },
-      {
-        id: 'client-linking',
-        title: 'ID client et registre local',
-        body:
-          'Lors de la première visite, un UUID est écrit dans meridian:client-id. POST /api/subscriptions associe e-mail + préférences à ce clientId. GET /api/subscriptions?clientId= hydrate meridian:subscriptions au chargement. DELETE désactive par clientId, coordonnées ville et types.',
-      },
-      {
-        id: 'alert-prefs',
-        title: 'Préférences d\'alerte',
-        body:
-          'Les lignes city_alerts stockent alert_prefs_json — une carte booléenne indexée par id de type d\'alerte (rain, wind, thunderstorm, snow, ice, extreme_heat, fog, niveaux de sévérité, hydrologique, qualité de l\'air, maritime, UV, météo sévère US, et plus — voir ALL_ALERT_TYPES dans constants/alert-types.js). PATCH /api/subscriptions met à jour des alertPrefs partiels sur une ligne alerts existante. Les colonnes legacy alert_on_rain et alert_on_storm restent synchronisées à la création.',
+          '• Newsletter — mises à jour produit (généralement via le formulaire du pied de page).\n• Récapitulatif hebdomadaire — résumé régulier pour une ville suivie.\n• Alertes météo — e-mails quand les types d’alerte choisis se déclenchent pour une ville (pluie, vent, neige, avertissements officiels, etc.).\n\nGérez-les via S’abonner sur une carte météo ou le menu Options de la page ville.',
       },
       {
         id: 'subscribe-ui',
-        title: 'Modale S\'abonner',
+        title: 'Comment s’abonner',
         body:
-          'Sur chaque carte météo et menu Options du détail ville : champ e-mail, case digest hebdomadaire et bascules d\'alerte granulaires (ou tout activer). Des libellés intelligents affichent Abonné / Gérer quand déjà actif. Les digests hebdomadaires sont plafonnés à MAX_WEEKLY_DIGEST_LOCATIONS = 20 par adresse e-mail. La newsletter du pied de page utilise la même API avec type newsletter.',
-      },
-      {
-        id: 'emails',
-        title: 'Envoi des e-mails',
-        body:
-          'sendTransactionalEmail route via le connecteur ESP actif (Resend, SendGrid, SES ou SMTP) sélectionné dans l\'admin. Modèles React Email depuis src/emails/ et SQLite email_templates : welcome (newsletter), weekly digest, weather alert (par slug de type d\'alerte). Sans connecteur configuré, l\'API écrit les abonnements mais les fonctions d\'envoi renvoient { sent: false }. Définissez NEXT_PUBLIC_APP_URL pour des liens de désabonnement corrects dans les e-mails de production.',
+          'Saisissez votre e-mail, choisissez récapitulatif hebdomadaire et/ou alertes, et sélectionnez les types d’alerte souhaités (ou activez tout). Vous pouvez modifier les types d’alerte plus tard. Une adresse e-mail peut suivre jusqu’à vingt lieux en récapitulatifs hebdomadaires. Si vous êtes déjà abonné, le bouton peut afficher Abonné ou Gérer.',
       },
       {
         id: 'unsubscribe',
-        title: 'Se désabonner',
+        title: 'Comment arrêter les e-mails',
         body:
-          'Chaque abonnement a un unsubscribe_token unique. GET /api/unsubscribe?token= désactive cette ligne et affiche une confirmation. Les modèles e-mail lient vers cette route. Supprimer une ville peut optionnellement désabonner via RemoveCityDialog.',
+          'Utilisez le lien de désabonnement dans tout e-mail d’abonnement. Retirer une ville de Vos lieux peut aussi demander si vous souhaitez annuler les e-mails pour cette ville.',
       },
       {
-        id: 'cron-weekly',
-        title: 'Cron digest hebdomadaire',
+        id: 'operators',
+        title: 'Pour les opérateurs du site',
         body:
-          'GET /api/cron/weekly-digests avec Authorization: Bearer CRON_SECRET. Charge les abonnements city_weekly actifs groupés par e-mail, batch les villes uniques, récupère la météo actuelle par ville, et envoie un digest par e-mail via le connecteur actif. Planifiez en externe (ex. Vercel cron, GitHub Actions) — aucun planning n\'est livré dans le dépôt.',
-      },
-      {
-        id: 'cron-alerts',
-        title: 'Cron alertes météo',
-        body:
-          'GET /api/cron/weather-alerts avec Bearer CRON_SECRET. Pour chaque abonnement city_alerts, évalue les alertPrefs activées contre les correspondances fusionnées de evaluateOpenWeatherAlertMatches (conditions actuelles), evaluateOfficialAlertMatches (avertissements nationaux Open-Meteo), et alertes actives NWS lorsque les bascules plateforme le permettent. Déduplication via subscription_send_log pour que la même alerte ne soit pas envoyée deux fois pour la même ville/fenêtre de condition.',
-      },
-      {
-        id: 'remove-city',
-        title: 'Intégration suppression de ville',
-        body:
-          'Supprimer une ville enregistrée vide le cache météo L0. Si des abonnements existent pour cette ville, RemoveCityDialog invite à se désabonner du digest hebdomadaire et/ou des alertes avant de confirmer la suppression.',
+          'meridian:client-id anonyme lie le navigateur aux abonnements SQLite. API : GET/POST/DELETE/PATCH /api/subscriptions (PATCH met à jour alertPrefs). Livraison via le connecteur actif (Resend, SendGrid, SES ou SMTP). Sans connecteur, les lignes sont enregistrées mais les envois retournent { sent: false }. Définir NEXT_PUBLIC_APP_URL pour les liens de désabonnement. Crons : GET /api/cron/weekly-digests et /api/cron/weather-alerts avec Bearer CRON_SECRET. Les alertes fusionnent conditions OpenWeather, avertissements officiels Open-Meteo et NWS quand activé ; dédup via subscription_send_log. MAX_WEEKLY_DIGEST_LOCATIONS = 20.',
       },
     ],
   },
   {
     slug: 'monetization',
-    title: 'Monétisation & consentement',
+    title: 'Monétisation et consentement',
     lastUpdated: '2026-07-15',
     sections: [
       {
         id: 'tiers',
-        title: 'Niveau gratuit (Premium réservé)',
+        title: 'Gratuit pour tous aujourd’hui',
         body:
-          'Le produit fonctionne actuellement en gratuit uniquement. ConsentProvider force tier free ; meridian:tier est réservé et inutilisé à l\'exécution. Le checkout Stripe et PremiumGate ne sont pas branchés. Les annonces sont conditionnées par le consentement publicitaire et la config AdSense — pas par un indicateur premium.',
-      },
-      {
-        id: 'premium-features',
-        title: 'Ce que Premium débloquerait (non livré)',
-        body:
-          'Réservé / non implémenté dans l\'UI : masquer AdSense pour un niveau payant, et une bande de précipitations minutely. Le détail ville charge aujourd\'hui uniquement les scopes current, hourly et daily. Il n\'y a pas de composant MinutelyPrecipStrip dans l\'app.',
+          'meridian fonctionne comme un site météo gratuit. Il n’y a pas de paiement Premium fonctionnel ni de forfait payant supprimant les annonces. La publicité n’apparaît que si vous autorisez le consentement publicitaire et que l’opérateur a configuré Google AdSense.',
       },
       {
         id: 'consent-model',
-        title: 'Modèle de consentement',
+        title: 'Vos choix de confidentialité',
         body:
-          'Champs JSON meridian:consent : essential (toujours actif), functional (écritures cache météo localStorage et aides GPS), marketing (réservé), analytics (chargeur GA4 si configuré), advertising (AdSense). Drapeau legacy meridian:cookie-consent. Bannière cookies : Tout accepter, Accepter fonctionnel, Essentiel uniquement, Gérer les préférences. Rouvrez à tout moment via le contrôle flottant Paramètres → onglet Cookies. « Tout accepter » active functional + advertising ; activez Google Analytics séparément dans les préférences si proposé.',
+          'La bannière de première visite vous laisse choisir :\n\n• Tout accepter — fonctionnalités utiles plus publicité\n• Accepter fonctionnel — fonctionnalités utiles sans publicité\n• Essentiel uniquement — le minimum pour que le site fonctionne\n• Gérer les préférences — activer ou désactiver les catégories vous-même\n\nCatégories utiles expliquées simplement :\n• Fonctionnel — mémoriser la météo sur cet appareil entre les visites ; aides de localisation précise si vous les autorisez\n• Publicité — annonces Google quand configurées\n• Analytics — mesure d’usage optionnelle et Google Analytics quand configurés (non activés par « Tout accepter »)\n\nChangez d’avis plus tard sous Paramètres → Cookies quand le contrôle flottant Paramètres est disponible (il peut se masquer en défilant et peut être indisponible avec réduction des animations).',
       },
       {
         id: 'adsense',
-        title: 'Google AdSense (en production)',
+        title: 'Annonces que vous pourriez voir',
         body:
-          'Lorsque GOOGLE_ADSENSE_CLIENT_ID et les variables d\'environnement de slot de placement sont définies, AdSense est en production — pas des placeholders. AdSenseProvider charge le script une fois après consentement publicitaire si configuré. GET /api/ads/config renvoie la config script ; GET /api/ads?placement= renvoie la config par slot. GET /ads.txt sert la vérification éditeur depuis l\'environnement. ID client validé côté serveur (format ca-pub-…) ; jamais commité dans git.',
-      },
-      {
-        id: 'placements',
-        title: 'Emplacements publicitaires',
-        body:
-          'Emplacements UI actifs avec AdSlot : dashboard (sous la grille de villes), hero (hero accueil + barre latérale journal), city-detail (sous les onglets). L\'id de placement recent-checks existe dans constants/env mais n\'a pas d\'AdSlot sur la page d\'accueil. Variables d\'environnement de slot : GOOGLE_ADSENSE_SLOT_DASHBOARD, _HERO, _RECENT, _CITY_DETAIL, _DEFAULT. Sans ID de slot, les emplacements affichent des placeholders démo de marque ; les annonces auto peuvent encore tourner depuis le script quand l\'ID client est défini.',
-      },
-      {
-        id: 'adslot-states',
-        title: 'États UI AdSlot',
-        body:
-          'Par défaut (AdSense non défini / pas de consentement publicitaire) : placeholders PNG de marque sous public/ads/ (bannière et carré). Le texte de superposition est réservé aux lecteurs d\'écran (sr-only), pas peint sur l\'image. GET /api/ads/placeholder-bg peut encore servir des recherches d\'image hero pour d\'autres surfaces. Configuré + consentement — unité ins.adsbygoogle après script prêt.',
+          'Quand la publicité est autorisée et AdSense configuré, des annonces peuvent apparaître sur le hero d’accueil, sous Vos lieux (quand le mode stretch est activé), sous les onglets de page ville et dans certains layouts journal. Si les annonces ne sont pas configurées ou que vous avez refusé la publicité, vous voyez un placeholder de marque au lieu d’une annonce live.',
       },
       {
         id: 'analytics',
-        title: 'Analytics',
+        title: 'Mesure d’usage',
         body:
-          'Le beacon first-party SiteAnalyticsBeacon envoie le chemin de page / l\'engagement vers POST /api/analytics/collect dans site_analytics_events quand consent.analytics est activé (le point de collecte vérifie aussi le drapeau de consentement dans le corps de requête). Les événements de vue de slot publicitaire exigent aussi consent.advertising. GA4 optionnel (AnalyticsProvider) se charge uniquement quand NEXT_PUBLIC_GA_MEASUREMENT_ID est défini et consent.analytics est activé. La bannière cookies « Tout accepter » n\'active pas analytics — activez-le dans Paramètres → Cookies.',
-      },
-      {
-        id: 'stripe',
-        title: 'Stripe (prévu)',
-        body:
-          'Premium / checkout Stripe n\'est pas implémenté. Toute facturation future nécessiterait une application de niveau côté serveur ; ne traitez pas meridian:tier comme actif.',
+          'Si vous activez Analytics, le site peut enregistrer une utilisation first-party simple (comme quelles pages ont été vues) et, si configuré, charger Google Analytics. Le comptage de visibilité des emplacements publicitaires nécessite aussi le consentement publicitaire. Refuser analytics garde ces chargeurs désactivés.',
       },
       {
         id: 'data',
-        title: 'Licence des données',
+        title: 'Nous ne vendons pas vos données',
         body:
-          'meridian ne vend ni ne licence les données utilisateur. L\'analytics first-party et GA4 optionnel servent à faire fonctionner le produit. Tout produit analytics B2B ou anonymisé futur exigerait des mises à jour de consentement et de politique séparées.',
+          'meridian ne vend pas de données personnelles. Tout futur produit de données payant nécessiterait un avis clair et un nouveau consentement.',
+      },
+      {
+        id: 'operators',
+        title: 'Pour les opérateurs du site',
+        body:
+          'Niveau codé en dur gratuit ; meridian:tier inutilisé ; PremiumGate / UI minutely non branchés. AdSense : GOOGLE_ADSENSE_CLIENT_ID plus GOOGLE_ADSENSE_SLOT_DASHBOARD, GOOGLE_ADSENSE_SLOT_HERO, GOOGLE_ADSENSE_SLOT_RECENT, GOOGLE_ADSENSE_SLOT_CITY_DETAIL, GOOGLE_ADSENSE_SLOT_DEFAULT. AdSlots actifs : dashboard, hero, city-detail ; emplacement recent-checks sans UI accueil. Placeholders : public/ads/*.png (overlay sr-only). Analytics : SiteAnalyticsBeacon + POST /api/analytics/collect quand consent.analytics ; GA4 nécessite NEXT_PUBLIC_GA_MEASUREMENT_ID + même consentement. Stripe non implémenté.',
+      },
+    ],
+  },
+  {
+    slug: 'weather-icons',
+    title: 'Icônes météo',
+    lastUpdated: '2026-07-15',
+    sections: [
+      {
+        id: 'source',
+        title: 'Ce que sont les icônes',
+        body:
+          'Les images météo sur les cartes et prévisions sont des icônes ligne/remplissage claires (Meteocons par Bas Milius, licence MIT). Elles montrent soleil, nuages, pluie, neige, brouillard et conditions similaires à côté de la description écrite — le texte porte le sens si une image ne charge pas.',
+      },
+      {
+        id: 'accessibility',
+        title: 'Accessibilité',
+        body:
+          'Les icônes soutiennent les mots à l’écran. Quand une description de condition est visible, l’image est traitée comme décorative ; sinon une courte alternative textuelle est fournie à partir de la description.',
+      },
+      {
+        id: 'operators',
+        title: 'Pour les opérateurs du site',
+        body:
+          'Assets dans public/weather-icons/ (environ 35 fichiers SVG dans un checkout typique). scripts/copy-weather-icons.mjs copie 32 noms uniques depuis @meteocons/svg-static au postinstall / npm run copy:icons ; quelques extras (ex. sunrise, sunset, horizon) peuvent exister dans le dossier mais passent par les alias METRIC_METEOCON. Mapping : src/features/weather/utils/weather-icon.js (OPENWEATHER_TO_METEOCON). Composant : WeatherIcon.jsx. Attribution : public/weather-icons/ATTRIBUTION.txt. Tests : weather-icon.test.js.',
+      },
+    ],
+  },
+  {
+    slug: 'recent-checks',
+    title: 'À proximité et populaire',
+    lastUpdated: '2026-07-15',
+    sections: [
+      {
+        id: 'purpose',
+        title: 'Les deux colonnes d’accueil',
+        body:
+          'Sous Vos lieux, l’accueil affiche deux courtes listes de lieux.\n\nPrès de vous — lieux suggérés près de votre domicile ou région, avec conditions en direct. Ce n’est pas un journal privé de tout ce que vous avez recherché.\n\nRecherches populaires — lieux souvent recherchés sur ce site. Là aussi, c’est à l’échelle du site, pas « votre historique personnel ».',
+      },
+      {
+        id: 'ui',
+        title: 'Comportement des cartes',
+        body:
+          'Chaque colonne affiche jusqu’à cinq cartes avec icône, température, description et nom du lieu. Appuyez sur une carte pour ouvrir la page ville quand les coordonnées sont disponibles.',
+      },
+      {
+        id: 'demo-empty',
+        title: 'Quand Recherches populaires semble rempli sur une nouvelle installation',
+        body:
+          'Si presque personne n’a encore recherché, le site peut afficher quelques villes de démo connues dans Recherches populaires pour que la colonne ne soit pas vide. Les opérateurs peuvent désactiver cette liste de démo. Près de vous dépend toujours des signaux de localisation et des données de lieux proches.',
+      },
+      {
+        id: 'operators',
+        title: 'Pour les opérateurs du site',
+        body:
+          'Données Recherches populaires : GET /api/recent-checks → getRecentChecksPayload() → listPopularSearchChecks sur location_weather_checks (triggers search_select / search_preview), default limit 20, source popular|empty. L’API elle-même n’hydrate pas les showcases.\n\nRepli démo UI : quand l’API renvoie vide et SHOW_DEMO_POPULAR_SEARCHES est true (défaut ; désactiver avec NEXT_PUBLIC_SHOW_DEMO_POPULAR_SEARCHES=0), Recherches populaires se remplit depuis PLATFORM_SHOWCASE_CITIES.\n\nPrès de vous : lieux proches depuis le profil de localisation accueil + batch météo current — pas l’API recent-checks.\n\nnpm run seed:checks écrit des weather_snapshots North England pour démos cache L2 ; n’insère pas de lignes de vérification déclenchées par recherche et ne remplit pas Recherches populaires seul.',
+      },
+    ],
+  },
+  {
+    slug: 'forecasts',
+    title: 'Prévisions et cache',
+    lastUpdated: '2026-07-15',
+    sections: [
+      {
+        id: 'audience',
+        title: 'À qui s’adresse cette page',
+        body:
+          'Les visiteurs quotidiens peuvent ignorer cette page. Elle explique comment le site stocke et rafraîchit les données météo pour ceux qui exploitent ou intègrent meridian. En termes simples : votre navigateur retient un relevé récent ; le serveur retient aussi des relevés partagés pour ne pas appeler le fournisseur météo à chaque clic.',
+      },
+      {
+        id: 'scopes',
+        title: 'Scopes météo',
+        body:
+          'Scopes demandables par le client : current (maintenant), hourly (chronologie), daily (chronologie), minutely (précipitations — API uniquement ; détail ville ne charge pas minutely aujourd’hui). Scopes serveur uniquement : geocode (cache recherche ville clé geocode:{query}), alert (payloads d’alerte individuels). Chaque scope météo utilise la clé cache {lat},{lon},{scope} ; geocode par chaîne de requête.',
+      },
+      {
+        id: 'layers',
+        title: 'Couches de cache',
+        body:
+          'L0 — localStorage navigateur meridian:weather-cache, structure {cityId: {scope: {payload, fetchedAt}}} (écritures nécessitent consentement fonctionnel). L1 — Map en mémoire sur le processus serveur. L2 — SQLite weather_snapshots avec fetched_at, expires_at, stale_until. Le client lit L0 puis appelle l’API ; le serveur lit L1 puis L2 puis upstream OpenWeather.',
+      },
+      {
+        id: 'freshness',
+        title: 'États de fraîcheur',
+        body:
+          'fresh — dans expires_at. acceptable — après expires mais dans stale_until (peut encore être servi). expired — au-delà de stale_until, déclenche upstream si quota le permet. emergency — quota bloqué mais snapshot L2 expiré/acceptable servi quand même pour que les utilisateurs voient encore des données.',
+      },
+      {
+        id: 'ttl-table',
+        title: 'TTL par défaut (SCOPE_TTL)',
+        body:
+          'current — fresh 1h, stale 2h (remplacé par platform_settings.refresh_interval_ms et stale_cache_max_ms ; admin peut définir 10m–2h). hourly — fresh 2h, stale 6h. daily — fresh 6h, stale 12h. minutely — fresh 15m, stale 30m. geocode — fresh 7d, stale 30d. alert — fresh 1h, stale 6h.',
+      },
+      {
+        id: 'upstream',
+        title: 'Intégration OpenWeather',
+        body:
+          'Principal : One Call API 4.0 (onecall/current, timeline/1h, timeline/1day, timeline/1min). Le scope current bascule sur API 2.5 /weather si One Call current échoue. Geocode utilise l’API geocoding OpenWeather (limit 5). Normalisation dans src/lib/one-call.js produit des payloads UI cohérents.',
+      },
+      {
+        id: 'batch',
+        title: 'Récupération par lot',
+        body:
+          'POST /api/weather/batch accepte { cities: [{ lat, lon, scopes?: string[], id?, lang?, maxAgeMs?, trigger? }], trigger?, lang? }. Les scopes sont par ville (city.scopes), pas un tableau scopes de niveau supérieur. Le tableau de bord charge current + daily ensemble en un lot (pas de requestIdleCallback). Détail ville batch uniquement current + hourly + daily. Le handler espace les villes ~100ms pour éviter les limites de débit en rafale.',
+      },
+      {
+        id: 'headers',
+        title: 'Métadonnées de réponse',
+        body:
+          'Les réponses API incluent meta : cacheLayer (memory, database, upstream), freshness, fetchedAt, ageMs, upstreamCallAvoided, source. L’en-tête X-Cache reflète hit/miss le cas échéant. « Mis à jour il y a X » dans l’UI utilise meta.fetchedAt.',
+      },
+      {
+        id: 'quota',
+        title: 'Interaction quota',
+        body:
+          'Quand les limites journalières ou par minute sont dépassées, les appels upstream s’arrêtent et des données L2 emergency stale sont renvoyées si disponibles. Rouvrir une ville dans le TTL coûte zéro appel upstream.',
+      },
+      {
+        id: 'logging',
+        title: 'Journalisation des hits cache',
+        body:
+          'Les hits cache base L2 journalisent dans api_call_log avec cache_hit=1 et n’incrémentent pas le compteur upstream journalier. Les hits mémoire L1 sont servis mais intentionnellement non persistés dans SQLite — ils se déclenchent à chaque remontage SSR/client et feraient tourner meridian.db sous file watchers.',
+      },
+      {
+        id: 'payload-fields',
+        title: 'Champs payload current',
+        body:
+          'temperature, feelsLike, description, condition, icon (code OpenWeather), humidity, pressure, dewPoint, uvi, clouds, visibility, windSpeedKmh, windGustKmh, windDeg, sunrise, sunset, alertIds, city, country, timezone, updatedAt, source.',
       },
     ],
   },
@@ -415,46 +374,52 @@ export const DOCS_PAGES_I18N = [
     lastUpdated: '2026-07-15',
     sections: [
       {
-        id: 'quota',
-        title: 'Quota quotidien et par minute',
+        id: 'audience',
+        title: 'À qui s’adresse cette page',
         body:
-          'Valeurs par défaut depuis constants/weather.js : DAILY_LIMIT 1000, WARNING_THRESHOLD 800, SOFT_BLOCK_THRESHOLD 950, PER_MINUTE_LIMIT 60 appels upstream par minute glissante. platform_settings peut remplacer daily_limit, soft_block_threshold, warning_threshold et per_minute_limit (valeurs par défaut seedées au premier ouverture DB). Le compteur se réinitialise à minuit UTC.',
+          'Cette page s’adresse aux personnes qui gèrent le site. Les données météo consultées sont partagées et favorables au cache pour que les limites OpenWeather gratuites (défaut 1000 appels/jour) soient moins souvent épuisées.',
+      },
+      {
+        id: 'quota',
+        title: 'Quota journalier et par minute',
+        body:
+          'Défauts depuis constants/weather.js : DAILY_LIMIT 1000, WARNING_THRESHOLD 800, SOFT_BLOCK_THRESHOLD 950, PER_MINUTE_LIMIT 60 appels upstream par minute glissante. platform_settings peut remplacer daily_limit, soft_block_threshold, warning_threshold et per_minute_limit (défauts semés au premier ouverture DB). Compteur remis à zéro à minuit UTC.',
       },
       {
         id: 'status',
         title: 'Valeurs de statut',
         body:
-          'ok — sous le seuil d\'avertissement. warning — à ou au-dessus de warning_threshold (défaut 800 appels aujourd\'hui). soft_block — à ou au-dessus de soft_block_threshold (défaut 950) ; upstream bloqué. hard_block — à daily_limit (défaut 1000). Le plafond par minute bloque aussi l\'upstream quand per_minute_limit appels ont eu lieu dans les 60 dernières secondes.',
+          'ok — sous le seuil d’avertissement. warning — à ou au-dessus de warning_threshold (défaut 800 appels aujourd’hui). soft_block — à ou au-dessus de soft_block_threshold (défaut 950) ; upstream bloqué. hard_block — à daily_limit (défaut 1000). Le plafond par minute bloque aussi upstream quand per_minute_limit appels ont eu lieu dans les 60 dernières secondes.',
       },
       {
         id: 'cache-hits',
         title: 'Hits cache vs upstream',
         body:
-          'Les hits base de données L2 sont journalisés dans api_call_log avec cache_hit=1 et n\'incrémentent pas le compteur upstream quotidien. Les hits mémoire L1 ne sont pas journalisés dans SQLite — recordCacheHit retourne tôt quand meta.layer est memory. Seuls les appels upstream OpenWeather réussis (statut 200, cache_hit=0) comptent pour le quota. Les servitudes emergency stale évitent l\'upstream quand bloqué.',
+          'Les hits base L2 journalisent dans api_call_log avec cache_hit=1 et n’incrémentent pas le compteur upstream journalier. Les hits mémoire L1 ne sont pas journalisés dans SQLite — recordCacheHit retourne tôt quand meta.layer est memory. Seuls les appels upstream OpenWeather réussis (statut 200, cache_hit=0) comptent pour le quota. Les serves emergency stale évitent upstream quand bloqué.',
       },
       {
         id: 'admin-shortcut',
         title: 'Diagnostics admin',
         body:
-          'Ouvrez /admin (après connexion) pour utilisé aujourd\'hui / limite quotidienne, restant, statut et paramètres d\'intervalle d\'actualisation. API : GET /api/admin/usage.',
+          'Ouvrez /admin (après connexion) pour utilisé aujourd’hui / limite journalière, restant, statut et réglages d’intervalle de rafraîchissement. API : GET /api/admin/usage.',
       },
       {
         id: 'admin-api',
         title: 'API admin',
         body:
-          'GET /api/admin/usage — instantané quota et appels récents. GET|PATCH /api/admin/config — API principale des paramètres admin (intervalle d\'actualisation, connecteurs, défauts digest, AdSense, bascules d\'alerte, etc.). Legacy étroit : PATCH /api/admin/settings { refreshIntervalMs }. Auth : cookie de session HttpOnly meridian_admin_session après /login. Le secret de signature est ADMIN_SECRET (pas ADMIN_PASSWORD). Contournement dev quand NODE_ENV=development, ALLOW_DEV_ADMIN_BYPASS=1 et ADMIN_SECRET non défini.',
+          'GET /api/admin/usage — instantané quota et appels récents. GET|PATCH /api/admin/config — API principale des réglages admin (intervalle de rafraîchissement, connecteurs, défauts digest, AdSense, bascules alertes, etc.). Legacy étroit : PATCH /api/admin/settings { refreshIntervalMs }. Auth : cookie de session HttpOnly meridian_admin_session après /login. Secret de signature ADMIN_SECRET (pas ADMIN_PASSWORD). Contournement dev quand NODE_ENV=development, ALLOW_DEV_ADMIN_BYPASS=1 et ADMIN_SECRET unset.',
       },
       {
         id: 'openweather',
         title: 'Limites fournisseur OpenWeather',
         body:
-          'meridian suit son propre compteur upstream ; OpenWeather peut aussi limiter ou rejeter les clés indépendamment (401, 429). L\'orchestrateur les mappe vers des erreurs API structurées pour le client.',
+          'meridian suit son propre compteur upstream ; OpenWeather peut aussi limiter ou rejeter les clés indépendamment (401, 429). L’orchestrateur les mappe vers des erreurs API structurées pour le client.',
       },
       {
         id: 'emergency',
         title: 'Mode urgence',
         body:
-          'Lorsque soft/hard bloqué, les utilisateurs voient encore le dernier snapshot SQLite acceptable marqué freshness emergency plutôt qu\'une erreur vide — sauf si aucun snapshot n\'a jamais existé pour ces coordonnées.',
+          'En soft/hard block, les utilisateurs voient encore le dernier snapshot SQLite acceptable marqué freshness emergency plutôt qu’une erreur vide — sauf si aucun snapshot n’a jamais existé pour ces coordonnées.',
       },
     ],
   },
@@ -465,21 +430,21 @@ export const DOCS_PAGES_I18N = [
     sections: [
       {
         id: 'overview',
-        title: 'Vue d\'ensemble',
+        title: 'Vue d’ensemble',
         body:
-          'Toutes les routes API sont des handlers Next.js App Router sous src/app/api/. Météo et géocodage nécessitent OPENWEATHER_API_KEY. Les routes cron nécessitent Authorization: Bearer CRON_SECRET. Les routes admin nécessitent un cookie de session admin authentifié (meridian_admin_session) après connexion sur /login, sauf contournement dev.',
+          'Cette page s’adresse aux développeurs et opérateurs intégrant les API meridian — les visiteurs quotidiens peuvent l’ignorer. Toutes les routes API sont des handlers Next.js App Router sous src/app/api/. Météo et geocode nécessitent OPENWEATHER_API_KEY. Les routes cron nécessitent Authorization: Bearer CRON_SECRET. Les routes admin nécessitent un cookie de session admin authentifié (meridian_admin_session) après connexion sur /login, sauf ALLOW_DEV_ADMIN_BYPASS en développement.',
       },
       {
         id: 'weather',
         title: 'GET /api/weather',
         body:
-          'Query : lat, lon, scope (current|hourly|daily|minutely), trigger optionnel, lang. Renvoie la charge utile météo plus fetchedAt, cacheHit, freshness, source, trigger, tokensUsed. L\'en-tête X-Cache reflète la couche de cache. Erreurs : 400 invalid params, 404 location not found, 429 rate_limited, 502 upstream_error ou service_unavailable.',
+          'Query : lat, lon, scope (current|hourly|daily|minutely), trigger optionnel, lang. Renvoie payload météo plus fetchedAt, cacheHit, freshness, source, trigger, tokensUsed. L’en-tête X-Cache reflète la couche cache. Erreurs : 400 invalid params, 404 location not found, 429 rate_limited, 502 upstream_error ou service_unavailable.',
       },
       {
         id: 'weather-batch',
         title: 'POST /api/weather/batch',
         body:
-          'Body : { cities: [{ lat, lon, scopes?: string[], id?, lang?, maxAgeMs?, trigger? }], trigger?, lang? }. Renvoie { cities: [{ lat, lon, scopes: { scope: { data, meta } | { error } } }] }. Les scopes sont par ville, pas un tableau de niveau supérieur. Limité à 20 requêtes/minute par IP. Utilisé par les hooks tableau de bord et détail ville.',
+          'Body : { cities: [{ lat, lon, scopes?: string[], id?, lang?, maxAgeMs?, trigger? }], trigger?, lang? }. Renvoie { cities: [{ lat, lon, scopes: { scope: { data, meta } | { error } } }] }. Scopes par ville, pas de tableau de niveau supérieur. Limité à 20 requêtes/minute par IP. Utilisé par les hooks tableau de bord et détail ville.',
       },
       {
         id: 'weather-history',
@@ -491,37 +456,37 @@ export const DOCS_PAGES_I18N = [
         id: 'geocode',
         title: 'GET /api/geocode',
         body:
-          'Query : q (min 2 caractères), paramètres context optionnels. Renvoie un tableau normalisé : name, country, state, lat, lon, label. Limite upstream 5 résultats. Mis en cache en L2 avec scope geocode. Limité à 60 requêtes/minute par IP.',
+          'Query : q (min 2 caractères), paramètres context optionnels. Renvoie tableau normalisé : name, country, state, lat, lon, label. Limite upstream 5 résultats. Mis en cache L2 avec scope geocode. Limité à 60 requêtes/minute par IP.',
       },
       {
         id: 'recent-checks',
         title: 'GET /api/recent-checks',
         body:
-          'Sans paramètres. Renvoie { checks, source } où source vaut popular quand des lignes déclenchées par recherche existent, ou empty quand il n\'y en a pas. Limite par défaut 20 depuis location_weather_checks classées par volume de recherche (déclencheurs search_select et search_preview). Pas de repli showcase.',
+          'Sans paramètres. Renvoie { checks, source } où source est popular quand des lignes déclenchées par recherche existent, ou empty quand aucune. Limite par défaut 20 depuis location_weather_checks classées par volume de recherche (triggers search_select et search_preview). L’API n’a pas de repli showcase — l’UI accueil peut quand même montrer des villes populaires de démo quand vide si SHOW_DEMO_POPULAR_SEARCHES est activé. La colonne Près de vous n’utilise pas cette route.',
       },
       {
         id: 'subscriptions',
         title: '/api/subscriptions',
         body:
-          'GET ?clientId= — liste les abonnements actifs pour le client. POST — crée { clientId, email, type, cityName?, cityLat?, cityLon?, frequency?, alertOnRain?, alertOnStorm?, alertPrefs? }. PATCH — met à jour alertPrefs sur une ligne city_alerts { clientId, id, alertPrefs }. DELETE — corps { clientId, cityLat, cityLon, types[] }. Types : newsletter, city_weekly, city_alerts.',
+          'GET ?clientId= — lister les abonnements actifs pour le client. POST — créer { clientId, email, type, cityName?, cityLat?, cityLon?, frequency?, alertOnRain?, alertOnStorm?, alertPrefs? }. PATCH — mettre à jour alertPrefs sur une ligne city_alerts { clientId, id, alertPrefs }. DELETE — body { clientId, cityLat, cityLon, types[] }. Types : newsletter, city_weekly, city_alerts.',
       },
       {
         id: 'unsubscribe',
         title: 'GET /api/unsubscribe',
         body:
-          'Query : token (unsubscribe_token UUID). Désactive l\'abonnement et renvoie une confirmation HTML.',
+          'Query : token (unsubscribe_token UUID). Désactive l’abonnement et renvoie une confirmation HTML.',
       },
       {
         id: 'alerts',
         title: 'GET /api/alerts/[alertId]',
         body:
-          'Renvoie une alerte normalisée : id, senderName, event, start, end, description. Source : scope alert mis en cache.',
+          'Renvoie alerte normalisée : id, senderName, event, start, end, description. Source : scope alert en cache.',
       },
       {
         id: 'cron',
         title: 'Routes cron',
         body:
-          'GET /api/cron/weekly-digests — envoie les e-mails digest hebdomadaires groupés par e-mail d\'abonné. GET /api/cron/weather-alerts — évalue alertPrefs contre les flux OpenWeather, Open-Meteo et NWS et envoie les e-mails d\'alerte. Les deux nécessitent Bearer CRON_SECRET.',
+          'GET /api/cron/weekly-digests — envoyer les e-mails récapitulatifs hebdomadaires groupés par e-mail abonné. GET /api/cron/weather-alerts — évaluer alertPrefs contre OpenWeather, Open-Meteo et flux NWS et envoyer les e-mails d’alerte. Les deux nécessitent Bearer CRON_SECRET.',
       },
       {
         id: 'admin',
@@ -533,7 +498,7 @@ export const DOCS_PAGES_I18N = [
         id: 'ads',
         title: 'Routes ads',
         body:
-          'GET /api/ads/config — { scriptEnabled, clientId, consentRequired }. GET /api/ads?placement=dashboard|hero|recent-checks|city-detail — config de placement avec slotId si défini. GET /api/ads/placeholder-bg — recherche hero pour surfaces placeholder. Route app GET /ads.txt — ligne éditeur AdSense depuis env. Emplacements AdSlot actifs : dashboard, hero, city-detail. L\'env de slot recent-checks existe mais l\'accueil n\'a pas d\'AdSlot.',
+          'GET /api/ads/config — { scriptEnabled, clientId, consentRequired }. GET /api/ads?placement=dashboard|hero|recent-checks|city-detail — config placement avec slotId si défini. GET /api/ads/placeholder-bg — lookup hero pour surfaces placeholder. Route app GET /ads.txt — ligne éditeur AdSense depuis env. Placements AdSlot actifs : dashboard, hero, city-detail. env slot recent-checks existe mais l’accueil n’a pas d’AdSlot.',
       },
       {
         id: 'other',
@@ -543,89 +508,52 @@ export const DOCS_PAGES_I18N = [
       },
       {
         id: 'errors',
-        title: 'Forme d\'erreur',
+        title: 'Forme d’erreur',
         body:
-          'Les erreurs JSON sont typiquement { error: code, message: string }. Les codes ApiError incluent invalid_request, service_unavailable, location_not_found, rate_limited, upstream_error, unauthorized, not_found, limit_reached.',
-      },
-    ],
-  },
-  {
-    slug: 'weather-icons',
-    title: 'Icônes météo',
-    lastUpdated: '2026-07-15',
-    sections: [
-      {
-        id: 'source',
-        title: 'Jeu d\'icônes',
-        body:
-          'meridian utilise Meteocons (MIT, Bas Milius) SVG statiques style fill au lieu des PNG CDN OpenWeather. Les icônes sont dans public/weather-icons/ et copiées depuis @meteocons/svg-static à npm install (postinstall) ou via npm run copy:icons. Attribution dans public/weather-icons/ATTRIBUTION.txt.',
-      },
-      {
-        id: 'inventory',
-        title: 'Icônes livrées',
-        body:
-          'scripts/copy-weather-icons.mjs copie 35 SVG uniques : 17 icônes de condition OpenWeather plus tuiles métrique/détail (thermometer, humidity, barometer, wind, UV, raindrop, snowflake, compass, starry-night, time-afternoon, et variantes associées). Comptez les fichiers sous public/weather-icons/*.svg après copy:icons.',
-      },
-      {
-        id: 'mapping',
-        title: 'Mapping des codes OpenWeather',
-        body:
-          'Les codes d\'icône OpenWeather (ex. 01d, 10n) mappent vers des noms Meteocon dans src/features/weather/utils/weather-icon.js : 01d→clear-day, 01n→clear-night, 02d→partly-cloudy-day, 02n→partly-cloudy-night, 03d/03n→cloudy, 04d→overcast-day, 04n→overcast-night, 09d→overcast-day-rain, 09n→overcast-night-rain, 10d→partly-cloudy-day-rain, 10n→partly-cloudy-night-rain, 11d→thunderstorms-day, 11n→thunderstorms-night, 13d→overcast-day-snow, 13n→overcast-night-snow, 50d→fog-day, 50n→fog-night. Les codes inconnus basculent sur cloudy. METRIC_METEOCON mappe les clés de tuile détail vers des icônes supplémentaires.',
-      },
-      {
-        id: 'component',
-        title: 'Composant WeatherIcon',
-        body:
-          'src/features/weather/components/WeatherIcon.jsx encapsule getWeatherIconPath(icon) pour /weather-icons/{name}.svg local. Utilisé sur les cartes météo, consultations récentes, bandes de prévision, graphique horaire, lignes quotidiennes et tuiles métrique du détail ville. Le texte alt utilise la description météo si fournie.',
-      },
-      {
-        id: 'maintenance',
-        title: 'Ajouter ou mettre à jour des icônes',
-        body:
-          'Modifiez OPENWEATHER_TO_METEOCON / METRIC_METEOCON dans weather-icon.js et ICON_NAMES dans scripts/copy-weather-icons.mjs, puis npm run copy:icons. Les tests Vitest dans weather-icon.test.js vérifient le mapping.',
-      },
-      {
-        id: 'accessibility',
-        title: 'Accessibilité',
-        body:
-          'Les icônes sont des compléments décoratifs aux descriptions textuelles (ex. « Ciel dégagé »). WeatherIcon définit alt depuis la prop description ; alt vide quand utilisé uniquement à côté du texte de condition visible.',
+          'Erreurs JSON typiquement { error: code, message: string }. Codes ApiError incluent invalid_request, service_unavailable, location_not_found, rate_limited, upstream_error, unauthorized, not_found, limit_reached.',
       },
     ],
   },
   {
     slug: 'deployment',
-    title: 'Déploiement & environnement',
+    title: 'Déploiement et environnement',
     lastUpdated: '2026-07-15',
     sections: [
+      {
+        id: 'audience',
+        title: 'À qui s’adresse cette page',
+        body:
+          'Cette page s’adresse aux personnes déployant meridian. Les visiteurs quotidiens n’ont pas besoin de ces réglages. Une démo fonctionnelle ne nécessite que OPENWEATHER_API_KEY ; tout le reste est du stretch optionnel.',
+      },
       {
         id: 'env-required',
         title: 'Environnement requis',
         body:
-          'OPENWEATHER_API_KEY — requis pour météo et géocodage. DATABASE_PATH — fichier SQLite (défaut ./data/meridian.db) ; doit être un volume persistant en production pour que cache et abonnements survivent aux redémarrages.',
+          'OPENWEATHER_API_KEY — requis pour météo et geocode. DATABASE_PATH — fichier SQLite (défaut ./data/meridian.db) ; volume persistant en production pour que cache et abonnements survivent aux redémarrages. NEXT_PUBLIC_SHOW_HOME_STRETCH=0 masque annonce tableau de bord + Journal (activé par défaut). NEXT_PUBLIC_SHOW_DEMO_POPULAR_SEARCHES=0 désactive les villes populaires de démo quand l’API est vide.',
       },
       {
         id: 'env-hero',
         title: 'Environnement image hero',
         body:
-          'UNSPLASH_ACCESS_KEY — optionnel ; premier fournisseur photo pour les heroes de lieu (serveur uniquement, mis en cache dans hero_image_cache). PEXELS_API_KEY — troisième fournisseur optionnel après Unsplash et Wikimedia Commons. NEXT_PUBLIC_CITY_HERO_OSM — définir à 0 pour désactiver l\'en-tête carte satellite (activé par défaut). NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 — opt-in Google Street View quand OSM est désactivé. NEXT_PUBLIC_GOOGLE_MAPS_API_KEY — clé Maps Embed API optionnelle pour iframes Street View.',
+          'UNSPLASH_ACCESS_KEY — optionnel ; premier fournisseur photo pour heroes de lieu (serveur uniquement, cache dans hero_image_cache). PEXELS_API_KEY — troisième fournisseur optionnel après Unsplash et Wikimedia Commons. NEXT_PUBLIC_CITY_HERO_OSM — mettre à 0 pour désactiver l’en-tête carte satellite (activé par défaut). NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 — opt-in Google Street View quand OSM est off. NEXT_PUBLIC_GOOGLE_MAPS_API_KEY — clé Maps Embed API optionnelle pour iframes Street View.',
       },
       {
         id: 'env-email',
         title: 'Environnement e-mail',
         body:
-          'Multi-ESP via connecteur actif dans platform_settings (sélecteur admin) : Resend (RESEND_API_KEY, RESEND_FROM_EMAIL), SendGrid (SENDGRID_API_KEY, SENDGRID_FROM_EMAIL), Amazon SES (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SES_REGION, AWS_SES_FROM_EMAIL), ou SMTP (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, SMTP_FROM_EMAIL, SMTP_SECURE). NEXT_PUBLIC_APP_URL — URL de base pour les liens de désabonnement dans les e-mails (listée dans .env.example ; requise en production).',
+          'Multi-ESP via connecteur actif dans platform_settings (sélecteur admin) : Resend (RESEND_API_KEY, RESEND_FROM_EMAIL), SendGrid (SENDGRID_API_KEY, SENDGRID_FROM_EMAIL), Amazon SES (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SES_REGION, AWS_SES_FROM_EMAIL) ou SMTP (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, SMTP_FROM_EMAIL, SMTP_SECURE). NEXT_PUBLIC_APP_URL — URL de base pour liens de désabonnement dans les e-mails (listé dans .env.example ; requis en production).',
       },
       {
         id: 'env-cron',
         title: 'Cron et admin',
         body:
-          'CRON_SECRET — Bearer pour /api/cron/* (refusé si non défini en production). ADMIN_SECRET — signe le cookie de session admin et chiffre les secrets des connecteurs. ADMIN_PASSWORD — connexion root pour ADMIN_EMAIL uniquement. Contournement dev uniquement quand NODE_ENV=development, ALLOW_DEV_ADMIN_BYPASS=1 et ADMIN_SECRET non défini. Voir docs/SECURITY.md. Planifiez cron en externe : weekly-digests (ex. lundi matin), weather-alerts (ex. toutes les 15–30 minutes).',
+          'CRON_SECRET — Bearer pour /api/cron/* (refusé si unset en production). ADMIN_SECRET — signe le cookie de session admin et chiffre les secrets connecteurs. ADMIN_PASSWORD — connexion root pour ADMIN_EMAIL uniquement. Contournement dev uniquement quand NODE_ENV=development, ALLOW_DEV_ADMIN_BYPASS=1 et ADMIN_SECRET unset. Voir docs/SECURITY.md. Planifier cron en externe : weekly-digests (ex. lundi matin), weather-alerts (ex. toutes les 15–30 minutes).',
       },
       {
         id: 'env-adsense',
         title: 'Environnement AdSense',
         body:
-          'GOOGLE_ADSENSE_CLIENT_ID (ca-pub-…). GOOGLE_ADSENSE_SLOT_DASHBOARD, SLOT_HERO, SLOT_RECENT, SLOT_CITY_DETAIL, SLOT_DEFAULT — IDs d\'unité d\'affichage. OAuth AdSense Management API : GOOGLE_ADSENSE_OAUTH_CLIENT_ID, GOOGLE_ADSENSE_OAUTH_CLIENT_SECRET, GOOGLE_ADSENSE_OAUTH_REDIRECT_URI optionnel (défaut ${NEXT_PUBLIC_APP_URL}/api/admin/adsense/oauth/callback). Gardez l\'ID client uniquement dans les secrets hôte. /ads.txt généré à l\'exécution depuis l\'ID client.',
+          'GOOGLE_ADSENSE_CLIENT_ID (ca-pub-…). GOOGLE_ADSENSE_SLOT_DASHBOARD, SLOT_HERO, SLOT_RECENT, SLOT_CITY_DETAIL, SLOT_DEFAULT — IDs d’unités display. OAuth AdSense Management API : GOOGLE_ADSENSE_OAUTH_CLIENT_ID, GOOGLE_ADSENSE_OAUTH_CLIENT_SECRET, GOOGLE_ADSENSE_OAUTH_REDIRECT_URI optionnel (défaut ${NEXT_PUBLIC_APP_URL}/api/admin/adsense/oauth/callback). Garder l’ID client uniquement dans les secrets hôte. /ads.txt généré à l’exécution depuis l’ID client.',
       },
       {
         id: 'env-analytics',
@@ -637,25 +565,25 @@ export const DOCS_PAGES_I18N = [
         id: 'scripts',
         title: 'Scripts npm',
         body:
-          'dev, build, start — Next.js. lint, test, test:watch, verify — porte qualité (verify = lint + test + build). copy:icons — Meteocons vers public (aussi postinstall). seed:checks — snapshots démo Nord de l\'Angleterre. backfill:city-slugs — peupler city_slug sur les lieux existants. email — serveur d\'aperçu React Email. audit:deps — npm audit --omit=dev.',
+          'dev, build, start — Next.js. lint, test, test:watch, verify — porte qualité (verify = lint + test + build). copy:icons — Meteocons vers public (aussi postinstall). seed:checks — snapshots démo North England. backfill:city-slugs — remplir city_slug sur locations existantes. email — serveur aperçu React Email. audit:deps — npm audit --omit=dev.',
       },
       {
         id: 'sqlite',
         title: 'Tables SQLite',
         body:
-          'Météo cœur : weather_snapshots, api_call_log. Lieux et consultations : locations, location_weather_checks, weather_observations, weather_forecast_archive. Abonnements : subscriptions, subscription_send_log. Plateforme : platform_settings (singleton). Heroes : hero_image_cache. Monétisation : adsense_report_snapshots. Analytics : site_analytics_events. E-mail/CMS : email_templates, cms_pages. Admin : admin_users, admin_invites, admin_password_resets, admin_audit_log. Schéma dans src/lib/db/index.js. La première ouverture seed platform_settings avec refresh 1h, stale 2h, daily limit 1000, soft block 950, warning 800, per-minute 60.',
+          'Météo cœur : weather_snapshots, api_call_log. Lieux et checks : locations, location_weather_checks, weather_observations, weather_forecast_archive. Abonnements : subscriptions, subscription_send_log. Plateforme : platform_settings (singleton). Heroes : hero_image_cache. Monétisation : adsense_report_snapshots. Analytics : site_analytics_events. E-mail/CMS : email_templates, cms_pages. Admin : admin_users, admin_invites, admin_password_resets, admin_audit_log. Schéma dans src/lib/db/index.js. Première ouverture sème platform_settings avec refresh 1h, stale 2h, limite journalière 1000, soft block 950, warning 800, per-minute 60.',
       },
       {
         id: 'middleware',
         title: 'Middleware',
         body:
-          'src/middleware.js réécrit l\'hôte docs.localhost vers /docs pour le sous-domaine documentation local. Pas de middleware auth sur les routes principales de l\'app.',
+          'src/middleware.js réécrit l’hôte docs.localhost vers /docs pour le sous-domaine documentation local. Pas de middleware auth sur les routes app principales.',
       },
       {
         id: 'localstorage-keys',
-        title: 'Clés de stockage navigateur',
+        title: 'Clés stockage navigateur',
         body:
-          'Depuis storage-keys.js : meridian:client-id, meridian:saved-cities, meridian:checked-cities, meridian:user-location, meridian:weather-cache, meridian:theme, meridian:cookie-consent, meridian:subscriptions, meridian:tier (réservé), meridian:consent, meridian:accessibility, meridian:city-detail-accordion, meridian:temperature-unit, meridian:preferred-locale, meridian:weather-refresh-mode. sessionStorage meridian_analytics_sid — id de session analytics first-party. Cookie admin meridian_admin_session (HttpOnly, défini côté serveur). Événement personnalisé meridian:storage synchronise les hooks après écritures.',
+          'Depuis storage-keys.js : meridian:client-id, meridian:saved-cities, meridian:checked-cities, meridian:user-location, meridian:weather-cache, meridian:theme, meridian:cookie-consent, meridian:subscriptions, meridian:tier (réservé), meridian:consent, meridian:accessibility, meridian:city-detail-accordion, meridian:temperature-unit, meridian:preferred-locale, meridian:weather-refresh-mode. sessionStorage meridian_analytics_sid — ID session analytics first-party. Cookie admin meridian_admin_session (HttpOnly, défini serveur). Événement custom meridian:storage synchronise les hooks après écritures.',
       },
     ],
   },

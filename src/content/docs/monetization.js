@@ -5,57 +5,39 @@ export const monetizationDoc = {
   sections: [
     {
       id: 'tiers',
-      title: 'Free tier (Premium reserved)',
+      title: 'Free for everyone today',
       body:
-        'The product currently operates as free only. ConsentProvider hardcodes tier free; meridian:tier is reserved and unused at runtime. Stripe checkout and PremiumGate are not wired. Ads are gated by advertising consent and AdSense config — not by a premium flag.',
-    },
-    {
-      id: 'premium-features',
-      title: 'What Premium would unlock (not shipped)',
-      body:
-        'Reserved / not implemented in UI: hiding AdSense for a paid tier, and a minutely precipitation strip. City detail today loads current, hourly, and daily scopes only. There is no MinutelyPrecipStrip component in the app.',
+        'meridian runs as a free weather site. There is no working Premium checkout or paid plan that removes ads. Advertising only appears if you allow advertising consent and the operator configured Google AdSense.',
     },
     {
       id: 'consent-model',
-      title: 'Consent model',
+      title: 'Your privacy choices',
       body:
-        'meridian:consent JSON fields: essential (always on), functional (weather cache localStorage writes and GPS helpers), marketing (reserved), analytics (GA4 loader when configured), advertising (AdSense). meridian:cookie-consent legacy flag. Cookie banner: Accept all, Accept functional, Essential only, Manage preferences. Reopen anytime via the floating Settings control → Cookies tab. “Accept all” enables functional + advertising; turn on Google Analytics separately in preferences if offered.',
+        'The first visit banner lets you choose:\n\n• Accept all — useful features plus advertising\n• Accept functional — useful features without advertising\n• Essential only — basics for the site to work\n• Manage preferences — turn categories on or off yourself\n\nUseful categories explained simply:\n• Functional — remember weather on this device between visits; precise location helpers if you allow them\n• Advertising — Google ads when configured\n• Analytics — optional site usage measurement and Google Analytics when configured (not turned on by “Accept all”)\n\nChange your mind later under Settings → Cookies when the floating Settings control is available (it can hide while scrolling, and may be offline under reduced motion).',
     },
     {
       id: 'adsense',
-      title: 'Google AdSense (live)',
+      title: 'Ads you might see',
       body:
-        'When GOOGLE_ADSENSE_CLIENT_ID and placement slot env vars are set, AdSense is live — not placeholders. AdSenseProvider loads the script once after advertising consent when configured. GET /api/ads/config returns script config; GET /api/ads?placement= returns per-slot config. GET /ads.txt serves publisher verification from env. Client ID validated server-side (ca-pub-… format); never committed to git.',
-    },
-    {
-      id: 'placements',
-      title: 'Ad placements',
-      body:
-        'Active UI placements with AdSlot: dashboard (below city grid), hero (home hero + journal sidebar), city-detail (under tabs). Placement id recent-checks exists in constants/env but has no home-page AdSlot. Slot env vars: GOOGLE_ADSENSE_SLOT_DASHBOARD, _HERO, _RECENT, _CITY_DETAIL, _DEFAULT. Without slot IDs, placements show branded demo placeholders; auto ads may still run from script when the client ID is set.',
-    },
-    {
-      id: 'adslot-states',
-      title: 'AdSlot UI states',
-      body:
-        'Default (AdSense unset / no advertising consent): branded PNG placeholders under public/ads/ (banner and square). Overlay copy is screen-reader-only (sr-only), not painted on the image. GET /api/ads/placeholder-bg may still serve hero-image lookups for other surfaces. Configured + consent — ins.adsbygoogle unit after script ready.',
+        'When advertising is allowed and AdSense is configured, ads can appear on the home hero, under Your locations, under city-page tabs, and in some journal layouts. If ads are not configured or you declined advertising, you see a branded placeholder instead of a live ad. Home dashboard ad + Journal teaser are on by default (hide with NEXT_PUBLIC_SHOW_HOME_STRETCH=0).',
     },
     {
       id: 'analytics',
-      title: 'Analytics',
+      title: 'Usage measurement',
       body:
-        'First-party SiteAnalyticsBeacon posts page path / engagement to POST /api/analytics/collect into site_analytics_events when consent.analytics is on (collect endpoint also checks the consent flag in the request body). Ad-slot view events also require consent.advertising. Optional GA4 (AnalyticsProvider) loads only when NEXT_PUBLIC_GA_MEASUREMENT_ID is set and consent.analytics is on. Cookie banner “Accept all” does not enable analytics — turn it on in Settings → Cookies.',
-    },
-    {
-      id: 'stripe',
-      title: 'Stripe (planned)',
-      body:
-        'Premium / Stripe checkout is not implemented. Any future billing would need server-side tier enforcement; do not treat meridian:tier as live.',
+        'If you switch Analytics on, the site may record simple first-party usage (such as which pages were viewed) and, when configured, load Google Analytics. Ad-slot visibility counting also needs advertising consent. Declining analytics keeps those loaders off.',
     },
     {
       id: 'data',
-      title: 'Data licensing',
+      title: 'We do not sell your data',
       body:
-        'meridian does not sell or license user data. First-party analytics and optional GA4 are for operating the product. Any future B2B or anonymised analytics product would require separate consent and policy updates.',
+        'meridian does not sell personal data. Any future paid data product would need clear notice and fresh consent.',
+    },
+    {
+      id: 'operators',
+      title: 'For site operators',
+      body:
+        'Tier hardcoded free; meridian:tier unused; PremiumGate / minutely UI not wired. AdSense: GOOGLE_ADSENSE_CLIENT_ID plus GOOGLE_ADSENSE_SLOT_DASHBOARD, GOOGLE_ADSENSE_SLOT_HERO, GOOGLE_ADSENSE_SLOT_RECENT, GOOGLE_ADSENSE_SLOT_CITY_DETAIL, GOOGLE_ADSENSE_SLOT_DEFAULT. Active AdSlots: dashboard, hero, city-detail; recent-checks placement has no home UI. Placeholders: public/ads/*.png (sr-only overlay). Analytics: SiteAnalyticsBeacon + POST /api/analytics/collect when consent.analytics; GA4 needs NEXT_PUBLIC_GA_MEASUREMENT_ID + same consent. Stripe not implemented.',
     },
   ],
 };
