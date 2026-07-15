@@ -1,6 +1,6 @@
-# SCOPE.md — MASTER DRAFT (source of truth for every agent)
+# SCOPE.md — Project brief (interview delivery)
 
-> **Authority:** This document overrides feature enthusiasm, prior chat plans, and overbuilt ADRs when they conflict with delivery of the interview exercise.
+> **Authority:** When stretch ADRs or exploratory extras conflict with delivering the Weather Dashboard brief, this document wins.
 > **Product name in repo:** meridian (Weather Dashboard coding exercise).
 > **Expected effort bar:** 4–6 hours worth of *scoped* product — working, well-structured, demoable. Not a SaaS platform.
 
@@ -20,7 +20,7 @@ This submission is an **interview coding challenge**. All code may be discarded 
 | Testing | Basic tests or clear evidence of functional testing |
 | Discussability | Can explain choices and demo confidently |
 
-**Agent rule:** Prefer finishing and polishing **in-scope** behaviour over adding systems. If a task is not required to pass the criteria above, do not expand it.
+Prefer finishing and polishing **in-scope** behaviour over adding systems. If a task is not required to pass the criteria above, leave it out.
 
 ---
 
@@ -68,7 +68,7 @@ Do **not** introduce: new primary languages, new major UI frameworks, Docker-as-
 - Git history present
 - Optional but valued: basic tests for key logic; “what we’d improve with more time”; deploy link
 
-### 3.4 Primary demo path (agents: protect this)
+### 3.4 Primary demo path
 
 1. `npm install` → configure `.env.local` with `OPENWEATHER_API_KEY` → `npm run dev`
 2. Search a city (e.g. London) → opens city detail → **Pin to your locations** → home card shows temp/description/icon (+ extras)
@@ -96,19 +96,19 @@ Supporting docs for reviewers (keep accurate, don’t balloon):
 
 ## 4. Out of scope / freeze list (do not grow)
 
-These exist in the repo as **over-scope extras**. They may remain for the interview conversation (“what we explored”) but agents must **not** expand them unless fixing a **demo blocker** or an explicit user request.
+These exist in the repo as **over-scope extras**. They may remain for the interview conversation (“what we explored”) but should **not** expand unless fixing a **demo blocker**.
 
-| Area | Examples in repo | Agent policy |
+| Area | Examples in repo | Policy |
 | --- | --- | --- |
 | Admin platform | `/admin`, users, CMS, connections, AdSense earnings OAuth | Freeze |
 | Monetization product | AdSense slots, premium tier, billing stubs | Freeze |
 | Email product | Resend/SendGrid/SES, digests, alert emails, React Email | Freeze |
-| Heavy i18n product work | Expanding admin/auth locale completeness | Freeze admin/auth English-first; public UI + legal/docs/journal are in scope when requested |
+| Heavy i18n product work | Expanding admin/auth locale completeness | Freeze admin/auth English-first; public UI + legal/docs/journal already covered |
 | Legal/docs site expansion | New legal/doc pages | Freeze |
 | PWA / service worker polish | New offline product features | Freeze |
 | Platform “recent checks” as a product | Seed scripts, showcase analytics | Freeze unless it breaks home demo |
 | New databases / infra | Extra services, Docker requirements | Do not add |
-| New microfile sprawl | Splitting 20-line leaf components | **Stop** — see §6 |
+| New microfile sprawl | Splitting 20-line leaf components | Prefer larger cohesive modules — see §6 |
 
 **Interview framing:** Extras can be mentioned as stretch; **evaluation focus is the Weather Dashboard brief.** Prefer a sharp core demo over a wide admin surface.
 
@@ -128,7 +128,7 @@ Non-goals for “done”: perfect admin, AdSense live earnings, multi-ESP email,
 
 ---
 
-## 6. Agent operating rules (speed + scope)
+## 6. Scope discipline (speed + structure)
 
 ### 6.1 Before any feature work
 
@@ -140,8 +140,7 @@ Non-goals for “done”: perfect admin, AdSense live earnings, multi-ESP email,
 
 - Touch the **smallest set of files** that implements the request.
 - Prefer editing existing core modules over creating new packages/folders.
-- **Do not** apply Structural Microfile Protocol to create new 20–40 line files unless a file is already large (~200+ lines) *and* the split is needed for clarity.
-- **Do not** read all of `node_modules/next/dist/docs/` by default. Only open a **specific** Next doc when an API is unknown or a deprecation blocks the build.
+- Avoid splitting into many tiny 20–40 line files unless a file is already large (~200+ lines) *and* the split is needed for clarity.
 
 ### 6.3 CODEMAP — where to look (core only)
 
@@ -155,12 +154,11 @@ Non-goals for “done”: perfect admin, AdSense live earnings, multi-ESP email,
 | Tests | co-located `*.test.js`, `npm run test` | — |
 | Reviewer narrative | `README.md`, `REVIEWER.md` | rewriting all ADRs |
 
-### 6.4 Performance / agent-tax rules
+### 6.4 Development hygiene
 
-- Do not open Cursor browser automation unless the user asks for visual verification.
-- Do not restart `next dev` unless the server is wedged; prefer hard refresh.
-- Do not run full `npm run verify` unless changing shared contracts or preparing submission; prefer targeted tests.
-- Do not “clean up” out-of-scope areas in the same PR/task as a core fix.
+- Prefer hard refresh over restarting `next dev` unless the server is wedged.
+- Prefer targeted `npm run test` over full `npm run verify` unless changing shared contracts or preparing submission.
+- Do not “clean up” out-of-scope areas in the same change as a core fix.
 
 ### 6.5 Allowed polish (still in spirit of brief)
 
@@ -173,9 +171,9 @@ Non-goals for “done”: perfect admin, AdSense live earnings, multi-ESP email,
 
 ---
 
-## 7. Assumptions & decisions agents should defend in interview
+## 7. Assumptions & decisions to defend in interview
 
-Keep these stable unless the user explicitly changes product direction:
+Keep these stable unless product direction explicitly changes:
 
 1. **Next.js API routes** proxy OpenWeather so the API key stays server-side.
 2. **localStorage** holds the user’s city list (brief requirement).
@@ -186,9 +184,9 @@ Keep these stable unless the user explicitly changes product direction:
 
 ---
 
-## 8. Explicit non-instructions
+## 8. Out of direction for this delivery
 
-Agents must **not**:
+Do **not**:
 
 - Rewrite the app to match a different stack
 - Add TypeScript migration mid-delivery
@@ -196,7 +194,7 @@ Agents must **not**:
 - Treat ADR stretch features as mandatory scope
 - Optimize for enterprise multi-tenancy
 
-Agents **should**:
+Do:
 
 - Protect the demo path
 - Keep core code obvious
@@ -208,9 +206,9 @@ Agents **should**:
 
 | Field | Value |
 | --- | --- |
-| Status | MASTER DRAFT — binding for agents |
+| Status | Project brief — binding for interview delivery |
 | Relates to | Interview “Web Developer Coding Exercise — Weather Dashboard” |
 | Implementation map | `REVIEWER.md`, `docs/ARCHITECTURE.md` |
 | Decision log | `docs/DECISIONS.md` (historical; subordinate to this scope) |
 
-When chat plans conflict with this file, **this file wins**.
+When exploratory stretch notes conflict with this file, **this file wins**.

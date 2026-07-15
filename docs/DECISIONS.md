@@ -1,6 +1,6 @@
 # Architecture decisions
 
-> **Scope note:** Stretch ADRs below (admin, email, ads, etc.) are historical product exploration. Interview delivery authority is [`SCOPE.md`](../SCOPE.md) — core weather dashboard first; do not expand frozen areas without an explicit request.
+> **Scope note:** Stretch ADRs below (admin, email, ads, etc.) are historical product exploration. Interview delivery authority is [`SCOPE.md`](../SCOPE.md) — core weather dashboard first; frozen areas stay frozen unless the home demo is broken.
 
 ## ADR-001: OpenWeather One Call 4.0 with 2.5 fallback
 
