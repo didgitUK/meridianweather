@@ -3,7 +3,7 @@ import { hasLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { BlogArticleCard } from '@/features/weather/components/BlogArticleCard';
 import { PageSection } from '@/components/layout/PageSection';
-import { getBlogPosts } from '@/constants/blog-posts';
+import { getBlogPosts } from '@/lib/cms/get-blog-content';
 import { SPACING, TYPOGRAPHY } from '@/constants/design-tokens';
 import { buildPageMetadata } from '@/lib/seo';
 import { buildLanguageAlternates, buildLocalizedPath, getOgLocale } from '@/i18n/seo';

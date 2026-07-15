@@ -57,8 +57,9 @@ Summary: Next.js API routes proxy OpenWeather so the key never hits the browser.
 
 ## Stretch backends (optional)
 
-- Cron: `Authorization: Bearer CRON_SECRET` (`weather-alerts`, `weekly-digests`); fail-closed in production when unset
-- Admin: HttpOnly cookie `meridian_admin_session`; multi-ESP email (Resend / SendGrid / SES / SMTP)
+- Cron: `Authorization: Bearer CRON_SECRET` (`weather-alerts`, `weekly-digests`); fail-closed in production when unset; runs recorded in `process_runs`
+- Admin: HttpOnly cookie `meridian_admin_session`; multi-ESP email (Resend / SendGrid / SES / SMTP); audit in `admin_audit_log`
+- Observability: `error_events` + `data/logs/*.jsonl` — see [`OBSERVABILITY.md`](OBSERVABILITY.md)
 - Analytics: `POST /api/analytics/collect` when analytics consent; optional GA4
 - Popular searches: `GET /api/recent-checks` from `location_weather_checks` (not `seed:checks` snapshots)
 

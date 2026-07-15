@@ -101,6 +101,9 @@ SQLite (`src/lib/db/index.js`) — core plus stretch tables:
 | `blog_posts` | Editable journal articles (EN CMS; seed from `HOME_BLOG_POSTS`) |
 | `site_analytics_events` | First-party analytics (beacon ingest) |
 | `admin_audit_log` | Admin action audit trail |
+| `error_events` | Durable error/warn events (API 5xx, cron, client boundary) |
+| `process_runs` | Cron job runs (weather-alerts, weekly-digests) |
+| `email_send_log` | Transactional email attempts (redacted recipient) |
 | `weather_observations` | Upstream-only observation archive |
 | `weather_forecast_archive` | Forecast archive rows |
 
@@ -120,3 +123,7 @@ Additional migrations may exist; treat `src/lib/db/index.js` as source of truth.
 ## User documentation
 
 In-app docs at `/docs/*` — **11** pages from `DOCS_PAGES` in `src/content/docs/defaults.js` (re-exported via `index.js`), resolved through CMS/`getDocBySlug`. File defaults seed and reset SQLite `cms_pages`. Journal articles for the default locale resolve from SQLite `blog_posts` (admin Content → Blog Articles); other locales use `blog-posts-i18n` packs.
+
+### Observability
+
+Structured logger (`src/lib/server/logger.js`) writes console + optional `data/logs/*.jsonl`. Queryable trails: `error_events`, `process_runs`, `email_send_log`, expanded `admin_audit_log`. Admin UI: `/admin?section=observability`. Browser smoke: Playwright `e2e/observability.smoke.spec.js`. Full map: [`docs/OBSERVABILITY.md`](OBSERVABILITY.md).

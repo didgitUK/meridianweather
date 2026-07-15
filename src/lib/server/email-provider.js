@@ -2,44 +2,76 @@ import crypto from 'node:crypto';
 import nodemailer from 'nodemailer';
 import { Resend } from 'resend';
 import { DEFAULT_SES_REGION } from '@/constants/email-providers';
+import { logEmailSend } from '@/lib/email-send-log-repo';
 import {
   EMAIL_PROVIDERS,
   resolveActiveEmailConnector,
 } from '@/lib/server/email-connectors';
 
 /**
- * @param {{ to: string, subject: string, html: string }} message
+ * @param {{ to: string, subject: string, html: string, templateSlug?: string, correlationId?: string }} message
  */
 export async function sendTransactionalEmail(message) {
   const connector = resolveActiveEmailConnector();
+  const templateSlug = message.templateSlug ?? null;
+  const correlationId = message.correlationId ?? null;
 
-  if (connector.provider === EMAIL_PROVIDERS.none) {
-    return { sent: false, reason: 'email_not_configured' };
+  function record(status, reason, provider = connector.provider) {
+    logEmailSend({
+      provider,
+      templateSlug,
+      to: message.to,
+      status,
+      reason,
+      correlationId,
+      meta: { subject: message.subject?.slice(0, 120) },
+    });
   }
 
-  if (connector.provider === EMAIL_PROVIDERS.ses) {
-    if (!connector.accessKeyId || !connector.apiKey || !connector.fromEmail) {
+  try {
+    if (connector.provider === EMAIL_PROVIDERS.none) {
+      record('skipped', 'email_not_configured', EMAIL_PROVIDERS.none);
       return { sent: false, reason: 'email_not_configured' };
     }
-    return sendViaSes(connector, message);
-  }
 
-  if (connector.provider === EMAIL_PROVIDERS.smtp) {
-    if (!connector.host || !connector.apiKey || !connector.fromEmail) {
+    if (connector.provider === EMAIL_PROVIDERS.ses) {
+      if (!connector.accessKeyId || !connector.apiKey || !connector.fromEmail) {
+        record('skipped', 'email_not_configured');
+        return { sent: false, reason: 'email_not_configured' };
+      }
+      const result = await sendViaSes(connector, message);
+      record('sent', null, result.provider);
+      return result;
+    }
+
+    if (connector.provider === EMAIL_PROVIDERS.smtp) {
+      if (!connector.host || !connector.apiKey || !connector.fromEmail) {
+        record('skipped', 'email_not_configured');
+        return { sent: false, reason: 'email_not_configured' };
+      }
+      const result = await sendViaSmtp(connector, message);
+      record('sent', null, result.provider);
+      return result;
+    }
+
+    if (!connector.apiKey) {
+      record('skipped', 'email_not_configured');
       return { sent: false, reason: 'email_not_configured' };
     }
-    return sendViaSmtp(connector, message);
-  }
 
-  if (!connector.apiKey) {
-    return { sent: false, reason: 'email_not_configured' };
-  }
+    if (connector.provider === EMAIL_PROVIDERS.sendgrid) {
+      const result = await sendViaSendGrid(connector, message);
+      record('sent', null, result.provider);
+      return result;
+    }
 
-  if (connector.provider === EMAIL_PROVIDERS.sendgrid) {
-    return sendViaSendGrid(connector, message);
+    const result = await sendViaResend(connector, message);
+    record('sent', null, result.provider);
+    return result;
+  } catch (error) {
+    record('failed', error?.message ?? 'send_failed');
+    throw error;
   }
-
-  return sendViaResend(connector, message);
 }
 
 /**

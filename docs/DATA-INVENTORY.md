@@ -33,7 +33,12 @@
 | Email templates | SQLite `email_templates` | Editable branded HTML | Legitimate interest | Until updated |
 | CMS pages | SQLite `cms_pages` | Editable legal/docs copy | Legitimate interest | Until updated |
 | Admin users | SQLite `admin_users`, `admin_invites`, `admin_password_resets` | Staff accounts and auth flows | Legitimate interest | Until deleted |
-| Admin audit | SQLite `admin_audit_log` | Admin action trail | Legitimate interest | Indefinite in v1 |
+| Admin audit | SQLite `admin_audit_log` | Admin action trail (auth, config, CMS, blog, templates, secrets) | Legitimate interest | Indefinite in v1 |
+| Error events | SQLite `error_events` | Durable API/cron/client errors | Legitimate interest | Indefinite in v1 |
+| Process runs | SQLite `process_runs` | Cron job start/finish + counts | Legitimate interest | Indefinite in v1 |
+| Email send log | SQLite `email_send_log` | Transactional send attempts (recipient redacted) | Legitimate interest | Indefinite in v1 |
+| App / error JSONL | `data/logs/*.jsonl` | Filesystem mirror of structured logger | Legitimate interest | Local disk until rotated/deleted |
+| Blog posts | SQLite `blog_posts` | Journal CMS (EN) | Legitimate interest | Until updated |
 
 ## Consent JSON shape (`meridian:consent`)
 

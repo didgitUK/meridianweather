@@ -1,6 +1,6 @@
 /**
- * Journal posts — English reads from SQLite CMS (seeded from defaults);
- * localized packs remain in blog-posts-i18n for non-en locales.
+ * Client-safe journal helpers (file defaults + i18n packs).
+ * Server pages that should respect CMS edits import `@/lib/cms/get-blog-content`.
  */
 
 import { HOME_BLOG_POSTS } from '@/constants/blog-posts-defaults';
@@ -8,11 +8,6 @@ import {
   getLocalizedBlogPost,
   getLocalizedBlogPosts,
 } from '@/constants/blog-posts-i18n';
-import {
-  getPublicBlogPost,
-  listBlogPostSlugs,
-  listPublicBlogPosts,
-} from '@/lib/cms/blog-post-repo';
 
 export { HOME_BLOG_POSTS };
 
@@ -20,12 +15,7 @@ export { HOME_BLOG_POSTS };
  * @param {string | null | undefined} [locale]
  */
 export function getBlogPosts(locale) {
-  const localized = getLocalizedBlogPosts(locale);
-  if (localized) {
-    return localized;
-  }
-
-  return listPublicBlogPosts();
+  return getLocalizedBlogPosts(locale) ?? HOME_BLOG_POSTS;
 }
 
 /**
@@ -38,9 +28,9 @@ export function getBlogPostById(id, locale) {
     return localized;
   }
 
-  return getPublicBlogPost(id);
+  return HOME_BLOG_POSTS.find((post) => post.id === id) ?? null;
 }
 
 export function getBlogPostIds() {
-  return listBlogPostSlugs();
+  return HOME_BLOG_POSTS.map((post) => post.id);
 }

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getRecentAdminAuditEvents } from '@/lib/admin-audit-repo';
+import { getRecentAdminAuditEvents, logAdminAuditEvent } from '@/lib/admin-audit-repo';
 import { maskSecret } from '@/lib/mask-secret';
 import { getUsageSnapshot } from '@/lib/api-usage-tracker';
 import { getPlatformSettings, updatePlatformSettings } from '@/lib/platform-settings';
@@ -267,6 +267,15 @@ export async function PATCH(request) {
 
   const settings = updatePlatformSettings(next);
   applyInaccuracyAutoDismiss();
+
+  const changedKeys = Object.keys(body ?? {}).filter((key) => body[key] != null);
+  logAdminAuditEvent({
+    action: 'admin_config_updated',
+    meta: {
+      keys: changedKeys,
+      emailProvider: body.emailProvider ?? undefined,
+    },
+  });
 
   return NextResponse.json({
     settings: sanitizeSettings(settings),

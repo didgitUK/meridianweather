@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { logAdminAuditEvent } from '@/lib/admin-audit-repo';
 import {
   ADMIN_SESSION_COOKIE,
   createAdminSessionToken,
@@ -6,6 +7,7 @@ import {
   isAdminLoginConfigured,
   loginAdminUser,
 } from '@/lib/server/admin-auth';
+import { redactEmail } from '@/lib/server/logger';
 import { enforceRateLimit } from '@/lib/server/rate-limit';
 
 export async function POST(request) {
@@ -30,8 +32,17 @@ export async function POST(request) {
 
   const user = loginAdminUser({ email, password });
   if (!user) {
+    logAdminAuditEvent({
+      action: 'admin_login_failed',
+      meta: { email: redactEmail(email) },
+    });
     return NextResponse.json({ error: 'unauthorized', message: 'Invalid credentials' }, { status: 401 });
   }
+
+  logAdminAuditEvent({
+    action: 'admin_login_succeeded',
+    meta: { userId: user.id, email: redactEmail(user.email) },
+  });
 
   const token = createAdminSessionToken(user);
   const response = NextResponse.json({

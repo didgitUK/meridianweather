@@ -12,6 +12,13 @@
 
 # testing
 /coverage
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# runtime structured logs (created by logger.js)
+/data/logs/
 
 # next.js
 /.next/

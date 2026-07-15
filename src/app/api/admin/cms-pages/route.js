@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { CMS_COLLECTION, CMS_COLLECTIONS } from '@/constants/cms';
+import { logAdminAuditEvent } from '@/lib/admin-audit-repo';
 import {
   getCmsPage,
   listCmsPages,
@@ -74,6 +75,11 @@ export async function PUT(request) {
         return NextResponse.json({ error: 'not_found', message: 'Page not found' }, { status: 404 });
       }
 
+      logAdminAuditEvent({
+        action: 'cms_page_reset',
+        meta: { collection, slug },
+      });
+
       return NextResponse.json({ page, pages: listCmsPages(collection) });
     }
 
@@ -86,6 +92,11 @@ export async function PUT(request) {
     if (!page) {
       return NextResponse.json({ error: 'not_found', message: 'Page not found' }, { status: 404 });
     }
+
+    logAdminAuditEvent({
+      action: 'cms_page_saved',
+      meta: { collection, slug },
+    });
 
     return NextResponse.json({ page, pages: listCmsPages(collection) });
   } catch (error) {

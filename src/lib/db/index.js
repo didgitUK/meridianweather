@@ -44,6 +44,41 @@ CREATE TABLE IF NOT EXISTS admin_audit_log (
   meta_json TEXT
 );
 
+CREATE TABLE IF NOT EXISTS error_events (
+  id TEXT PRIMARY KEY,
+  timestamp TEXT NOT NULL,
+  level TEXT NOT NULL,
+  source TEXT NOT NULL,
+  message TEXT NOT NULL,
+  stack TEXT,
+  correlation_id TEXT,
+  meta_json TEXT
+);
+
+CREATE TABLE IF NOT EXISTS process_runs (
+  id TEXT PRIMARY KEY,
+  job TEXT NOT NULL,
+  status TEXT NOT NULL,
+  started_at TEXT NOT NULL,
+  finished_at TEXT,
+  correlation_id TEXT,
+  counts_json TEXT,
+  error_summary TEXT,
+  meta_json TEXT
+);
+
+CREATE TABLE IF NOT EXISTS email_send_log (
+  id TEXT PRIMARY KEY,
+  timestamp TEXT NOT NULL,
+  provider TEXT NOT NULL,
+  template_slug TEXT,
+  recipient_fingerprint TEXT NOT NULL,
+  status TEXT NOT NULL,
+  reason TEXT,
+  correlation_id TEXT,
+  meta_json TEXT
+);
+
 CREATE TABLE IF NOT EXISTS subscriptions (
   id TEXT PRIMARY KEY,
   client_id TEXT NOT NULL,
@@ -251,6 +286,18 @@ CREATE INDEX IF NOT EXISTS idx_admin_password_resets_user
 
 CREATE INDEX IF NOT EXISTS idx_admin_audit_log_action
   ON admin_audit_log(action, timestamp DESC);
+
+CREATE INDEX IF NOT EXISTS idx_error_events_timestamp
+  ON error_events(timestamp DESC);
+
+CREATE INDEX IF NOT EXISTS idx_error_events_source
+  ON error_events(source, timestamp DESC);
+
+CREATE INDEX IF NOT EXISTS idx_process_runs_started
+  ON process_runs(started_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_email_send_log_timestamp
+  ON email_send_log(timestamp DESC);
 
 CREATE INDEX IF NOT EXISTS idx_admin_users_email
   ON admin_users(email);

@@ -4,12 +4,18 @@ import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { PageSection } from '@/components/layout/PageSection';
+import { reportClientError } from '@/lib/client/report-client-error';
 
 export default function ErrorPage({ error, reset }) {
   const t = useTranslations('Errors');
 
   useEffect(() => {
     console.error('[locale-error]', error);
+    reportClientError({
+      message: error?.message ?? 'Locale error boundary',
+      stack: error?.stack,
+      digest: error?.digest,
+    });
   }, [error]);
 
   return (

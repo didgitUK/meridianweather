@@ -6,7 +6,7 @@ This is a **responsive website** for phones and desktops. Footer store badges hi
 
 **Live site:** [https://meridianweather.co.uk](https://meridianweather.co.uk)
 
-**Further reading:** [SCOPE.md](SCOPE.md) (what must work vs stretch) · [REVIEWER.md](REVIEWER.md) (5-minute walkthrough) · [docs/STUDY-BACKEND.md](docs/STUDY-BACKEND.md) (cache, quota, API flow)
+**Further reading:** [SCOPE.md](SCOPE.md) (what must work vs stretch) · [REVIEWER.md](REVIEWER.md) (5-minute walkthrough) · [docs/STUDY-BACKEND.md](docs/STUDY-BACKEND.md) (cache, quota, API flow) · [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) (logs, audit trails, Playwright)
 
 ![Home dashboard — search, Your locations, near you, ad placeholders, journal](docs/screenshots/01-home-dashboard.png)
 
@@ -281,6 +281,7 @@ npm run start
 | `npm run dev` | Development server |
 | `npm run build` then `npm run start` | Production |
 | `npm run test` | Vitest unit tests |
+| `npm run test:e2e` | Playwright browser smoke (console / localStorage / API timing) |
 | `npm run lint` | ESLint |
 | `npm run verify` | Lint + test + build |
 | `npm run copy:icons` | Copy Meteocons → `public/weather-icons/` (also `postinstall`) |
@@ -318,6 +319,7 @@ npm run start
 | [REVIEWER.md](REVIEWER.md) | Walking the demo or mapping criteria to files |
 | [SCOPE.md](SCOPE.md) | Core vs freeze / stretch boundaries |
 | [docs/STUDY-BACKEND.md](docs/STUDY-BACKEND.md) | Lifecycle, errors, cache TTLs |
+| [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) | Error log, process/email audit, `data/logs/`, Playwright |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Folder map and data flows |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Why choices were made (ADRs) |
 | [docs/SECURITY.md](docs/SECURITY.md) | Threat model and production checklist |

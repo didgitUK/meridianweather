@@ -6,7 +6,7 @@ import {
   getBlogPostById,
   getBlogPostIds,
   getBlogPosts,
-} from '@/constants/blog-posts';
+} from '@/lib/cms/get-blog-content';
 import { buildPageMetadata } from '@/lib/seo';
 import { buildLanguageAlternates, buildLocalizedPath, getOgLocale } from '@/i18n/seo';
 import { routing } from '@/i18n/routing';

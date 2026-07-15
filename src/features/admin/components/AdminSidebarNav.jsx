@@ -19,6 +19,7 @@ import {
   Newspaper,
   Radar,
   Scale,
+  ScrollText,
   Settings,
   UserRound,
   Users,
@@ -54,6 +55,7 @@ const ADMIN_NAV_ICONS = {
   KeyRound,
   Inbox,
   Settings,
+  ScrollText,
 };
 
 const UNLABELED_GROUPS = ADMIN_NAV_GROUPS.filter((group) => !group.label);

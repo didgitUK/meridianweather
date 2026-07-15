@@ -74,20 +74,39 @@ export async function trackUpstreamCall(endpoint, fn, meta = {}) {
     return { blocked: true, result: null };
   }
 
-  const result = await fn();
-  minuteWindow.push(Date.now());
+  const started = Date.now();
 
-  logApiCall({
-    id: uuidv4(),
-    timestamp: new Date().toISOString(),
-    endpoint,
-    cacheHit: false,
-    status: '200',
-    durationMs: result.durationMs,
-    meta,
-  });
+  try {
+    const result = await fn();
+    minuteWindow.push(Date.now());
 
-  return { blocked: false, result };
+    logApiCall({
+      id: uuidv4(),
+      timestamp: new Date().toISOString(),
+      endpoint,
+      cacheHit: false,
+      status: '200',
+      durationMs: result.durationMs ?? Date.now() - started,
+      meta,
+    });
+
+    return { blocked: false, result };
+  } catch (error) {
+    logApiCall({
+      id: uuidv4(),
+      timestamp: new Date().toISOString(),
+      endpoint,
+      cacheHit: false,
+      status: String(error?.status ?? 'error'),
+      durationMs: Date.now() - started,
+      meta: {
+        ...meta,
+        failure: true,
+        message: error?.message ?? 'Upstream call failed',
+      },
+    });
+    throw error;
+  }
 }
 
 export function getUsageSnapshot() {

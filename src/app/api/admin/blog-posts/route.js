@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { logAdminAuditEvent } from '@/lib/admin-audit-repo';
 import {
   getBlogPost,
   listBlogPosts,
@@ -53,6 +54,7 @@ export async function PUT(request) {
         return NextResponse.json({ error: 'not_found', message: 'Post not found' }, { status: 404 });
       }
 
+      logAdminAuditEvent({ action: 'blog_post_reset', meta: { slug } });
       return NextResponse.json({ post, posts: listBlogPosts() });
     }
 
@@ -67,6 +69,7 @@ export async function PUT(request) {
       bodyHtml: body.bodyHtml,
     });
 
+    logAdminAuditEvent({ action: 'blog_post_saved', meta: { slug } });
     return NextResponse.json({ post, posts: listBlogPosts() });
   } catch (error) {
     return NextResponse.json(

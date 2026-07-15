@@ -9,6 +9,7 @@ import { AdminBlogPostsPanel } from '@/features/admin/components/AdminBlogPostsP
 import { AdminCmsPagesPanel } from '@/features/admin/components/AdminCmsPagesPanel';
 import { AdminEmailConnectorsPanel } from '@/features/admin/components/email-connectors/AdminEmailConnectorsPanel';
 import { AdminInaccuraciesPanel } from '@/features/admin/components/AdminInaccuraciesPanel';
+import { AdminObservabilityPanel } from '@/features/admin/components/AdminObservabilityPanel';
 import { AdminLocationsPanel } from '@/features/admin/components/AdminLocationsPanel';
 import { AdminOverviewPanel } from '@/features/admin/components/AdminOverviewPanel';
 import { AdminPlatformSettings } from '@/features/admin/components/AdminPlatformSettings';
@@ -262,6 +263,8 @@ export function AdminDashboard() {
             onRefresh={refresh}
           />
         );
+      case 'observability':
+        return <AdminObservabilityPanel />;
       case 'locations':
         return <AdminLocationsPanel locations={data?.locations} onRefresh={refresh} />;
       case 'profile':

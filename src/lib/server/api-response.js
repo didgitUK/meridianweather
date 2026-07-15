@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { ApiError } from '@/lib/api-client';
+import { logErrorEvent } from '@/lib/error-log-repo';
+import { createCorrelationId } from '@/lib/server/logger';
 
 /**
  * Canonical API error envelope: `{ error, message }`.
@@ -33,9 +35,9 @@ export function statusFromCaughtError(error, { invalidPrefix = 'Invalid' } = {})
   }
 
   if (
-    message.startsWith(invalidPrefix) ||
-    message.includes('required') ||
-    message.includes('at least')
+    message.startsWith(invalidPrefix)
+    || message.includes('required')
+    || message.includes('at least')
   ) {
     return { error: 'invalid_request', message, status: 400 };
   }
@@ -43,7 +45,36 @@ export function statusFromCaughtError(error, { invalidPrefix = 'Invalid' } = {})
   return { error: 'upstream_error', message, status: 502 };
 }
 
+/**
+ * @param {unknown} error
+ * @param {{ source?: string, correlationId?: string, meta?: Record<string, unknown>, persist?: boolean } & Record<string, unknown>} [overrides]
+ */
 export function apiErrorFromCaught(error, overrides = {}) {
-  const resolved = { ...statusFromCaughtError(error), ...overrides };
+  const {
+    source = 'api',
+    correlationId,
+    meta,
+    persist = true,
+    ...statusOverrides
+  } = overrides;
+
+  const resolved = { ...statusFromCaughtError(error), ...statusOverrides };
+  const corr = correlationId ?? createCorrelationId();
+
+  if (persist && resolved.status >= 500) {
+    logErrorEvent({
+      level: 'error',
+      source,
+      message: resolved.message,
+      stack: error instanceof Error ? error.stack : null,
+      correlationId: corr,
+      meta: {
+        ...meta,
+        errorCode: resolved.error,
+        status: resolved.status,
+      },
+    });
+  }
+
   return apiError(resolved.error, resolved.message, resolved.status);
 }

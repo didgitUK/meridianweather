@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { EMAIL_TEMPLATE_DEFINITIONS } from '@/constants/email-templates';
+import { logAdminAuditEvent } from '@/lib/admin-audit-repo';
 import {
   getEmailTemplate,
   listEmailTemplates,
@@ -77,6 +78,7 @@ export async function PUT(request) {
         return NextResponse.json({ error: 'not_found', message: 'Template not found' }, { status: 404 });
       }
 
+      logAdminAuditEvent({ action: 'email_template_reset', meta: { slug } });
       return NextResponse.json({ template, templates: listEmailTemplates() });
     }
 
@@ -89,6 +91,7 @@ export async function PUT(request) {
       return NextResponse.json({ error: 'not_found', message: 'Template not found' }, { status: 404 });
     }
 
+    logAdminAuditEvent({ action: 'email_template_saved', meta: { slug } });
     return NextResponse.json({ template, templates: listEmailTemplates() });
   } catch (error) {
     return NextResponse.json(
