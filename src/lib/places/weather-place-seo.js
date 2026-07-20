@@ -1,29 +1,56 @@
 import { cache } from 'react';
+import { WEATHER_CHECK_TRIGGERS } from '@/constants/weather-check-triggers';
 import { fetchPlaceScopesForSeo } from '@/lib/places/fetch-place-seo-scopes';
 import {
   findUkPlaceBySlug,
   recordUkPlaceView,
 } from '@/lib/places/uk-places-repo';
+import { fetchWeatherForScope } from '@/lib/weather-fetch-orchestrator';
+
+async function fetchPlaceScopesForDisplay(city, locale) {
+  const options = {
+    lang: locale,
+    trigger: WEATHER_CHECK_TRIGGERS.cityDetail,
+  };
+
+  const [currentResponse, dailyResponse, hourlyResponse] = await Promise.all([
+    fetchWeatherForScope(city.lat, city.lon, 'current', options),
+    fetchWeatherForScope(city.lat, city.lon, 'daily', options),
+    fetchWeatherForScope(city.lat, city.lon, 'hourly', options).catch(() => null),
+  ]);
+
+  return {
+    current: currentResponse.data,
+    currentMeta: currentResponse.meta,
+    daily: dailyResponse.data,
+    dailyMeta: dailyResponse.meta,
+    hourly: hourlyResponse?.data ?? null,
+    hourlyMeta: hourlyResponse?.meta ?? null,
+  };
+}
 
 const getPlaceWeatherForSeoByKey = cache(async (lat, lon, locale, slug) => {
-  try {
-    const placeMeta = slug ? findUkPlaceBySlug(slug) : null;
-    if (slug) {
-      recordUkPlaceView(slug);
-    }
+  const placeMeta = slug ? findUkPlaceBySlug(slug) : null;
+  if (slug) {
+    recordUkPlaceView(slug);
+  }
 
-    return await fetchPlaceScopesForSeo(
-      {
-        lat,
-        lon,
-        seoSlug: slug,
-        population: placeMeta?.population,
-      },
-      locale,
-      placeMeta,
-    );
+  const city = {
+    lat,
+    lon,
+    seoSlug: slug,
+    population: placeMeta?.population,
+  };
+
+  try {
+    return await fetchPlaceScopesForSeo(city, locale, placeMeta);
   } catch {
-    return null;
+    // SEO TTL path failed (quota/cache) — still render with the normal city_detail path.
+    try {
+      return await fetchPlaceScopesForDisplay(city, locale);
+    } catch {
+      return null;
+    }
   }
 });
 

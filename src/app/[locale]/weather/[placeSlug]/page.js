@@ -12,7 +12,6 @@ import {
   UK_PLACES_PHASE_B_LIMIT,
 } from '@/constants/weather-places';
 import { summarizeCityWeather } from '@/lib/city-weather-seo';
-import { getHeroImageForRegion } from '@/lib/hero-image/get-hero-image-for-region';
 import {
   listUkPlaces,
   resolveWeatherPlace,
@@ -116,18 +115,9 @@ export default async function WeatherPlacePage({ params }) {
 
   const t = await getTranslations({ locale, namespace: 'Seo' });
   const weather = await getPlaceWeatherForSeo(city, getOpenWeatherLang(locale));
-  const heroImage = await getHeroImageForRegion({
-    city: city.name,
-    state: city.state,
-    country: city.country,
-    lat: city.lat,
-    lon: city.lon,
-    temperature: weather?.current?.temperature ?? null,
-    weatherId: weather?.current?.weatherId ?? null,
-    condition: weather?.current?.condition ?? null,
-    description: weather?.current?.description ?? null,
-    icon: weather?.current?.icon ?? null,
-  }).catch(() => null);
+  // Map-first heroes (same as /city/) — skip photo fetch so stock Unsplash/Wikimedia
+  // images are not resolved or shown for UK place pages.
+  const heroImage = null;
 
   const path = `/weather/${city.seoSlug ?? decodedSlug}`;
   const region = city.state || city.country;
