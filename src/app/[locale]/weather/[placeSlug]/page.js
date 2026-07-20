@@ -34,7 +34,8 @@ import { buildLanguageAlternates, buildLocalizedPath, getOgLocale, getOpenWeathe
 import { routing } from '@/i18n/routing';
 
 // Literal required — Next segment config cannot use imported bindings.
-export const revalidate = 86400;
+// Force dynamic: upstream weather fetches are uncached and conflict with ISR on Gandi.
+export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
 
 const UK_PLACES_SEED_FLOOR = UK_PLACES_PHASE_A_LIMIT + Math.floor(UK_PLACES_PHASE_B_LIMIT * 0.5);
