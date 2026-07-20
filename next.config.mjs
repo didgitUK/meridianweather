@@ -53,6 +53,17 @@ if (process.env.NODE_ENV === 'production') {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   serverExternalPackages: ['better-sqlite3'],
+  // Gandi Simple Hosting has tight process limits — keep static generation single-threaded there.
+  ...(process.env.GANDI
+    ? {
+        experimental: {
+          cpus: 1,
+          workerThreads: false,
+          staticGenerationMaxConcurrency: 1,
+          staticGenerationMinPagesPerWorker: 200,
+        },
+      }
+    : {}),
   images: {
     remotePatterns: [
       {

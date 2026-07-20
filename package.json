@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build",
-    "start": "next start",
+    "start": "node -r ./scripts/load-gandi-env.cjs ./node_modules/next/dist/bin/next start",
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -14,8 +14,9 @@
     "verify": "npm run lint && npm run test && npm run build",
     "audit:deps": "npm audit --omit=dev",
     "copy:icons": "node scripts/copy-weather-icons.mjs",
-    "postinstall": "node scripts/copy-weather-icons.mjs && ([ -z \"$GANDI\" ] || npm run build)",
+    "postinstall": "node scripts/copy-weather-icons.mjs && ([ -z \"$GANDI\" ] || NODE_OPTIONS='--max-old-space-size=768' npm run build)",
     "deploy:gandi": "bash scripts/deploy-gandi.sh",
+    "deploy:gandi:env": "bash scripts/gandi-upload-env.sh",
     "seed:checks": "node scripts/seed-recent-checks.mjs",
     "backfill:city-slugs": "node scripts/backfill-city-slugs.mjs",
     "email": "email dev --dir src/emails"

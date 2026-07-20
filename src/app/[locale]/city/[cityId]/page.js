@@ -17,6 +17,11 @@ export const revalidate = 900;
 export const dynamicParams = true;
 
 export function generateStaticParams() {
+  // Skip showcase pre-render on constrained hosts (Gandi builder process limits).
+  if (process.env.GANDI) {
+    return [];
+  }
+
   return getShowcaseCities().flatMap((city) =>
     routing.locales.map((locale) => ({
       locale,
