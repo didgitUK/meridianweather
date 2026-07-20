@@ -8,7 +8,6 @@ import { PageSection } from '@/components/layout/PageSection';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { UK_PLACE_TIER_A } from '@/constants/uk-places-phase-a';
 import { WEATHER_CHECK_TRIGGERS } from '@/constants/weather-check-triggers';
-import { WEATHER_PLACE_SEO_REVALIDATE_SECONDS } from '@/constants/weather-places';
 import { summarizeCityWeather } from '@/lib/city-weather-seo';
 import { getHeroImageForRegion } from '@/lib/hero-image/get-hero-image-for-region';
 import {
@@ -30,7 +29,8 @@ import {
 import { buildLanguageAlternates, buildLocalizedPath, getOgLocale, getOpenWeatherLang } from '@/i18n/seo';
 import { routing } from '@/i18n/routing';
 
-export const revalidate = WEATHER_PLACE_SEO_REVALIDATE_SECONDS;
+// Literal required — Next segment config cannot use imported bindings.
+export const revalidate = 86400;
 export const dynamicParams = true;
 
 function ensureUkPlacesSeeded() {
