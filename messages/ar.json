@@ -94,7 +94,8 @@
       "gps": "موقع الجهاز الدقيق",
       "history": "عمليات التحقق الأخيرة",
       "ip": "موقع الشبكة التقريبي"
-    }
+    },
+    "sheetDescription": "ابحث عن مدينة ثم افتح التوقعات."
   },
   "Dashboard": {
     "hero": {
@@ -527,5 +528,12 @@
     "unableToSubmitReport": "تعذّر إرسال البلاغ",
     "newsletterSaveFailed": "تعذّر حفظ اشتراك النشرة",
     "newsletterUnsubscribeFailed": "تعذّر إلغاء الاشتراك"
+  },
+  "MobileNav": {
+    "label": "رئيسي",
+    "home": "الرئيسية",
+    "search": "بحث",
+    "myPlaces": "أماكني",
+    "settings": "الإعدادات"
   }
 }

@@ -94,7 +94,8 @@
       "gps": "position précise de l’appareil",
       "history": "vos vérifications récentes",
       "ip": "position approximative du réseau"
-    }
+    },
+    "sheetDescription": "Recherchez une ville, puis ouvrez sa prévision."
   },
   "Dashboard": {
     "hero": {
@@ -527,5 +528,12 @@
     "unableToSubmitReport": "Impossible d’envoyer le signalement",
     "newsletterSaveFailed": "Impossible d’enregistrer l’abonnement à la newsletter",
     "newsletterUnsubscribeFailed": "Impossible de se désabonner"
+  },
+  "MobileNav": {
+    "label": "Principal",
+    "home": "Accueil",
+    "search": "Recherche",
+    "myPlaces": "Lieux",
+    "settings": "Réglages"
   }
 }

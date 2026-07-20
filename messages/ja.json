@@ -94,7 +94,8 @@
       "gps": "端末の精密な位置情報",
       "history": "最近の確認履歴",
       "ip": "おおよそのネットワーク位置"
-    }
+    },
+    "sheetDescription": "都市を検索して予報を開きます。"
   },
   "Dashboard": {
     "hero": {
@@ -527,5 +528,12 @@
     "unableToSubmitReport": "報告を送信できません",
     "newsletterSaveFailed": "ニュースレターの購読を保存できません",
     "newsletterUnsubscribeFailed": "購読解除できません"
+  },
+  "MobileNav": {
+    "label": "メイン",
+    "home": "ホーム",
+    "search": "検索",
+    "myPlaces": "場所",
+    "settings": "設定"
   }
 }

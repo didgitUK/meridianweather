@@ -94,7 +94,8 @@
       "gps": "precise device location",
       "history": "your recent checks",
       "ip": "approximate network location"
-    }
+    },
+    "sheetDescription": "Search for a city or town, then open its forecast."
   },
   "Dashboard": {
     "hero": {
@@ -527,5 +528,12 @@
     "unableToSubmitReport": "Unable to submit report",
     "newsletterSaveFailed": "Unable to save newsletter subscription",
     "newsletterUnsubscribeFailed": "Unable to unsubscribe"
+  },
+  "MobileNav": {
+    "label": "Primary",
+    "home": "Home",
+    "search": "Search",
+    "myPlaces": "My places",
+    "settings": "Settings"
   }
 }

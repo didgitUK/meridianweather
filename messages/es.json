@@ -94,7 +94,8 @@
       "gps": "ubicación precisa del dispositivo",
       "history": "tus consultas recientes",
       "ip": "ubicación aproximada de red"
-    }
+    },
+    "sheetDescription": "Busque una ciudad y abra su pronóstico."
   },
   "Dashboard": {
     "hero": {
@@ -527,5 +528,12 @@
     "unableToSubmitReport": "No se pudo enviar el informe",
     "newsletterSaveFailed": "No se pudo guardar la suscripción al boletín",
     "newsletterUnsubscribeFailed": "No se pudo dar de baja"
+  },
+  "MobileNav": {
+    "label": "Principal",
+    "home": "Inicio",
+    "search": "Buscar",
+    "myPlaces": "Lugares",
+    "settings": "Ajustes"
   }
 }
