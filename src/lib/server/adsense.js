@@ -1,10 +1,13 @@
+import { MERIDIAN_ADSENSE_CLIENT_ID } from '@/constants/adsense';
 import { getPlatformSettings } from '@/lib/platform-settings';
 
 const CLIENT_ID_PATTERN = /^ca-pub-\d+$/;
 const SLOT_ID_PATTERN = /^\d+$/;
 
 function readClientIdFromEnv() {
-  const clientId = process.env.GOOGLE_ADSENSE_CLIENT_ID?.trim() ?? '';
+  const clientId =
+    process.env.GOOGLE_ADSENSE_CLIENT_ID?.trim()
+    || MERIDIAN_ADSENSE_CLIENT_ID;
   return CLIENT_ID_PATTERN.test(clientId) ? clientId : '';
 }
 

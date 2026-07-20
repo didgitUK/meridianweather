@@ -12,6 +12,8 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { AnalyticsProvider } from '@/components/seo/AnalyticsProvider';
 import { SiteAnalyticsBeacon } from '@/components/analytics/SiteAnalyticsBeacon';
 import { routing } from '@/i18n/routing';
+import { AdSenseSiteVerification } from '@/components/monetization/AdSenseSiteVerification';
+import { getAdSenseClientId } from '@/lib/server/adsense';
 import { buildOrganizationSchema, buildWebsiteSchema, ROOT_METADATA } from '@/lib/seo';
 
 export const viewport = {
@@ -34,6 +36,8 @@ export async function generateMetadata({ params }) {
 
   const t = await getTranslations({ locale, namespace: 'Seo' });
 
+  const adsenseClientId = getAdSenseClientId();
+
   return {
     ...ROOT_METADATA,
     title: {
@@ -52,6 +56,9 @@ export async function generateMetadata({ params }) {
       title: `${ROOT_METADATA.twitter.title.split(' — ')[0]} — ${t('homeTitle')}`,
       description: t('homeDescription'),
     },
+    ...(adsenseClientId
+      ? { other: { 'google-adsense-account': adsenseClientId } }
+      : {}),
   };
 }
 
@@ -68,6 +75,7 @@ export default async function LocaleLayout({ children, params }) {
   return (
     <>
       <HtmlAttributes locale={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} />
+      <AdSenseSiteVerification />
       <JsonLd data={buildOrganizationSchema()} />
       <JsonLd data={buildWebsiteSchema()} />
       <NextIntlClientProvider messages={messages}>
