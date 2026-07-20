@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Upload production env to Gandi persistent volume (survives git deploy).
-# Source: .env.local (gitignored). Destination: /lamp0/etc/meridian.env via SFTP.
+# Source: .env.local (gitignored). Destination: /lamp0/home/meridian.env via SFTP
+# (maps to /srv/data/home/meridian.env at runtime). /lamp0/etc is not writable.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -54,7 +55,7 @@ for line in src.read_text().splitlines():
 # Force production app URL + sqlite path on the volume
 overrides = {
   'NEXT_PUBLIC_APP_URL': 'https://meridianweather.co.uk',
-  'DATABASE_PATH': '/srv/data/meridian.db',
+  'DATABASE_PATH': '/srv/data/home/meridian.db',
   'NODE_ENV': 'production',
 }
 by_key = {}
@@ -67,12 +68,19 @@ dst.write_text('\n'.join(out) + '\n')
 print(f'wrote {len(out)} keys')
 PY
 
+REMOTE_ENV="/lamp0/home/meridian.env"
 export SSHPASS="$GANDI_TOKEN"
-sshpass -e sftp -o StrictHostKeyChecking=accept-new -o PreferredAuthentications=password -o PubkeyAuthentication=no \
-  "${GANDI_USER}@${GANDI_SFTP_HOST}" <<EOF
-mkdir etc
-put ${TMP} /lamp0/etc/meridian.env
+OUT="$(
+  sshpass -e sftp -o StrictHostKeyChecking=accept-new -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+    "${GANDI_USER}@${GANDI_SFTP_HOST}" <<EOF
+put ${TMP} ${REMOTE_ENV}
 bye
 EOF
+)"
+printf '%s\n' "$OUT"
+if printf '%s\n' "$OUT" | grep -qi 'Permission denied\|Failure\|No such file'; then
+  echo "SFTP upload failed for ${REMOTE_ENV}" >&2
+  exit 1
+fi
 
-echo "Uploaded persistent env to Gandi (/lamp0/etc/meridian.env)."
+echo "Uploaded persistent env to Gandi (${REMOTE_ENV})."

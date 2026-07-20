@@ -4,10 +4,12 @@
  */
 const fs = require('node:fs');
 
+const home = process.env.HOME || '';
 const CANDIDATES = [
   process.env.MERIDIAN_ENV_FILE,
-  '/srv/data/etc/meridian.env',
-  '/lamp0/etc/meridian.env',
+  '/srv/data/home/meridian.env',
+  home ? `${home}/meridian.env` : null,
+  '/lamp0/home/meridian.env',
 ].filter(Boolean);
 
 for (const filePath of CANDIDATES) {
