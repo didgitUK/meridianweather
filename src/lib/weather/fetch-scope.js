@@ -3,6 +3,7 @@ import {
   WEATHER_CHECK_TRIGGERS,
   mapCacheLayerToOutcome,
   normalizeWeatherCheckTrigger,
+  resolveSnapshotTtlClass,
 } from '@/constants/weather-check-triggers';
 import { WEATHER_PLACE_SEO_MAX_AGE_MS } from '@/constants/weather-places';
 import {
@@ -104,7 +105,8 @@ export async function fetchWeatherForScope(lat, lon, scope = 'current', options 
   const lang = resolveWeatherLang(options);
   const trigger = resolveTrigger(options);
   const maxAgeMs = resolveMaxAgeMs(options, scope, trigger);
-  const cacheKey = buildSnapshotKey(lat, lon, scope, lang);
+  const ttlClass = resolveSnapshotTtlClass(trigger);
+  const cacheKey = buildSnapshotKey(lat, lon, scope, lang, ttlClass);
   const rawCached = readFromCaches(cacheKey, { trigger, lat, lon, scope });
   const cached = resolveUsableCached(rawCached, maxAgeMs);
   const cachedHasTimelinePoints =

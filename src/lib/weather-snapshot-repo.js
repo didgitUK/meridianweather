@@ -1,10 +1,11 @@
 import { getDb } from '@/lib/db';
 import { v4 as uuidv4 } from 'uuid';
 
-export function buildSnapshotKey(lat, lon, scope, lang = 'en') {
+export function buildSnapshotKey(lat, lon, scope, lang = 'en', ttlClass = 'default') {
   if (scope === 'geocode') return `${scope}:${lat}`;
   const base = `${Number(lat).toFixed(4)},${Number(lon).toFixed(4)},${scope}`;
-  return lang === 'en' ? base : `${base},${lang}`;
+  const withLang = lang === 'en' ? base : `${base},${lang}`;
+  return ttlClass === 'default' ? withLang : `${withLang}@${ttlClass}`;
 }
 
 export function readSnapshot(cacheKey) {
