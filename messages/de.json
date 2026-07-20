@@ -94,7 +94,8 @@
       "gps": "genauer Gerätestandort",
       "history": "Ihren letzten Prüfungen",
       "ip": "ungefährem Netzwerkstandort"
-    }
+    },
+    "sheetDescription": "Suchen Sie eine Stadt oder einen Ort und öffnen Sie die Vorhersage."
   },
   "Dashboard": {
     "hero": {
@@ -527,5 +528,12 @@
     "unableToSubmitReport": "Meldung konnte nicht gesendet werden",
     "newsletterSaveFailed": "Newsletter-Abonnement konnte nicht gespeichert werden",
     "newsletterUnsubscribeFailed": "Abmelden nicht möglich"
+  },
+  "MobileNav": {
+    "label": "Primär",
+    "home": "Start",
+    "search": "Suche",
+    "myPlaces": "Orte",
+    "settings": "Einstellungen"
   }
 }

@@ -26,7 +26,7 @@ export function FloatingControlsDock({ onOpenSettings }) {
   return (
     <div
       className={cn(
-        'fixed left-4 z-50',
+        'fixed left-4 z-50 hidden md:block',
         SAFE_AREA.bottom,
       )}
     >

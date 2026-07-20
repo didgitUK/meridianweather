@@ -13,12 +13,14 @@ import { useSearchResultPreview } from '@/features/cities/hooks/useSearchResultP
 import { useUserLocationProfile } from '@/features/cities/hooks/useUserLocationProfile';
 import { CitySearchDropdown } from '@/features/cities/components/CitySearchDropdown';
 import { CitySearchLocationHint } from '@/features/cities/components/CitySearchLocationHint';
+import { useLocationSearch } from '@/providers/LocationSearchProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { TOUCH } from '@/constants/design-tokens';
 
 const MAX_PREVIEW_PREFETCHES = 4;
+const MOBILE_SEARCH_MQ = '(max-width: 767px)';
 
 export function CitySearch({
   onSelect,
@@ -38,6 +40,8 @@ export function CitySearch({
   const router = useRouter();
   const pathname = usePathname();
   const rootRef = useRef(null);
+  const { openSearch } = useLocationSearch();
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [dropdownDismissed, setDropdownDismissed] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const {
@@ -56,11 +60,21 @@ export function CitySearch({
   const showLocationHint = !isCompact && !hideLocationHint;
   const listboxId = `${inputId}-listbox`;
   const locationHintId = `${inputId}-location`;
-  const showDropdown = query.trim().length >= 2 && !dropdownDismissed;
+  const showDropdown = !isMobileViewport && query.trim().length >= 2 && !dropdownDismissed;
   const activeOptionId =
     showDropdown && highlightedIndex >= 0 && results[highlightedIndex]
       ? `${listboxId}-option-${highlightedIndex}`
       : undefined;
+
+  useEffect(() => {
+    const media = window.matchMedia(MOBILE_SEARCH_MQ);
+    function sync() {
+      setIsMobileViewport(media.matches);
+    }
+    sync();
+    media.addEventListener('change', sync);
+    return () => media.removeEventListener('change', sync);
+  }, []);
 
   useEffect(() => {
     function clearSearchField() {
@@ -110,12 +124,12 @@ export function CitySearch({
   }, [showDropdown, results, loadPreview]);
 
   useEffect(() => {
-    if (!autoFocus) {
+    if (!autoFocus || isMobileViewport) {
       return;
     }
 
     document.getElementById(inputId)?.focus();
-  }, [autoFocus, inputId]);
+  }, [autoFocus, inputId, isMobileViewport]);
 
   function handleSelect(result) {
     const cityId = buildCityId(result.name, result.country, result.lat);
@@ -133,6 +147,13 @@ export function CitySearch({
     onSelect(result);
   }
 
+  function openMobileSearchSheet() {
+    openSearch({
+      initialQuery: query,
+      onSelect: handleSelect,
+    });
+  }
+
   function goToSearchArchive() {
     const next = query.trim();
     if (!next) {
@@ -144,6 +165,10 @@ export function CitySearch({
 
   function handleArchiveSubmit(event) {
     event.preventDefault();
+    if (isMobileViewport) {
+      openMobileSearchSheet();
+      return;
+    }
     if (showDropdown && highlightedIndex >= 0 && results[highlightedIndex]) {
       handleSelect(results[highlightedIndex]);
       return;
@@ -151,7 +176,22 @@ export function CitySearch({
     goToSearchArchive();
   }
 
+  function handleInputFocus() {
+    setDropdownDismissed(false);
+    if (isMobileViewport) {
+      openMobileSearchSheet();
+    }
+  }
+
   function handleInputKeyDown(event) {
+    if (isMobileViewport) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        openMobileSearchSheet();
+      }
+      return;
+    }
+
     if (event.key === 'Escape') {
       if (showDropdown) {
         event.preventDefault();
@@ -225,7 +265,8 @@ export function CitySearch({
         id={inputId}
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        onFocus={() => setDropdownDismissed(false)}
+        onFocus={handleInputFocus}
+        onClick={isMobileViewport ? openMobileSearchSheet : undefined}
         onKeyDown={handleInputKeyDown}
         placeholder={t('placeholder')}
         role="combobox"
@@ -236,6 +277,7 @@ export function CitySearch({
         autoComplete="off"
         autoCorrect="off"
         spellCheck={false}
+        readOnly={isMobileViewport}
         className={inputClassName}
         aria-describedby={
           showLocationHint && (isLocationLoading || displayLabel) ? locationHintId : undefined
@@ -253,21 +295,23 @@ export function CitySearch({
           {tCommon('search')}
         </Button>
       ) : null}
-      <CitySearchDropdown
-        open={showDropdown}
-        isLoading={isLoading}
-        error={error}
-        query={query}
-        results={results}
-        previews={previews}
-        isHero={isCompact}
-        actionLabel={resolvedActionLabel}
-        geocodeContext={geocodeContext}
-        listboxId={listboxId}
-        highlightedIndex={highlightedIndex}
-        onHighlight={setHighlightedIndex}
-        onSelect={handleSelect}
-      />
+      <div className="hidden md:block">
+        <CitySearchDropdown
+          open={showDropdown}
+          isLoading={isLoading}
+          error={error}
+          query={query}
+          results={results}
+          previews={previews}
+          isHero={isCompact}
+          actionLabel={resolvedActionLabel}
+          geocodeContext={geocodeContext}
+          listboxId={listboxId}
+          highlightedIndex={highlightedIndex}
+          onHighlight={setHighlightedIndex}
+          onSelect={handleSelect}
+        />
+      </div>
     </>
   );
 
