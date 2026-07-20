@@ -24,7 +24,7 @@ function resolveResendConnector(settings) {
   const fromEmail =
     settings.resendFromEmail?.trim() ||
     process.env.RESEND_FROM_EMAIL?.trim() ||
-    'info@meridianweather.co.uk',
+    'info@meridianweather.co.uk';
 
   return {
     provider: EMAIL_PROVIDERS.resend,
@@ -43,7 +43,7 @@ function resolveSendgridConnector(settings) {
     settings.sendgridFromEmail?.trim() ||
     process.env.SENDGRID_FROM_EMAIL?.trim() ||
     process.env.RESEND_FROM_EMAIL?.trim() ||
-    'info@meridianweather.co.uk',
+    'info@meridianweather.co.uk';
 
   return {
     provider: EMAIL_PROVIDERS.sendgrid,
@@ -72,7 +72,7 @@ function resolveSesConnector(settings) {
     settings.sesFromEmail?.trim() ||
     process.env.AWS_SES_FROM_EMAIL?.trim() ||
     process.env.RESEND_FROM_EMAIL?.trim() ||
-    'info@meridianweather.co.uk',
+    'info@meridianweather.co.uk';
 
   const source = databaseSecret || databaseAccessKey
     ? 'database'
@@ -120,7 +120,7 @@ function resolveSmtpConnector(settings) {
     settings.smtpFromEmail?.trim() ||
     process.env.SMTP_FROM_EMAIL?.trim() ||
     process.env.RESEND_FROM_EMAIL?.trim() ||
-    'info@meridianweather.co.uk',
+    'info@meridianweather.co.uk';
 
   const source = databasePassword || databaseHost || databaseUser
     ? 'database'
