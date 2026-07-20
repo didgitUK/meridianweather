@@ -25,4 +25,5 @@ export const AD_PLACEMENTS = {
   hero: 'hero',
   recentChecks: 'recent-checks',
   cityDetail: 'city-detail',
+  weatherPlaceMid: 'weather-place-mid',
 };

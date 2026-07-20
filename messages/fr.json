@@ -496,7 +496,20 @@
     "searchDescription": "Recherchez des villes et lieux dans le monde sur meridian.",
     "searchDescriptionWithQuery": "Lieux correspondant à \"{query}\" sur meridian.",
     "journalTitle": "Journal",
-    "journalDescription": "Guides et notes sur les prévisions, les alertes et l’utilisation de meridian."
+    "journalDescription": "Guides et notes sur les prévisions, les alertes et l’utilisation de meridian.",
+    "weatherPlaceTitle": "Météo à {city}",
+    "weatherPlaceTitleShort": "Météo {city}",
+    "weatherPlaceDescription": "Quel temps fait-il à {city} ? Conditions en direct, prévisions horaires et sur 10 jours pour {city}, {region}.",
+    "weatherPlaceDescriptionWithSummary": "Quel temps fait-il à {city} ? {summary}. Prévisions en direct pour {city}, {region} sur meridian.",
+    "weatherPlaceH1": "Météo à {city}",
+    "weatherPlaceLede": "Quel temps fait-il aujourd’hui à {city} ? Conditions en direct, détail horaire et perspectives sur 10 jours pour {city}, {region}.",
+    "weatherPlaceFaqWhatLikeQ": "Quel temps fait-il à {city} ?",
+    "weatherPlaceFaqWhatLikeA": "En ce moment à {city}, {country} : {summary}. Mis à jour dans la journée sur meridian.",
+    "weatherPlaceFaqWhatLikeAFallback": "Voir les conditions et les prévisions pour {city}, {country} sur cette page.",
+    "weatherPlaceFaqForecastQ": "Quelles sont les prévisions météo pour {city} ?",
+    "weatherPlaceFaqForecastA": "meridian affiche des prévisions horaires et sur 10 jours pour {city}.",
+    "weatherPlaceFaqShortQ": "Météo {city} — où la consulter ?",
+    "weatherPlaceFaqShortA": "Cette page est la page météo meridian pour {city}."
   },
   "Errors": {
     "notFoundHeading": "Page introuvable",

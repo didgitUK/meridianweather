@@ -1,11 +1,12 @@
 import {
   WEATHER_CHECK_CACHE_OUTCOMES,
+  WEATHER_CHECK_TRIGGERS,
   mapCacheLayerToOutcome,
   normalizeWeatherCheckTrigger,
 } from '@/constants/weather-check-triggers';
+import { WEATHER_PLACE_SEO_MAX_AGE_MS } from '@/constants/weather-places';
 import {
   canMakeUpstreamCall,
-  recordCacheHit,
   trackUpstreamCall,
 } from '@/lib/api-usage-tracker';
 import { cacheMeetsMaxAge, resolveScopeMaxAgeMs } from '@/lib/weather-cache-age';
@@ -28,6 +29,38 @@ function resolveWeatherLang(options = {}) {
 
 function resolveTrigger(options = {}) {
   return normalizeWeatherCheckTrigger(options.trigger);
+}
+
+function resolveMaxAgeMs(options = {}, scope, trigger) {
+  const explicit = resolveScopeMaxAgeMs(options.maxAgeMs, scope);
+  if (explicit != null) {
+    return explicit;
+  }
+
+  if (trigger === WEATHER_CHECK_TRIGGERS.weatherPlaceSeo) {
+    return WEATHER_PLACE_SEO_MAX_AGE_MS;
+  }
+
+  return null;
+}
+
+function resolveUsableCached(cached, maxAgeMs) {
+  if (!cached) {
+    return null;
+  }
+
+  if (!cached.emergency) {
+    return cached;
+  }
+
+  if (
+    maxAgeMs
+    && cacheMeetsMaxAge({ meta: { fetchedAt: cached.emergency.fetchedAt } }, maxAgeMs)
+  ) {
+    return wrapSnapshot(cached.emergency, 'database', 'acceptable');
+  }
+
+  return cached;
 }
 
 function recordCurrentCheckFromResponse(lat, lon, scope, response, trigger) {
@@ -70,9 +103,10 @@ function enrichUsageMeta(lat, lon, scope, trigger, extra = {}) {
 export async function fetchWeatherForScope(lat, lon, scope = 'current', options = {}) {
   const lang = resolveWeatherLang(options);
   const trigger = resolveTrigger(options);
-  const maxAgeMs = resolveScopeMaxAgeMs(options.maxAgeMs, scope);
+  const maxAgeMs = resolveMaxAgeMs(options, scope, trigger);
   const cacheKey = buildSnapshotKey(lat, lon, scope, lang);
-  const cached = readFromCaches(cacheKey, { trigger, lat, lon, scope });
+  const rawCached = readFromCaches(cacheKey, { trigger, lat, lon, scope });
+  const cached = resolveUsableCached(rawCached, maxAgeMs);
   const cachedHasTimelinePoints =
     !['hourly', 'daily', 'minutely'].includes(scope) || (cached?.data?.points?.length ?? 0) > 0;
   const cachedNeedsLegacySupplement =
@@ -103,8 +137,8 @@ export async function fetchWeatherForScope(lat, lon, scope = 'current', options 
   }
 
   if (!canMakeUpstreamCall()) {
-    if (cached?.emergency) {
-      const emergency = wrapSnapshot(cached.emergency, 'database', 'emergency');
+    if (rawCached?.emergency) {
+      const emergency = wrapSnapshot(rawCached.emergency, 'database', 'emergency');
       recordCurrentCheckFromResponse(lat, lon, scope, emergency, trigger);
       return emergency;
     }
@@ -132,8 +166,8 @@ export async function fetchWeatherForScope(lat, lon, scope = 'current', options 
     );
 
     if (tracked.blocked) {
-      if (cached?.emergency) {
-        const emergency = wrapSnapshot(cached.emergency, 'database', 'emergency');
+      if (rawCached?.emergency) {
+        const emergency = wrapSnapshot(rawCached.emergency, 'database', 'emergency');
         recordCurrentCheckFromResponse(lat, lon, scope, emergency, trigger);
         return emergency;
       }

@@ -68,13 +68,14 @@ export function CityDetailPageHeader({
   isReportActive = false,
   isReporting = false,
   heroImage = null,
+  preferPhotoHero = false,
 }) {
   const tCommon = useTranslations('Common');
   const locationLabel = [city.state, city.country].filter(Boolean).join(', ');
   const mapLat = Number(city?.lat);
   const mapLon = Number(city?.lon);
   const hasMapCoords = Number.isFinite(mapLat) && Number.isFinite(mapLon);
-  const useOsm = isCityHeroOsmEnabled() && hasMapCoords;
+  const useOsm = !preferPhotoHero && isCityHeroOsmEnabled() && hasMapCoords;
   const useStreetView =
     !useOsm
     && isCityHeroStreetViewEnabled()

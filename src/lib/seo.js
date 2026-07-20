@@ -266,13 +266,17 @@ export function buildPlaceSchema(city) {
   };
 }
 
-export function buildCityWebPageSchema(city, path) {
+export function buildCityWebPageSchema(city, path, options = {}) {
+  const title = options.title ?? `${city.name} weather forecast`;
+  const description =
+    options.description ?? `Current conditions and forecast for ${city.name}.`;
+
   return {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
-    name: `${city.name} weather forecast`,
+    name: title,
     url: absoluteUrl(path),
-    description: `Current conditions and forecast for ${city.name}.`,
+    description,
     about: buildPlaceSchema(city),
     isPartOf: {
       '@type': 'WebSite',

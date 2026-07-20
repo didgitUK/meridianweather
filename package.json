@@ -18,6 +18,8 @@
     "deploy:gandi": "bash scripts/deploy-gandi.sh",
     "deploy:gandi:env": "bash scripts/gandi-upload-env.sh",
     "seed:checks": "node scripts/seed-recent-checks.mjs",
+    "seed:uk-places": "node scripts/seed-uk-places.mjs",
+    "prefetch:place-heroes": "node scripts/prefetch-place-heroes.mjs",
     "backfill:city-slugs": "node scripts/backfill-city-slugs.mjs",
     "email": "email dev --dir src/emails"
   },

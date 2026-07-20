@@ -17,6 +17,7 @@ function readSlotFromEnv(placement) {
     hero: process.env.GOOGLE_ADSENSE_SLOT_HERO ?? '',
     'recent-checks': process.env.GOOGLE_ADSENSE_SLOT_RECENT ?? '',
     'city-detail': process.env.GOOGLE_ADSENSE_SLOT_CITY_DETAIL ?? '',
+    'weather-place-mid': process.env.GOOGLE_ADSENSE_SLOT_WEATHER_MID ?? '',
   };
 
   const slotId = (slots[placement] ?? process.env.GOOGLE_ADSENSE_SLOT_DEFAULT ?? '').trim();

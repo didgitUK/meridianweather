@@ -1,10 +1,29 @@
 import { SCOPE_TTL } from '@/constants/weather';
+import {
+  WEATHER_PLACE_SEO_MAX_AGE_MS,
+  WEATHER_PLACE_SEO_STALE_MS,
+} from '@/constants/weather-places';
+import { WEATHER_CHECK_TRIGGERS } from '@/constants/weather-check-triggers';
 import { getPlatformSettings } from '@/lib/platform-settings';
 import { getMemoryCache, setMemoryCache } from '@/lib/cache';
 import { readSnapshot } from '@/lib/weather-snapshot-repo';
 import { recordCacheHit } from '@/lib/api-usage-tracker';
 
-export function getScopeTtl(scope) {
+export function getScopeTtl(scope, options = {}) {
+  if (options.trigger === WEATHER_CHECK_TRIGGERS.weatherPlaceSeo) {
+    return {
+      fresh: WEATHER_PLACE_SEO_MAX_AGE_MS,
+      stale: WEATHER_PLACE_SEO_STALE_MS,
+    };
+  }
+
+  if (options.freshMs != null) {
+    return {
+      fresh: options.freshMs,
+      stale: options.staleMs ?? options.freshMs * 2,
+    };
+  }
+
   const settings = getPlatformSettings();
   if (scope === 'current') {
     return {

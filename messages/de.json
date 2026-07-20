@@ -496,7 +496,20 @@
     "searchDescription": "Städte und Orte weltweit auf meridian suchen.",
     "searchDescriptionWithQuery": "Orte zu \"{query}\" auf meridian.",
     "journalTitle": "Journal",
-    "journalDescription": "Anleitungen und Notizen zu Vorhersagen, Warnungen und der Nutzung von meridian."
+    "journalDescription": "Anleitungen und Notizen zu Vorhersagen, Warnungen und der Nutzung von meridian.",
+    "weatherPlaceTitle": "Wetter in {city}",
+    "weatherPlaceTitleShort": "Wetter {city}",
+    "weatherPlaceDescription": "Wie ist das Wetter in {city}? Aktuelle Bedingungen, stündliche und 10-Tage-Vorhersage für {city}, {region}.",
+    "weatherPlaceDescriptionWithSummary": "Wie ist das Wetter in {city}? {summary}. Live-Vorhersage für {city}, {region} auf meridian.",
+    "weatherPlaceH1": "Wetter in {city}",
+    "weatherPlaceLede": "Wie ist das Wetter heute in {city}? Aktuelle Bedingungen, stündliche Details und 10-Tage-Ausblick für {city}, {region}.",
+    "weatherPlaceFaqWhatLikeQ": "Wie ist das Wetter in {city}?",
+    "weatherPlaceFaqWhatLikeA": "Gerade in {city}, {country}: {summary}. Wird den Tag über auf meridian aktualisiert.",
+    "weatherPlaceFaqWhatLikeAFallback": "Aktuelle Bedingungen und Vorhersage für {city}, {country} auf dieser Seite.",
+    "weatherPlaceFaqForecastQ": "Wie ist die Wettervorhersage für {city}?",
+    "weatherPlaceFaqForecastA": "meridian zeigt stündliche und 10-Tage-Vorhersagen für {city} mit Temperatur, Regen, Wind und mehr.",
+    "weatherPlaceFaqShortQ": "Wetter {city} — wo kann ich es prüfen?",
+    "weatherPlaceFaqShortA": "Diese Seite ist die meridian-Wetterseite für {city}."
   },
   "Errors": {
     "notFoundHeading": "Seite nicht gefunden",

@@ -37,6 +37,7 @@ export const AD_PLACEHOLDER_IMAGES = Object.freeze({
   hero: '/ads/SquareAds-Placeholder.png',
   'city-detail': '/ads/BannerAds-Placeholder.png',
   'recent-checks': '/ads/BannerAds-Placeholder.png',
+  'weather-place-mid': '/ads/BannerAds-Placeholder.png',
   default: '/ads/BannerAds-Placeholder.png',
 });
 

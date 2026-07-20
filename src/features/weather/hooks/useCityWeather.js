@@ -36,22 +36,24 @@ function buildInitialScopes(initialScopes) {
   return merged;
 }
 
-function scopeIsFresh(entry, scope) {
+function scopeIsFresh(entry, scope, maxAgeOverrideMs) {
   if (!entry?.data) {
     return false;
   }
 
-  const maxAge = SCOPE_TTL[scope]?.fresh ?? SCOPE_TTL.current.fresh;
+  const maxAge = maxAgeOverrideMs ?? SCOPE_TTL[scope]?.fresh ?? SCOPE_TTL.current.fresh;
   return cacheMeetsMaxAge(
     { meta: { fetchedAt: entry.meta?.fetchedAt ?? null } },
     maxAge,
   );
 }
 
-export function useCityWeather(city, isHydrated, initialScopes = null) {
+export function useCityWeather(city, isHydrated, initialScopes = null, options = {}) {
   const locale = useLocale();
   const weatherLang = resolveOpenWeatherLang(locale);
   const { isManual } = useWeatherRefreshMode();
+  const trigger = options.trigger ?? WEATHER_CHECK_TRIGGERS.cityDetail;
+  const defaultMaxAgeMs = options.maxAgeMs;
   const [scopes, setScopes] = useState(() => buildInitialScopes(initialScopes));
   const [isLoading, setIsLoading] = useState(!initialScopes?.current?.data);
   const [error, setError] = useState(null);
@@ -112,7 +114,7 @@ export function useCityWeather(city, isHydrated, initialScopes = null) {
     }
 
     const allCoreFresh = ['current', 'hourly', 'daily'].every(
-      (scope) => scopeIsFresh(initial[scope], scope),
+      (scope) => scopeIsFresh(initial[scope], scope, defaultMaxAgeMs),
     );
     const canSkipNetwork = !force && (
       (isManual && hasCurrentCache)
@@ -128,7 +130,7 @@ export function useCityWeather(city, isHydrated, initialScopes = null) {
 
     const missingOrStale = force
       ? DETAIL_SCOPES
-      : DETAIL_SCOPES.filter((scope) => !scopeIsFresh(initial[scope], scope));
+      : DETAIL_SCOPES.filter((scope) => !scopeIsFresh(initial[scope], scope, defaultMaxAgeMs));
 
     setIsLoading(true);
     setLoadStage('formulatingCharts');
@@ -139,8 +141,8 @@ export function useCityWeather(city, isHydrated, initialScopes = null) {
         lat: cityLat,
         lon: cityLon,
         scopes: missingOrStale.length > 0 ? missingOrStale : DETAIL_SCOPES,
-        maxAgeMs: force ? FORCE_REFRESH_MAX_AGE_MS : undefined,
-        trigger: WEATHER_CHECK_TRIGGERS.cityDetail,
+        maxAgeMs: force ? FORCE_REFRESH_MAX_AGE_MS : defaultMaxAgeMs,
+        trigger,
         lang: weatherLang,
       });
 
@@ -168,7 +170,7 @@ export function useCityWeather(city, isHydrated, initialScopes = null) {
         setIsLoading(false);
       }
     }
-  }, [cityId, cityLat, cityLon, cityName, isHydrated, isManual, weatherLang]);
+  }, [cityId, cityLat, cityLon, cityName, defaultMaxAgeMs, isHydrated, isManual, trigger, weatherLang]);
 
   useEffect(() => {
     void load();

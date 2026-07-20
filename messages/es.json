@@ -496,7 +496,20 @@
     "searchDescription": "Busca ciudades y lugares de todo el mundo en meridian.",
     "searchDescriptionWithQuery": "Lugares que coinciden con \"{query}\" en meridian.",
     "journalTitle": "Diario",
-    "journalDescription": "Guías y notas sobre pronósticos, alertas y el uso de meridian."
+    "journalDescription": "Guías y notas sobre pronósticos, alertas y el uso de meridian.",
+    "weatherPlaceTitle": "El tiempo en {city}",
+    "weatherPlaceTitleShort": "Tiempo {city}",
+    "weatherPlaceDescription": "¿Qué tiempo hace en {city}? Condiciones en vivo, por horas y previsión a 10 días para {city}, {region}.",
+    "weatherPlaceDescriptionWithSummary": "¿Qué tiempo hace en {city}? {summary}. Previsión en vivo para {city}, {region} en meridian.",
+    "weatherPlaceH1": "El tiempo en {city}",
+    "weatherPlaceLede": "¿Qué tiempo hace hoy en {city}? Condiciones en vivo, detalle horario y perspectiva a 10 días para {city}, {region}.",
+    "weatherPlaceFaqWhatLikeQ": "¿Qué tiempo hace en {city}?",
+    "weatherPlaceFaqWhatLikeA": "Ahora en {city}, {country}: {summary}. Se actualiza a lo largo del día en meridian.",
+    "weatherPlaceFaqWhatLikeAFallback": "Consulta las condiciones y el pronóstico de {city}, {country} en esta página.",
+    "weatherPlaceFaqForecastQ": "¿Cuál es el pronóstico del tiempo para {city}?",
+    "weatherPlaceFaqForecastA": "meridian muestra previsiones horarias y a 10 días para {city}.",
+    "weatherPlaceFaqShortQ": "Tiempo {city} — ¿dónde consultarlo?",
+    "weatherPlaceFaqShortA": "Esta es la página del tiempo de meridian para {city}."
   },
   "Errors": {
     "notFoundHeading": "Página no encontrada",

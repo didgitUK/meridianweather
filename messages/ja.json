@@ -496,7 +496,20 @@
     "searchDescription": "meridianで世界中の都市・場所を検索。",
     "searchDescriptionWithQuery": "meridianで「{query}」に一致する場所。",
     "journalTitle": "ジャーナル",
-    "journalDescription": "予報、アラート、meridianの使い方に関するガイドとノート。"
+    "journalDescription": "予報、アラート、meridianの使い方に関するガイドとノート。",
+    "weatherPlaceTitle": "{city}の天気",
+    "weatherPlaceTitleShort": "天気 {city}",
+    "weatherPlaceDescription": "{city}の天気はどうですか？{city}、{region}の実況、1時間ごと、10日予報。",
+    "weatherPlaceDescriptionWithSummary": "{city}の天気はどうですか？{summary}。{city}、{region}のライブ予報（meridian）。",
+    "weatherPlaceH1": "{city}の天気",
+    "weatherPlaceLede": "今日の{city}の天気は？実況、時間別、10日見通しを{city}、{region}向けに表示します。",
+    "weatherPlaceFaqWhatLikeQ": "{city}の天気はどうですか？",
+    "weatherPlaceFaqWhatLikeA": "いまの{city}、{country}：{summary}。meridianで一日を通して更新されます。",
+    "weatherPlaceFaqWhatLikeAFallback": "{city}、{country}の実況と予報はこのページで確認できます。",
+    "weatherPlaceFaqForecastQ": "{city}の天気予報は？",
+    "weatherPlaceFaqForecastA": "meridianは{city}の時間別・10日予報を表示します。",
+    "weatherPlaceFaqShortQ": "天気 {city} — どこで見られますか？",
+    "weatherPlaceFaqShortA": "このページは{city}向けのmeridian天気ページです。"
   },
   "Errors": {
     "notFoundHeading": "ページが見つかりません",
