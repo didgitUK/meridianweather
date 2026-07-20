@@ -1,5 +1,6 @@
 import { Fraunces, DM_Sans } from 'next/font/google';
 import './globals.css';
+import { MERIDIAN_ADSENSE_CLIENT_ID } from '@/constants/adsense';
 import { ROOT_METADATA } from '@/lib/seo';
 
 const fraunces = Fraunces({
@@ -15,11 +16,16 @@ const dmSans = DM_Sans({
 });
 
 const googleSiteVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim();
+const adsenseClientId =
+  process.env.GOOGLE_ADSENSE_CLIENT_ID?.trim() || MERIDIAN_ADSENSE_CLIENT_ID;
 
 export const metadata = {
   ...ROOT_METADATA,
   ...(googleSiteVerification
     ? { verification: { google: googleSiteVerification } }
+    : {}),
+  ...(adsenseClientId
+    ? { other: { 'google-adsense-account': adsenseClientId } }
     : {}),
 };
 
@@ -31,6 +37,14 @@ export default function RootLayout({ children }) {
     >
       <head>
         <link rel="preconnect" href="https://openweathermap.org" />
+        {/* AdSense site verification requires this snippet in initial HTML (not consent-gated). */}
+        {adsenseClientId ? (
+          <script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
+            crossOrigin="anonymous"
+          />
+        ) : null}
       </head>
       <body className="flex min-h-full flex-col text-base leading-normal">{children}</body>
     </html>

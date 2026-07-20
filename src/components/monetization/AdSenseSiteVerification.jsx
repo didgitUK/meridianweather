@@ -1,8 +1,8 @@
 import { getAdSenseClientId } from '@/lib/server/adsense';
 
 /**
- * Always-on meta for AdSense site confirmation (crawlers do not run consent UI).
- * Live adsbygoogle.js still loads only after advertising consent.
+ * Meta tag backup for AdSense site confirmation.
+ * The adsbygoogle.js snippet lives in root layout <head> (required for code-snippet verification).
  */
 export function AdSenseSiteVerification() {
   const clientId = getAdSenseClientId();

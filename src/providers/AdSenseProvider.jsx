@@ -19,6 +19,17 @@ const AdSenseContext = createContext({
 
 const ADSENSE_SCRIPT_ID = 'google-adsense';
 
+function findAdSenseScript() {
+  if (typeof document === 'undefined') {
+    return null;
+  }
+
+  return (
+    document.getElementById(ADSENSE_SCRIPT_ID)
+    || document.querySelector('script[src*="pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"]')
+  );
+}
+
 export function AdSenseProvider({ children }) {
   const { consent } = useConsent();
   const [config, setConfig] = useState(null);
@@ -44,32 +55,29 @@ export function AdSenseProvider({ children }) {
     };
   }, []);
 
-  const shouldLoadScript = consent.advertising && config?.scriptEnabled && config?.clientId;
+  // Ad fills stay consent-gated. The loader script itself is SSR'd in root layout
+  // so AdSense crawlers can verify the site without accepting cookies.
+  const shouldServeAds = consent.advertising && config?.scriptEnabled && config?.clientId;
 
   useEffect(() => {
-    if (shouldLoadScript || !config?.clientId) {
+    if (!shouldServeAds || !config?.clientId) {
+      queueMicrotask(() => setScriptReady(false));
       return undefined;
     }
 
-    const script = document.getElementById(ADSENSE_SCRIPT_ID);
-    script?.remove();
-    queueMicrotask(() => setScriptReady(false));
-
-    return undefined;
-  }, [config?.clientId, shouldLoadScript]);
-
-  useEffect(() => {
-    if (!shouldLoadScript || !config?.clientId) {
-      return undefined;
-    }
-
-    const existing = document.getElementById(ADSENSE_SCRIPT_ID);
+    const existing = findAdSenseScript();
     if (existing) {
-      if (existing.getAttribute('data-loaded') === 'true') {
+      if (
+        existing.getAttribute('data-loaded') === 'true'
+        || existing.getAttribute('data-nscript')
+        || existing.async
+      ) {
+        // Root-layout script is already in the document for verification.
         queueMicrotask(() => setScriptReady(true));
-      } else {
-        existing.addEventListener('load', () => setScriptReady(true), { once: true });
+        return undefined;
       }
+
+      existing.addEventListener('load', () => setScriptReady(true), { once: true });
       return undefined;
     }
 
@@ -89,7 +97,7 @@ export function AdSenseProvider({ children }) {
       script.onload = null;
       script.onerror = null;
     };
-  }, [config?.clientId, shouldLoadScript]);
+  }, [config?.clientId, shouldServeAds]);
 
   const getPlacement = useCallback(async (placement) => {
     const cache = placementCacheRef.current;
@@ -108,10 +116,10 @@ export function AdSenseProvider({ children }) {
   const value = useMemo(
     () => ({
       config,
-      scriptReady: shouldLoadScript ? scriptReady : false,
+      scriptReady: shouldServeAds ? scriptReady : false,
       getPlacement,
     }),
-    [config, getPlacement, scriptReady, shouldLoadScript],
+    [config, getPlacement, scriptReady, shouldServeAds],
   );
 
   return <AdSenseContext.Provider value={value}>{children}</AdSenseContext.Provider>;
