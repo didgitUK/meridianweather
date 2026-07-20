@@ -94,7 +94,8 @@
       "gps": "precise device location",
       "history": "your recent checks",
       "ip": "approximate network location"
-    }
+    },
+    "sheetDescription": "Search for a city or town, then open its forecast."
   },
   "Dashboard": {
     "hero": {
@@ -488,6 +489,19 @@
     "cityForecastTitle": "{city} weather forecast",
     "cityForecastDescription": "{summary} in {city}, {country} — 7-day forecast and live conditions on meridian.",
     "cityForecastFallback": "Track current conditions and forecasts for {city}, {country} on meridian.",
+    "weatherPlaceTitle": "Weather in {city}",
+    "weatherPlaceTitleShort": "Weather {city}",
+    "weatherPlaceDescription": "What is the weather like in {city}? Live conditions, hourly and 10-day forecast for {city}, {region}.",
+    "weatherPlaceDescriptionWithSummary": "What is the weather like in {city}? {summary}. Live forecast for {city}, {region} on meridian.",
+    "weatherPlaceH1": "Weather in {city}",
+    "weatherPlaceLede": "What is the weather like in {city} today? Check live conditions, hourly detail, and the 10-day outlook for {city}, {region}.",
+    "weatherPlaceFaqWhatLikeQ": "What is the weather like in {city}?",
+    "weatherPlaceFaqWhatLikeA": "Right now in {city}, {country}: {summary}. Updated throughout the day on meridian.",
+    "weatherPlaceFaqWhatLikeAFallback": "See live conditions and the forecast for {city}, {country} on this page.",
+    "weatherPlaceFaqForecastQ": "What is the weather forecast for {city}?",
+    "weatherPlaceFaqForecastA": "meridian shows hourly and 10-day forecasts for {city}, with temperature, rain, wind, and more.",
+    "weatherPlaceFaqShortQ": "Weather {city} — where can I check it?",
+    "weatherPlaceFaqShortA": "This page is the meridian weather page for {city}: short-form Weather {city} and long-form questions about conditions in {city}.",
     "dataSource": "Weather data source: OpenWeather.",
     "notFoundTitle": "Page not found",
     "notFoundDescription": "The page you requested could not be found on meridian.",
@@ -514,5 +528,12 @@
     "unableToSubmitReport": "Unable to submit report",
     "newsletterSaveFailed": "Unable to save newsletter subscription",
     "newsletterUnsubscribeFailed": "Unable to unsubscribe"
+  },
+  "MobileNav": {
+    "label": "Primary",
+    "home": "Home",
+    "search": "Search",
+    "myPlaces": "My places",
+    "settings": "Settings"
   }
 }

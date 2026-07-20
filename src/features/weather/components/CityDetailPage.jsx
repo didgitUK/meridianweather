@@ -26,6 +26,8 @@ import {
   normalizeCityDetailTab,
 } from '@/constants/city-detail';
 import { AD_PLACEMENTS } from '@/constants/platform';
+import { WEATHER_CHECK_TRIGGERS } from '@/constants/weather-check-triggers';
+import { WEATHER_PLACE_SEO_MAX_AGE_MS } from '@/constants/weather-places';
 import {
   synthesizeExtendedDailyPoints,
   TARGET_DAILY_FORECAST_DAYS,
@@ -37,6 +39,10 @@ export function CityDetailPage({
   initialCity = null,
   initialScopes = null,
   heroImage = null,
+  preferPhotoHero = false,
+  weatherCheckTrigger = null,
+  showMidAd = false,
+  seoIntro = null,
 }) {
   const t = useTranslations('CityDetail');
   const tCommon = useTranslations('Common');
@@ -46,10 +52,18 @@ export function CityDetailPage({
   const searchParams = useSearchParams();
   const { city, isHydrated, isPinned } = useResolvedCity(cityId, initialCity);
   const hasCoordinates = city?.lat != null && city?.lon != null;
+  const resolvedTrigger = weatherCheckTrigger ?? WEATHER_CHECK_TRIGGERS.cityDetail;
   const { scopes, isLoading, error, refresh, loadProgress, loadStage } = useCityWeather(
     hasCoordinates ? city : null,
     isHydrated,
     initialScopes,
+    {
+      trigger: resolvedTrigger,
+      maxAgeMs:
+        resolvedTrigger === WEATHER_CHECK_TRIGGERS.weatherPlaceSeo
+          ? WEATHER_PLACE_SEO_MAX_AGE_MS
+          : undefined,
+    },
   );
   const current = scopes.current?.data;
   const weatherError = error ?? scopes.current?.error ?? null;
@@ -180,6 +194,15 @@ export function CityDetailPage({
 
   return (
     <div className="flex flex-col gap-6">
+      {seoIntro ? (
+        <div className="space-y-2">
+          <h1 className="font-heading text-2xl tracking-tight text-foreground sm:text-3xl">
+            {seoIntro.title}
+          </h1>
+          <p className="max-w-3xl text-sm text-muted-foreground sm:text-base">{seoIntro.lede}</p>
+        </div>
+      ) : null}
+
       {inaccurateReport.isActive ? <CityDetailInaccurateReportBanner /> : null}
 
       <AlertBanner alertIds={current?.alertIds ?? []} />
@@ -194,6 +217,7 @@ export function CityDetailPage({
         isReportActive={inaccurateReport.isActive}
         isReporting={inaccurateReport.isSubmitting}
         heroImage={heroImage}
+        preferPhotoHero={preferPhotoHero}
       />
 
       {weatherError && !current ? (
@@ -263,6 +287,15 @@ export function CityDetailPage({
           />
         ) : null}
       </div>
+
+      {showMidAd ? (
+        <div className="max-h-[280px] overflow-hidden rounded-xl">
+          <AdSlot
+            placement={AD_PLACEMENTS.weatherPlaceMid}
+            location={city ? { name: city.name, country: city.country } : null}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

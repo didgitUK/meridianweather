@@ -39,7 +39,6 @@ yarn-error.log*
 
 # local editor / agent scratch
 .cursor/
-AGENTS.md
 CLAUDE.md
 SCOPE.md
 REVIEWER.md
@@ -48,6 +47,9 @@ docs/STUDY-BACKEND.md
 # env files (can opt-in for committing if needed)
 .env*
 !.env.example
+
+# operator secrets (Gandi deploy tokens, etc.) — never commit
+.secrets/
 
 # vercel
 .vercel

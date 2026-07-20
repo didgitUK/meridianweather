@@ -24,12 +24,13 @@ export async function persistAndReturn({
   source,
   trigger,
   tokensUsed = 1,
+  ttlOptions = {},
 }) {
   if (scope !== 'geocode' && scope !== 'alert') {
     assertWeatherPayload(payload, scope);
   }
   const now = new Date();
-  const ttl = getScopeTtl(scope);
+  const ttl = getScopeTtl(scope, { trigger, ...ttlOptions });
   const snapshot = writeSnapshot({
     lat,
     lon,

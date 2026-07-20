@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { hasLocale } from 'next-intl';
 import { CityDetailPage } from '@/features/weather/components/CityDetailPage';
@@ -8,6 +8,7 @@ import { PageSection } from '@/components/layout/PageSection';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { getCityWeatherForSeo, summarizeCityWeather } from '@/lib/city-weather-seo';
 import { getHeroImageForRegion } from '@/lib/hero-image/get-hero-image-for-region';
+import { findUkPlaceByCitySlug, findUkPlaceNearCoords } from '@/lib/places/uk-places-repo';
 import { resolveCity, getShowcaseCities } from '@/lib/resolve-city';
 import { buildCityWebPageSchema, buildPageMetadata, buildPlaceSchema } from '@/lib/seo';
 import { buildLanguageAlternates, buildLocalizedPath, getOgLocale, getOpenWeatherLang } from '@/i18n/seo';
@@ -17,6 +18,11 @@ export const revalidate = 900;
 export const dynamicParams = true;
 
 export function generateStaticParams() {
+  // Skip showcase pre-render on constrained hosts (Gandi builder process limits).
+  if (process.env.GANDI) {
+    return [];
+  }
+
   return getShowcaseCities().flatMap((city) =>
     routing.locales.map((locale) => ({
       locale,
@@ -60,6 +66,14 @@ export default async function CityPage({ params }) {
 
   if (!city) {
     notFound();
+  }
+
+  const ukPlace =
+    findUkPlaceByCitySlug(city.id)
+    ?? (city.country === 'GB' ? findUkPlaceNearCoords(city.lat, city.lon, 'GB') : null);
+
+  if (ukPlace?.slug) {
+    permanentRedirect(buildLocalizedPath(`/weather/${ukPlace.slug}`, locale));
   }
 
   const weather = await getCityWeatherForSeo(city, getOpenWeatherLang(locale));

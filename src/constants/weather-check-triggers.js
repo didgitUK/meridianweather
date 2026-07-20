@@ -5,6 +5,7 @@ export const WEATHER_CHECK_TRIGGERS = Object.freeze({
   dashboardLoad: 'dashboard_load',
   dashboardRefresh: 'dashboard_refresh',
   cityDetail: 'city_detail',
+  weatherPlaceSeo: 'weather_place_seo',
   searchPreview: 'search_preview',
   searchSelect: 'search_select',
   cronAlerts: 'cron_alerts',
@@ -29,6 +30,7 @@ export const WEATHER_CHECK_TRIGGER_LABELS = Object.freeze({
   [WEATHER_CHECK_TRIGGERS.dashboardLoad]: 'Dashboard load',
   [WEATHER_CHECK_TRIGGERS.dashboardRefresh]: 'Dashboard refresh',
   [WEATHER_CHECK_TRIGGERS.cityDetail]: 'City detail',
+  [WEATHER_CHECK_TRIGGERS.weatherPlaceSeo]: 'Weather place (SEO)',
   [WEATHER_CHECK_TRIGGERS.searchPreview]: 'Search preview',
   [WEATHER_CHECK_TRIGGERS.searchSelect]: 'Search select',
   [WEATHER_CHECK_TRIGGERS.cronAlerts]: 'Cron alerts',
@@ -49,6 +51,16 @@ export const WEATHER_CHECK_CACHE_OUTCOMES = Object.freeze({
   sqlite: 'sqlite',
 });
 
+export const SNAPSHOT_TTL_CLASSES = Object.freeze({
+  default: 'default',
+  seo: 'seo',
+});
+
+/** Triggers allowed on public `/api/weather` and `/api/weather/batch`. */
+export const PUBLIC_WEATHER_API_TRIGGERS = Object.freeze(
+  WEATHER_CHECK_TRIGGER_VALUES.filter((t) => t !== WEATHER_CHECK_TRIGGERS.weatherPlaceSeo),
+);
+
 export function normalizeWeatherCheckTrigger(value) {
   if (typeof value !== 'string') {
     return WEATHER_CHECK_TRIGGERS.unknown;
@@ -57,6 +69,21 @@ export function normalizeWeatherCheckTrigger(value) {
   return WEATHER_CHECK_TRIGGER_VALUES.includes(value)
     ? value
     : WEATHER_CHECK_TRIGGERS.unknown;
+}
+
+export function resolveSnapshotTtlClass(trigger) {
+  return trigger === WEATHER_CHECK_TRIGGERS.weatherPlaceSeo
+    ? SNAPSHOT_TTL_CLASSES.seo
+    : SNAPSHOT_TTL_CLASSES.default;
+}
+
+export function assertPublicWeatherApiTrigger(trigger) {
+  if (trigger === WEATHER_CHECK_TRIGGERS.weatherPlaceSeo) {
+    const error = new Error('trigger weather_place_seo is not allowed on public weather API');
+    error.code = 'invalid_request';
+    error.status = 400;
+    throw error;
+  }
 }
 
 export function mapCacheLayerToOutcome(cacheLayer) {

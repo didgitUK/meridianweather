@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
   WEATHER_CHECK_TRIGGERS,
+  assertPublicWeatherApiTrigger,
   labelWeatherCheckTrigger,
   mapCacheLayerToOutcome,
   normalizeWeatherCheckTrigger,
+  resolveSnapshotTtlClass,
 } from '@/constants/weather-check-triggers';
 
 describe('weather-check-triggers', () => {
@@ -15,6 +17,18 @@ describe('weather-check-triggers', () => {
       WEATHER_CHECK_TRIGGERS.unknown,
     );
     expect(normalizeWeatherCheckTrigger(null)).toBe(WEATHER_CHECK_TRIGGERS.unknown);
+  });
+
+  it('maps weather_place_seo to the seo snapshot ttl class', () => {
+    expect(resolveSnapshotTtlClass(WEATHER_CHECK_TRIGGERS.weatherPlaceSeo)).toBe('seo');
+    expect(resolveSnapshotTtlClass(WEATHER_CHECK_TRIGGERS.dashboardLoad)).toBe('default');
+  });
+
+  it('rejects weather_place_seo on the public weather API', () => {
+    expect(() => assertPublicWeatherApiTrigger(WEATHER_CHECK_TRIGGERS.weatherPlaceSeo)).toThrow(
+      /weather_place_seo/,
+    );
+    expect(() => assertPublicWeatherApiTrigger(WEATHER_CHECK_TRIGGERS.dashboardLoad)).not.toThrow();
   });
 
   it('maps cache layers to check outcomes', () => {

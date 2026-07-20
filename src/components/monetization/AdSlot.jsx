@@ -64,7 +64,8 @@ export function AdSlot({
     && !config.testMode
     && !loadFailed
     && consent.advertising
-    && scriptReady;
+    && scriptReady
+    && Boolean(config.clientId);
 
   const tryLiveAd = wantsLiveAd && adStatus !== 'unfilled';
   const adFilled = adStatus === 'filled';

@@ -313,6 +313,57 @@ CREATE INDEX IF NOT EXISTS idx_weather_observations_lookup
 
 CREATE INDEX IF NOT EXISTS idx_weather_forecast_archive_lookup
   ON weather_forecast_archive(lat, lon, scope, valid_at DESC);
+
+CREATE TABLE IF NOT EXISTS uk_places (
+  id TEXT PRIMARY KEY,
+  slug TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  country TEXT NOT NULL DEFAULT 'GB',
+  admin_area TEXT,
+  lat REAL NOT NULL,
+  lon REAL NOT NULL,
+  population INTEGER NOT NULL DEFAULT 0,
+  place_type TEXT NOT NULL DEFAULT 'town',
+  tier INTEGER NOT NULL DEFAULT 1,
+  city_slug TEXT,
+  view_count INTEGER NOT NULL DEFAULT 0,
+  last_viewed_at TEXT,
+  last_fetched_at TEXT,
+  updated_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_uk_places_population
+  ON uk_places(population DESC);
+
+CREATE INDEX IF NOT EXISTS idx_uk_places_tier_population
+  ON uk_places(tier, population DESC);
+
+CREATE INDEX IF NOT EXISTS idx_uk_places_city_slug
+  ON uk_places(city_slug);
+
+CREATE TABLE IF NOT EXISTS weather_places (
+  id TEXT PRIMARY KEY,
+  slug TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  country TEXT NOT NULL,
+  admin_area TEXT,
+  lat REAL NOT NULL,
+  lon REAL NOT NULL,
+  population INTEGER NOT NULL DEFAULT 0,
+  place_type TEXT NOT NULL DEFAULT 'city',
+  tier INTEGER NOT NULL DEFAULT 3,
+  city_slug TEXT,
+  view_count INTEGER NOT NULL DEFAULT 0,
+  last_viewed_at TEXT,
+  last_fetched_at TEXT,
+  updated_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_weather_places_country_slug
+  ON weather_places(country, slug);
+
+CREATE INDEX IF NOT EXISTS idx_weather_places_population
+  ON weather_places(population DESC);
 `;
 
 const PLATFORM_SETTING_MIGRATIONS = [
@@ -627,6 +678,88 @@ function migrateWeatherCheckTriggers(database) {
   }
 }
 
+function migrateUkPlaces(database) {
+  try {
+    database.exec(`
+      CREATE TABLE IF NOT EXISTS uk_places (
+        id TEXT PRIMARY KEY,
+        slug TEXT NOT NULL UNIQUE,
+        name TEXT NOT NULL,
+        country TEXT NOT NULL DEFAULT 'GB',
+        admin_area TEXT,
+        lat REAL NOT NULL,
+        lon REAL NOT NULL,
+        population INTEGER NOT NULL DEFAULT 0,
+        place_type TEXT NOT NULL DEFAULT 'town',
+        tier INTEGER NOT NULL DEFAULT 1,
+        city_slug TEXT,
+        view_count INTEGER NOT NULL DEFAULT 0,
+        last_viewed_at TEXT,
+        last_fetched_at TEXT,
+        updated_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_uk_places_population
+        ON uk_places(population DESC);
+      CREATE INDEX IF NOT EXISTS idx_uk_places_tier_population
+        ON uk_places(tier, population DESC);
+      CREATE INDEX IF NOT EXISTS idx_uk_places_city_slug
+        ON uk_places(city_slug);
+    `);
+  } catch {
+    // Table already present.
+  }
+
+  const ukPlaceColumnMigrations = [
+    'ALTER TABLE uk_places ADD COLUMN view_count INTEGER NOT NULL DEFAULT 0',
+    'ALTER TABLE uk_places ADD COLUMN last_viewed_at TEXT',
+    'ALTER TABLE uk_places ADD COLUMN last_fetched_at TEXT',
+  ];
+
+  for (const statement of ukPlaceColumnMigrations) {
+    try {
+      database.exec(statement);
+    } catch {
+      // Column already exists.
+    }
+  }
+
+  try {
+    database.exec(
+      'CREATE INDEX IF NOT EXISTS idx_uk_places_view_count ON uk_places(view_count DESC)',
+    );
+  } catch {
+    // Index may fail until columns exist; ignored on retry.
+  }
+
+  try {
+    database.exec(`
+      CREATE TABLE IF NOT EXISTS weather_places (
+        id TEXT PRIMARY KEY,
+        slug TEXT NOT NULL UNIQUE,
+        name TEXT NOT NULL,
+        country TEXT NOT NULL,
+        admin_area TEXT,
+        lat REAL NOT NULL,
+        lon REAL NOT NULL,
+        population INTEGER NOT NULL DEFAULT 0,
+        place_type TEXT NOT NULL DEFAULT 'city',
+        tier INTEGER NOT NULL DEFAULT 3,
+        city_slug TEXT,
+        view_count INTEGER NOT NULL DEFAULT 0,
+        last_viewed_at TEXT,
+        last_fetched_at TEXT,
+        updated_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_weather_places_country_slug
+        ON weather_places(country, slug);
+      CREATE INDEX IF NOT EXISTS idx_weather_places_population
+        ON weather_places(population DESC);
+    `);
+  } catch {
+    // Table already present.
+  }
+}
+
 export function getDb() {
   if (db) return db;
 
@@ -648,6 +781,7 @@ export function getDb() {
   migrateLocations(db);
   migrateHeroImageCache(db);
   migrateWeatherCheckTriggers(db);
+  migrateUkPlaces(db);
 
   const existing = db.prepare('SELECT id FROM platform_settings WHERE id = 1').get();
   if (!existing) {

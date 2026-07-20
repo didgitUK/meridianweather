@@ -79,6 +79,21 @@ describe('GET /api/weather', () => {
     expect(fetchWeatherForScope).not.toHaveBeenCalled();
   });
 
+  it('rejects weather_place_seo on the public API', async () => {
+    const { GET } = await import('./route.js');
+    const response = await GET(
+      new Request(
+        'http://localhost/api/weather?lat=51.5&lon=-0.1&scope=current&trigger=weather_place_seo',
+      ),
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(body.error).toBe('invalid_request');
+    expect(body.message).toMatch(/weather_place_seo/);
+    expect(fetchWeatherForScope).not.toHaveBeenCalled();
+  });
+
   it('maps upstream failures through the API error envelope', async () => {
     fetchWeatherForScope.mockRejectedValue(new Error('OpenWeather request failed'));
 

@@ -94,7 +94,8 @@
       "gps": "موقع الجهاز الدقيق",
       "history": "عمليات التحقق الأخيرة",
       "ip": "موقع الشبكة التقريبي"
-    }
+    },
+    "sheetDescription": "ابحث عن مدينة ثم افتح التوقعات."
   },
   "Dashboard": {
     "hero": {
@@ -496,7 +497,20 @@
     "searchDescription": "ابحث عن مدن وأماكن في أنحاء العالم على meridian.",
     "searchDescriptionWithQuery": "أماكن تطابق \"{query}\" على meridian.",
     "journalTitle": "المجلة",
-    "journalDescription": "أدلة وملاحظات عن التوقعات والتنبيهات واستخدام meridian."
+    "journalDescription": "أدلة وملاحظات عن التوقعات والتنبيهات واستخدام meridian.",
+    "weatherPlaceTitle": "الطقس في {city}",
+    "weatherPlaceTitleShort": "طقس {city}",
+    "weatherPlaceDescription": "كيف هو الطقس في {city}؟ ظروف حية وتوقعات ساعية ولعشرة أيام لـ {city}، {region}.",
+    "weatherPlaceDescriptionWithSummary": "كيف هو الطقس في {city}؟ {summary}. توقعات حية لـ {city}، {region} على meridian.",
+    "weatherPlaceH1": "الطقس في {city}",
+    "weatherPlaceLede": "كيف هو الطقس اليوم في {city}؟ تحقق من الظروف الحية والتفاصيل الساعية وتوقعات 10 أيام لـ {city}، {region}.",
+    "weatherPlaceFaqWhatLikeQ": "كيف هو الطقس في {city}؟",
+    "weatherPlaceFaqWhatLikeA": "الآن في {city}، {country}: {summary}. يُحدَّث خلال اليوم على meridian.",
+    "weatherPlaceFaqWhatLikeAFallback": "اطّلع على الظروف والتوقعات لـ {city}، {country} في هذه الصفحة.",
+    "weatherPlaceFaqForecastQ": "ما توقعات الطقس لـ {city}؟",
+    "weatherPlaceFaqForecastA": "يعرض meridian توقعات ساعية ولعشرة أيام لـ {city}.",
+    "weatherPlaceFaqShortQ": "طقس {city} — أين يمكنني التحقق؟",
+    "weatherPlaceFaqShortA": "هذه صفحة طقس meridian لـ {city}."
   },
   "Errors": {
     "notFoundHeading": "الصفحة غير موجودة",
@@ -514,5 +528,12 @@
     "unableToSubmitReport": "تعذّر إرسال البلاغ",
     "newsletterSaveFailed": "تعذّر حفظ اشتراك النشرة",
     "newsletterUnsubscribeFailed": "تعذّر إلغاء الاشتراك"
+  },
+  "MobileNav": {
+    "label": "رئيسي",
+    "home": "الرئيسية",
+    "search": "بحث",
+    "myPlaces": "أماكني",
+    "settings": "الإعدادات"
   }
 }

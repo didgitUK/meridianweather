@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
-import { normalizeWeatherCheckTrigger } from '@/constants/weather-check-triggers';
+import {
+  assertPublicWeatherApiTrigger,
+  normalizeWeatherCheckTrigger,
+} from '@/constants/weather-check-triggers';
 import { normalizeOpenWeatherLang } from '@/i18n/locales';
 import { fetchWeatherBatch } from '@/lib/weather-fetch-orchestrator';
 import { apiError, apiErrorFromCaught } from '@/lib/server/api-response';
@@ -16,6 +19,7 @@ export async function POST(request) {
     const body = await request.json();
     const cities = body.cities ?? [];
     const trigger = normalizeWeatherCheckTrigger(body.trigger);
+    assertPublicWeatherApiTrigger(trigger);
     const lang = normalizeOpenWeatherLang(body.lang) ?? undefined;
 
     if (body.lang != null && body.lang !== '' && !lang) {
@@ -42,12 +46,19 @@ export async function POST(request) {
           ? [parseScope(city.scope)]
           : undefined;
       const cityLang = normalizeOpenWeatherLang(city?.lang) ?? lang;
+      const cityTrigger = city?.trigger != null
+        ? normalizeWeatherCheckTrigger(city.trigger)
+        : undefined;
+      if (cityTrigger) {
+        assertPublicWeatherApiTrigger(cityTrigger);
+      }
       return {
         ...city,
         lat,
         lon,
         ...(scopes ? { scopes } : {}),
         ...(cityLang ? { lang: cityLang } : {}),
+        ...(cityTrigger ? { trigger: cityTrigger } : {}),
       };
     });
 
