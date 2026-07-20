@@ -7,7 +7,6 @@ import { HomeBlogSection } from '@/features/weather/components/HomeBlogSection';
 import { PageSection } from '@/components/layout/PageSection';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { UK_PLACE_TIER_A } from '@/constants/uk-places-phase-a';
-import { WEATHER_CHECK_TRIGGERS } from '@/constants/weather-check-triggers';
 import {
   UK_PLACES_PHASE_A_LIMIT,
   UK_PLACES_PHASE_B_LIMIT,
@@ -163,8 +162,6 @@ export default async function WeatherPlacePage({ params }) {
               initialCity={city}
               initialScopes={initialScopes}
               heroImage={heroImage}
-              preferPhotoHero
-              weatherCheckTrigger={WEATHER_CHECK_TRIGGERS.weatherPlaceSeo}
               showMidAd
               seoIntro={{
                 title: t('weatherPlaceH1', { city: city.name }),
