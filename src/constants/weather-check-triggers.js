@@ -51,6 +51,16 @@ export const WEATHER_CHECK_CACHE_OUTCOMES = Object.freeze({
   sqlite: 'sqlite',
 });
 
+export const SNAPSHOT_TTL_CLASSES = Object.freeze({
+  default: 'default',
+  seo: 'seo',
+});
+
+/** Triggers allowed on public `/api/weather` and `/api/weather/batch`. */
+export const PUBLIC_WEATHER_API_TRIGGERS = Object.freeze(
+  WEATHER_CHECK_TRIGGER_VALUES.filter((t) => t !== WEATHER_CHECK_TRIGGERS.weatherPlaceSeo),
+);
+
 export function normalizeWeatherCheckTrigger(value) {
   if (typeof value !== 'string') {
     return WEATHER_CHECK_TRIGGERS.unknown;
@@ -59,6 +69,21 @@ export function normalizeWeatherCheckTrigger(value) {
   return WEATHER_CHECK_TRIGGER_VALUES.includes(value)
     ? value
     : WEATHER_CHECK_TRIGGERS.unknown;
+}
+
+export function resolveSnapshotTtlClass(trigger) {
+  return trigger === WEATHER_CHECK_TRIGGERS.weatherPlaceSeo
+    ? SNAPSHOT_TTL_CLASSES.seo
+    : SNAPSHOT_TTL_CLASSES.default;
+}
+
+export function assertPublicWeatherApiTrigger(trigger) {
+  if (trigger === WEATHER_CHECK_TRIGGERS.weatherPlaceSeo) {
+    const error = new Error('trigger weather_place_seo is not allowed on public weather API');
+    error.code = 'invalid_request';
+    error.status = 400;
+    throw error;
+  }
 }
 
 export function mapCacheLayerToOutcome(cacheLayer) {

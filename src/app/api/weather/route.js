@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
-import { normalizeWeatherCheckTrigger } from '@/constants/weather-check-triggers';
+import {
+  assertPublicWeatherApiTrigger,
+  normalizeWeatherCheckTrigger,
+} from '@/constants/weather-check-triggers';
 import { normalizeOpenWeatherLang } from '@/i18n/locales';
 import { fetchWeatherForScope } from '@/lib/weather-fetch-orchestrator';
 import { parseLatLon, parseScope } from '@/lib/validators';
@@ -11,6 +14,7 @@ export async function GET(request) {
     const { lat, lon } = parseLatLon(searchParams.get('lat'), searchParams.get('lon'));
     const scope = parseScope(searchParams.get('scope'));
     const trigger = normalizeWeatherCheckTrigger(searchParams.get('trigger'));
+    assertPublicWeatherApiTrigger(trigger);
     const rawLang = searchParams.get('lang');
     const lang = normalizeOpenWeatherLang(rawLang);
 
