@@ -7,8 +7,11 @@ import {
   listUkPlaces,
   seedAllUkPlaces,
 } from '@/lib/places/uk-places-repo';
+import { UK_PLACES_PHASE_A_LIMIT, UK_PLACES_PHASE_B_LIMIT } from '@/constants/weather-places';
 import { getShowcaseCities } from '@/lib/resolve-city';
 import { routing } from '@/i18n/routing';
+
+const UK_PLACES_SEED_FLOOR = UK_PLACES_PHASE_A_LIMIT + Math.floor(UK_PLACES_PHASE_B_LIMIT * 0.5);
 
 function getStaticPaths() {
   return [
@@ -47,7 +50,7 @@ export function getCitySitemapEntries() {
 }
 
 export function getWeatherPlaceSitemapEntries() {
-  if (countUkPlaces() === 0) {
+  if (countUkPlaces() < UK_PLACES_SEED_FLOOR) {
     seedAllUkPlaces();
   }
 

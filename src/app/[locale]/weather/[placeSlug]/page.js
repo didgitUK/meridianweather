@@ -8,6 +8,10 @@ import { PageSection } from '@/components/layout/PageSection';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { UK_PLACE_TIER_A } from '@/constants/uk-places-phase-a';
 import { WEATHER_CHECK_TRIGGERS } from '@/constants/weather-check-triggers';
+import {
+  UK_PLACES_PHASE_A_LIMIT,
+  UK_PLACES_PHASE_B_LIMIT,
+} from '@/constants/weather-places';
 import { summarizeCityWeather } from '@/lib/city-weather-seo';
 import { getHeroImageForRegion } from '@/lib/hero-image/get-hero-image-for-region';
 import {
@@ -33,8 +37,11 @@ import { routing } from '@/i18n/routing';
 export const revalidate = 86400;
 export const dynamicParams = true;
 
+const UK_PLACES_SEED_FLOOR = UK_PLACES_PHASE_A_LIMIT + Math.floor(UK_PLACES_PHASE_B_LIMIT * 0.5);
+
 function ensureUkPlacesSeeded() {
-  if (countUkPlaces() === 0) {
+  // Upsert is safe; re-run when Phase B is missing on hosts that only seeded Phase A once.
+  if (countUkPlaces() < UK_PLACES_SEED_FLOOR) {
     seedAllUkPlaces();
   }
 }

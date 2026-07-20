@@ -28,7 +28,7 @@ export async function GET(request) {
   });
 
   try {
-    if (countUkPlaces() === 0) {
+    if (countUkPlaces() < 750) {
       seedAllUkPlaces();
     }
 
