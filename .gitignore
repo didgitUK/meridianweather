@@ -39,7 +39,6 @@ yarn-error.log*
 
 # local editor / agent scratch
 .cursor/
-AGENTS.md
 CLAUDE.md
 SCOPE.md
 REVIEWER.md
