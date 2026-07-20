@@ -49,6 +49,9 @@ docs/STUDY-BACKEND.md
 .env*
 !.env.example
 
+# operator secrets (Gandi deploy tokens, etc.) — never commit
+.secrets/
+
 # vercel
 .vercel
 
