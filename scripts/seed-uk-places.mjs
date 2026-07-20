@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Seed Phase A UK places (top ~500 by population) into SQLite.
+ * Seed UK places (Phase A + B) into SQLite.
  * Usage: npm run seed:uk-places
  */
 import fs from 'fs';
@@ -33,10 +33,16 @@ function resolveDatabasePath() {
 }
 
 async function main() {
-  const placesModule = await import(
+  const phaseAModule = await import(
     pathToFileURL(path.join(root, 'src/constants/uk-places-phase-a.js')).href
   );
-  const places = placesModule.UK_PLACES_PHASE_A;
+  const phaseBModule = await import(
+    pathToFileURL(path.join(root, 'src/constants/uk-places-phase-b.js')).href
+  );
+  const places = [
+    ...phaseAModule.UK_PLACES_PHASE_A,
+    ...phaseBModule.UK_PLACES_PHASE_B,
+  ];
   const dbPath = resolveDatabasePath();
   fs.mkdirSync(path.dirname(dbPath), { recursive: true });
   const db = new Database(dbPath);
@@ -55,20 +61,37 @@ async function main() {
       place_type TEXT NOT NULL DEFAULT 'town',
       tier INTEGER NOT NULL DEFAULT 1,
       city_slug TEXT,
+      view_count INTEGER NOT NULL DEFAULT 0,
+      last_viewed_at TEXT,
+      last_fetched_at TEXT,
       updated_at TEXT NOT NULL
     );
     CREATE INDEX IF NOT EXISTS idx_uk_places_population ON uk_places(population DESC);
     CREATE INDEX IF NOT EXISTS idx_uk_places_tier_population ON uk_places(tier, population DESC);
     CREATE INDEX IF NOT EXISTS idx_uk_places_city_slug ON uk_places(city_slug);
+    CREATE INDEX IF NOT EXISTS idx_uk_places_view_count ON uk_places(view_count DESC);
   `);
+
+  for (const statement of [
+    'ALTER TABLE uk_places ADD COLUMN view_count INTEGER NOT NULL DEFAULT 0',
+    'ALTER TABLE uk_places ADD COLUMN last_viewed_at TEXT',
+    'ALTER TABLE uk_places ADD COLUMN last_fetched_at TEXT',
+  ]) {
+    try {
+      db.exec(statement);
+    } catch {
+      // Column exists.
+    }
+  }
 
   const existing = new Set(
     db.prepare('SELECT slug FROM uk_places').all().map((row) => row.slug),
   );
   const upsert = db.prepare(
     `INSERT INTO uk_places (
-       id, slug, name, country, admin_area, lat, lon, population, place_type, tier, city_slug, updated_at
-     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       id, slug, name, country, admin_area, lat, lon, population, place_type, tier, city_slug,
+       view_count, last_viewed_at, last_fetched_at, updated_at
+     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, NULL, NULL, ?)
      ON CONFLICT(slug) DO UPDATE SET
        name = excluded.name,
        country = excluded.country,

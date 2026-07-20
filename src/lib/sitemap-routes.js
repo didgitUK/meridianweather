@@ -5,7 +5,7 @@ import { listIndexableCities } from '@/lib/location-repo';
 import {
   countUkPlaces,
   listUkPlaces,
-  seedUkPlacesPhaseA,
+  seedAllUkPlaces,
 } from '@/lib/places/uk-places-repo';
 import { getShowcaseCities } from '@/lib/resolve-city';
 import { routing } from '@/i18n/routing';
@@ -48,7 +48,7 @@ export function getCitySitemapEntries() {
 
 export function getWeatherPlaceSitemapEntries() {
   if (countUkPlaces() === 0) {
-    seedUkPlacesPhaseA();
+    seedAllUkPlaces();
   }
 
   return listUkPlaces({ limit: 5000 }).map((place) => ({

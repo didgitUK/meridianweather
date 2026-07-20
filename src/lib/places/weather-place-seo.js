@@ -1,30 +1,27 @@
 import { cache } from 'react';
-import { WEATHER_CHECK_TRIGGERS } from '@/constants/weather-check-triggers';
-import { WEATHER_PLACE_SEO_MAX_AGE_MS } from '@/constants/weather-places';
-import { fetchWeatherForScope } from '@/lib/weather-fetch-orchestrator';
+import { fetchPlaceScopesForSeo } from '@/lib/places/fetch-place-seo-scopes';
+import {
+  findUkPlaceBySlug,
+  recordUkPlaceView,
+} from '@/lib/places/uk-places-repo';
 
-const getPlaceWeatherForSeoByKey = cache(async (lat, lon, locale) => {
+const getPlaceWeatherForSeoByKey = cache(async (lat, lon, locale, slug) => {
   try {
-    const options = {
-      lang: locale,
-      trigger: WEATHER_CHECK_TRIGGERS.weatherPlaceSeo,
-      maxAgeMs: WEATHER_PLACE_SEO_MAX_AGE_MS,
-    };
+    const placeMeta = slug ? findUkPlaceBySlug(slug) : null;
+    if (slug) {
+      recordUkPlaceView(slug);
+    }
 
-    const [currentResponse, dailyResponse, hourlyResponse] = await Promise.all([
-      fetchWeatherForScope(lat, lon, 'current', options),
-      fetchWeatherForScope(lat, lon, 'daily', options),
-      fetchWeatherForScope(lat, lon, 'hourly', options).catch(() => null),
-    ]);
-
-    return {
-      current: currentResponse.data,
-      currentMeta: currentResponse.meta,
-      daily: dailyResponse.data,
-      dailyMeta: dailyResponse.meta,
-      hourly: hourlyResponse?.data ?? null,
-      hourlyMeta: hourlyResponse?.meta ?? null,
-    };
+    return await fetchPlaceScopesForSeo(
+      {
+        lat,
+        lon,
+        seoSlug: slug,
+        population: placeMeta?.population,
+      },
+      locale,
+      placeMeta,
+    );
   } catch {
     return null;
   }
@@ -35,7 +32,12 @@ export async function getPlaceWeatherForSeo(city, locale = 'en') {
     return null;
   }
 
-  return getPlaceWeatherForSeoByKey(Number(city.lat), Number(city.lon), locale);
+  return getPlaceWeatherForSeoByKey(
+    Number(city.lat),
+    Number(city.lon),
+    locale,
+    city.seoSlug ?? null,
+  );
 }
 
 export function buildWeatherPlaceFaqItems(city, weather, t) {

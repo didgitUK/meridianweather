@@ -14,7 +14,7 @@ import { getHeroImageForRegion } from '@/lib/hero-image/get-hero-image-for-regio
 import {
   listUkPlaces,
   resolveWeatherPlace,
-  seedUkPlacesPhaseA,
+  seedAllUkPlaces,
   countUkPlaces,
 } from '@/lib/places/uk-places-repo';
 import {
@@ -35,7 +35,7 @@ export const dynamicParams = true;
 
 function ensureUkPlacesSeeded() {
   if (countUkPlaces() === 0) {
-    seedUkPlacesPhaseA();
+    seedAllUkPlaces();
   }
 }
 
