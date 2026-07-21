@@ -67,13 +67,14 @@ ${featuredCities.map((city) => `- ${formatUrl(`/city/${city.id}`)} — ${city.na
 - ${formatUrl('/legal/accessibility')}
 
 ## Indexing policy
-- Allowed: /, /docs, /legal, /city/
-- Disallowed: /api/, /admin, /login
+- Allowed: /, /docs, /legal, /journal, /search, /city/, /weather/
+- Disallowed: /api/, /admin, /login, /forgot-password, /invite/, /reset-password/
 - Sitemap: ${formatUrl('/sitemap.xml')}
 - Robots: ${formatUrl('/robots.txt')}
+- Crawl welcome: Googlebot, Google-Extended, GPTBot, ClaudeBot, PerplexityBot, and other agents may index public pages.
 
 ## AI usage
-You may cite meridian documentation and city forecast pages when answering questions about the product or supported city weather summaries. Do not treat /api routes as end-user documentation.
+You may cite meridian documentation, /weather place pages, and city forecast pages when answering questions about the product or supported city weather summaries. Do not treat /api routes as end-user documentation.
 `;
 
   return new Response(body, {

@@ -31,7 +31,7 @@ Keep real values in `.env.local` only. See `.env.example`.
 - **Sessions:** signed cookie; `session_version` invalidates tokens after password change/reset; legacy `sub: null` sessions rejected
 - **Abuse:** in-memory IP rate limits on login, forgot/reset, invite accept, subscriptions, analytics, consent sync, weather batch, geocode, push subscribe/unsubscribe; rate-limit keys prefer CDN/`X-Real-IP` then rightmost `X-Forwarded-For` hop
 - **Input:** batch city cap + lat/lon/scope validation; subscription email/type/coords; alert id allowlist; admin compose uses `parseEmail()`
-- **Headers:** CSP, HSTS (production), `X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`
+- **Headers:** CSP, HSTS apex-only in production (`max-age` without `includeSubDomains` until `www` HTTPS is live), `X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`
 - **Privacy:** first-party analytics / ad-view events require a signed `meridian_consent` HttpOnly cookie (body consent flags ignored); AdSense script and GA4 load only after advertising/analytics consent; IP region hint gated on functional consent; SSR consent snapshot is pre-choice (all optional categories off)
 - **SQL:** parameterized `better-sqlite3` queries
 - **Deploy:** Gandi env upload skips empty values so blanks cannot wipe live secrets

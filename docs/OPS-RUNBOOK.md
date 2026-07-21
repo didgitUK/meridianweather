@@ -55,6 +55,21 @@ Confirm admin → Observability shows cron runs green after first schedule. Afte
 3. Upload env via `scripts/gandi-upload-env.sh` (skips empty values)
 4. Verify: home load, `/api/platform/limits`, admin login, one cron dry-run
 
+## DNS — www must not stay on Gandi parking
+
+Google “connection blocked” is **not** caused by `/robots.txt` or the sitemap. Apex (`meridianweather.co.uk`) is crawlable (`Allow: /`, meta `index,follow`).
+
+`www.meridianweather.co.uk` currently CNAMEs to `webredir.vip.gandi.net` (parking). HTTP shows a Gandi parking page; **HTTPS on :443 is connection refused**. Apex also used to send `Strict-Transport-Security: …; includeSubDomains`, which forces HTTPS on `www` and surfaces that refusal to Google.
+
+**Fix in Gandi (LiveDNS + Web Hosting):**
+
+1. Remove the `www` CNAME to `webredir.vip.gandi.net`.
+2. Point `www` at the same A/AAAA as apex (`155.133.138.14` / `2001:4b98:dc5:253::14`), or attach `www` as a host alias on the Simple Hosting instance.
+3. Ensure the hosting SSL covers `www` (or HTTP→HTTPS redirect to apex).
+4. Prefer a 301 from `https://www…` → `https://meridianweather.co.uk`.
+
+App HSTS is apex-only (`max-age=63072000`, no `includeSubDomains`) until `www` HTTPS works; re-enable `includeSubDomains` after that.
+
 ## Privacy / consent
 
 - AdSense runtime script loads only after advertising consent
