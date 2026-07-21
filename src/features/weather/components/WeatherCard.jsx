@@ -22,6 +22,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { WeatherCardHeaderActions } from '@/features/weather/components/WeatherCardHeaderActions';
 import { WeatherCardSkeleton } from '@/features/weather/components/WeatherCardSkeleton';
 import { countryCodeToFlagEmoji } from '@/features/cities/utils/city-search';
+import { buildPlaceDetailHref } from '@/features/cities/utils/weather-place-href';
 import { formatPercent, formatWind } from '@/features/weather/utils/forecast-formatters';
 import { TYPOGRAPHY, TOUCH, ICONS } from '@/constants/design-tokens';
 import { cn } from '@/lib/utils';
@@ -61,6 +62,7 @@ export function WeatherCard({
   const { formatTemp } = useTemperatureUnit();
   const t = useTranslations('Dashboard.weatherCard');
   const tCommon = useTranslations('Common');
+  const detailHref = buildPlaceDetailHref(city) ?? `/city/${city.id}`;
 
   if (!weatherState || weatherState.loading) {
     return <WeatherCardSkeleton />;
@@ -98,12 +100,12 @@ export function WeatherCard({
     <Card
       className="border-border/80 shadow-sm transition-shadow hover:shadow-md"
       onMouseEnter={() => {
-        router.prefetch(`/city/${city.id}`);
+        router.prefetch(detailHref);
         void prefetchCityDetail(city, weatherLang);
       }}
     >
       <CardHeader className="flex flex-row items-start justify-between gap-3 sm:gap-4">
-        <Link href={`/city/${city.id}`} className="min-w-0 flex-1">
+        <Link href={detailHref} className="min-w-0 flex-1">
           <CardTitle className={cn(TYPOGRAPHY.displaySm, TYPOGRAPHY.heading, 'hover:underline')}>{city.name}</CardTitle>
           <WeatherCardLocationLabel city={city} />
         </Link>
@@ -122,7 +124,7 @@ export function WeatherCard({
             </AlertDescription>
           </Alert>
         ) : null}
-        <Link href={`/city/${city.id}`} className="flex items-center gap-3 sm:gap-4">
+        <Link href={detailHref} className="flex items-center gap-3 sm:gap-4">
           {weather.icon ? (
             <WeatherIcon
               icon={weather.icon}
@@ -175,7 +177,7 @@ export function WeatherCard({
           size="sm"
           nativeButton={false}
           className={cn(TOUCH.minH, 'w-full sm:w-auto')}
-          render={<Link href={`/city/${city.id}`} />}
+          render={<Link href={detailHref} />}
         >
           {t('viewFullForecast')}
           <ArrowRight className={ICONS.sm} data-icon="inline-end" aria-hidden />

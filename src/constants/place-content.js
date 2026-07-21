@@ -53,6 +53,7 @@ export const PLACE_POI_OSM_RULES = Object.freeze([
       tags.leisure === 'park'
       || tags.leisure === 'nature_reserve'
       || tags.leisure === 'garden'
+      || tags.leisure === 'golf_course'
       || tags.natural === 'beach'
       || tags.natural === 'cliff'
       || tags.tourism === 'viewpoint',

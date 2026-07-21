@@ -4,6 +4,10 @@ import {
   findLocationByLatCountry,
   locationToCityRecord,
 } from '@/lib/location-repo';
+import {
+  findUkPlaceByCitySlug,
+  ukPlaceToCityRecord,
+} from '@/lib/places/uk-places-repo';
 import { buildCityId, parseCityId } from '@/lib/utils';
 
 function showcaseCityToRecord(city) {
@@ -25,6 +29,10 @@ export function getShowcaseCities() {
   return [...SHOWCASE_BY_ID.values()];
 }
 
+function resolveUkPlaceFallback(decodedId) {
+  return ukPlaceToCityRecord(findUkPlaceByCitySlug(decodedId));
+}
+
 export function resolveCity(cityId) {
   if (!cityId) {
     return null;
@@ -42,15 +50,18 @@ export function resolveCity(cityId) {
   }
 
   const parsed = parseCityId(decodedId);
-  if (!parsed) {
-    return null;
+  if (parsed) {
+    const byLatCountry = locationToCityRecord(
+      findLocationByLatCountry(parsed.lat, parsed.country),
+    );
+    if (byLatCountry) {
+      return byLatCountry;
+    }
   }
 
-  const byLatCountry = locationToCityRecord(
-    findLocationByLatCountry(parsed.lat, parsed.country),
-  );
-  if (byLatCountry) {
-    return byLatCountry;
+  const ukFallback = resolveUkPlaceFallback(decodedId);
+  if (ukFallback) {
+    return ukFallback;
   }
 
   return null;

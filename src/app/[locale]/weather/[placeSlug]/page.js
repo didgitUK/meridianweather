@@ -230,6 +230,7 @@ export default async function WeatherPlacePage({ params, searchParams }) {
           <div className="flex flex-col gap-12">
             <PlaceThingsToDoSection
               placeName={city.name}
+              placeSlug={placeSlugResolved}
               placeLat={city.lat}
               placeLon={city.lon}
               pois={pois}

@@ -119,6 +119,27 @@ export function replacePlacePois(placeSlug, pois) {
 
 /**
  * @param {string} placeSlug
+ * @param {string} poiId
+ */
+export function getPlacePoi(placeSlug, poiId) {
+  if (!placeSlug || !poiId) {
+    return null;
+  }
+
+  const row = getDb()
+    .prepare(
+      `SELECT id, place_slug, category, name, lat, lon, osm_id, tags_json, fetched_at
+       FROM place_pois
+       WHERE place_slug = ? AND id = ?
+       LIMIT 1`,
+    )
+    .get(placeSlug, poiId);
+
+  return mapPoiRow(row);
+}
+
+/**
+ * @param {string} placeSlug
  */
 export function countPlacePois(placeSlug) {
   const row = getDb()

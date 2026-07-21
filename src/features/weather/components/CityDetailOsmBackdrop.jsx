@@ -55,6 +55,7 @@ function centersDiffer(map, lat, lon, zoom) {
  *   maxZoom?: number,
  *   onMapReady?: ((map: import('leaflet').Map) => void) | null,
  *   onMapDestroy?: (() => void) | null,
+ *   showControls?: boolean,
  *   fadeIn?: boolean,
  * }} props
  */
@@ -75,6 +76,7 @@ export function CityDetailOsmBackdrop({
   maxZoom = null,
   onMapReady = null,
   onMapDestroy = null,
+  showControls = false,
   fadeIn = true,
 }) {
   const containerRef = useRef(null);
@@ -131,8 +133,8 @@ export function CityDetailOsmBackdrop({
         zoom: mapZoom,
         minZoom: resolvedMinZoom,
         maxZoom: resolvedMaxZoom,
-        zoomControl: false,
-        attributionControl: false,
+        zoomControl: showControls,
+        attributionControl: showControls,
         dragging: interactive,
         scrollWheelZoom: interactive,
         doubleClickZoom: interactive,
@@ -150,6 +152,9 @@ export function CityDetailOsmBackdrop({
         {
           maxZoom: 19,
           pane: 'meridianSatellite',
+          attribution: showControls
+            ? 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics'
+            : undefined,
         },
       ).addTo(map);
 
@@ -279,6 +284,7 @@ export function CityDetailOsmBackdrop({
     showPrecipitation,
     showCityLights,
     interactive,
+    showControls,
     minZoom,
     maxZoom,
     fadeIn,
@@ -345,7 +351,8 @@ export function CityDetailOsmBackdrop({
           'absolute inset-0 h-full w-full bg-black meridian-osm-backdrop',
           fadeIn && 'meridian-osm-backdrop--fade',
           fadeIn && mapReady && 'meridian-osm-backdrop--ready',
-          '[&_.leaflet-container]:!z-0 [&_.leaflet-control-container]:hidden',
+          '[&_.leaflet-container]:!z-0',
+          !showControls && '[&_.leaflet-control-container]:hidden',
           interactive && '[&_.leaflet-container]:cursor-grab [&_.leaflet-container.leaflet-drag-target]:cursor-grabbing',
         )}
       >
