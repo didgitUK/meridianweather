@@ -8,6 +8,7 @@ import { AccessibilityProvider } from '@/providers/AccessibilityProvider';
 import { SettingsProvider } from '@/providers/SettingsProvider';
 import { LocationSearchProvider } from '@/providers/LocationSearchProvider';
 import { AdSenseProvider } from '@/providers/AdSenseProvider';
+import { AdFreeProvider } from '@/providers/AdFreeProvider';
 import { UserLocationProfileProvider } from '@/features/cities/hooks/useUserLocationProfile';
 import { PwaRegistrar } from '@/components/layout/PwaRegistrar';
 import { ScrollToTop } from '@/components/layout/ScrollToTop';
@@ -25,20 +26,22 @@ export function AppProviders({ children }) {
               <AccessibilityProvider>
                 <SettingsProvider>
                   <LocationSearchProvider>
-                    <AdSenseProvider>
-                      <ScrollToTop />
-                      <PwaRegistrar />
-                      {children}
-                      <MobileBottomNav />
-                      <Toaster
-                        richColors={false}
-                        position="bottom-right"
-                        expand={false}
-                        duration={TOAST_DURATION_MS}
-                        visibleToasts={TOAST_VISIBLE_LIMIT}
-                        toastOptions={{ duration: TOAST_DURATION_MS }}
-                      />
-                    </AdSenseProvider>
+                    <AdFreeProvider>
+                      <AdSenseProvider>
+                        <ScrollToTop />
+                        <PwaRegistrar />
+                        {children}
+                        <MobileBottomNav />
+                        <Toaster
+                          richColors={false}
+                          position="bottom-right"
+                          expand={false}
+                          duration={TOAST_DURATION_MS}
+                          visibleToasts={TOAST_VISIBLE_LIMIT}
+                          toastOptions={{ duration: TOAST_DURATION_MS }}
+                        />
+                      </AdSenseProvider>
+                    </AdFreeProvider>
                   </LocationSearchProvider>
                 </SettingsProvider>
               </AccessibilityProvider>

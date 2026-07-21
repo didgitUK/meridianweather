@@ -10,11 +10,13 @@ import {
   useState,
 } from 'react';
 import { useConsent } from '@/providers/ConsentProvider';
+import { useAdFree } from '@/providers/AdFreeProvider';
 
 const AdSenseContext = createContext({
   config: null,
   scriptReady: false,
   getPlacement: async () => null,
+  adsSuppressed: false,
 });
 
 const ADSENSE_SCRIPT_ID = 'google-adsense';
@@ -30,8 +32,17 @@ function findAdSenseScript() {
   );
 }
 
+function setAdRequestsPaused(paused) {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  window.adsbygoogle = window.adsbygoogle || [];
+  window.adsbygoogle.pauseAdRequests = paused ? 1 : 0;
+}
+
 export function AdSenseProvider({ children }) {
   const { consent } = useConsent();
+  const { isAdFree } = useAdFree();
   const [config, setConfig] = useState(null);
   const [scriptReady, setScriptReady] = useState(false);
   const placementCacheRef = useRef(new Map());
@@ -55,9 +66,20 @@ export function AdSenseProvider({ children }) {
     };
   }, []);
 
-  // Ad fills stay consent-gated. The loader script itself is SSR'd in root layout
-  // so AdSense crawlers can verify the site without accepting cookies.
-  const shouldServeAds = consent.advertising && config?.scriptEnabled && config?.clientId;
+  // Ad fills stay consent-gated and suppressed for ad-free licenses.
+  // The loader script itself is SSR'd in root layout for AdSense site verification.
+  const shouldServeAds =
+    !isAdFree
+    && consent.advertising
+    && config?.scriptEnabled
+    && config?.clientId;
+
+  useEffect(() => {
+    setAdRequestsPaused(isAdFree);
+    if (typeof document !== 'undefined') {
+      document.documentElement.dataset.adFree = isAdFree ? '1' : '0';
+    }
+  }, [isAdFree]);
 
   useEffect(() => {
     if (!shouldServeAds || !config?.clientId) {
@@ -100,6 +122,10 @@ export function AdSenseProvider({ children }) {
   }, [config?.clientId, shouldServeAds]);
 
   const getPlacement = useCallback(async (placement) => {
+    if (isAdFree) {
+      return null;
+    }
+
     const cache = placementCacheRef.current;
 
     if (cache.has(placement)) {
@@ -111,15 +137,16 @@ export function AdSenseProvider({ children }) {
     cache.set(placement, payload);
 
     return payload;
-  }, []);
+  }, [isAdFree]);
 
   const value = useMemo(
     () => ({
       config,
       scriptReady: shouldServeAds ? scriptReady : false,
       getPlacement,
+      adsSuppressed: isAdFree,
     }),
-    [config, getPlacement, scriptReady, shouldServeAds],
+    [config, getPlacement, scriptReady, shouldServeAds, isAdFree],
   );
 
   return <AdSenseContext.Provider value={value}>{children}</AdSenseContext.Provider>;

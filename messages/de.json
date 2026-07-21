@@ -184,7 +184,9 @@
       "pinToLocationsDescription": "Diese Stadt auf Ihrem Dashboard speichern",
       "emailOptions": "E-Mail-Optionen",
       "emailOptionsManage": "Plattformweite Vorhersagen und Wetterwarnungen verwalten",
-      "emailOptionsGet": "Plattformweite Vorhersagen und Wetterwarnungen erhalten"
+      "emailOptionsGet": "Plattformweite Vorhersagen und Wetterwarnungen erhalten",
+      "changeHeroImage": "Hero-Foto ändern",
+      "changeHeroImageDescription": "Anderes Foto für diesen Ort wählen"
     },
     "inaccurateBanner": "Ein Teammitglied prüft eine Meldung zu ungenauen Daten. Bitte haben Sie etwas Geduld, während wir Wetter und Vorhersagen verbessern.",
     "hero": {
@@ -356,7 +358,8 @@
     "tabs": {
       "label": "Einstellungsbereiche",
       "cookies": "Cookies",
-      "accessibility": "Barrierefreiheit"
+      "accessibility": "Barrierefreiheit",
+      "adFree": "Werbung aus"
     },
     "accessibility": {
       "intro": "Anzeige- und Interaktionseinstellungen für dieses Gerät anpassen. Änderungen gelten sofort und werden im Browser gespeichert.",
@@ -395,6 +398,24 @@
         "125": "Sehr groß (125%)",
         "150": "Maximum (150%)"
       }
+    },
+    "adFree": {
+      "title": "Browse without ads",
+      "description": "Support Meridian and hide advertising on this device. No Meridian account required — Stripe uses your email.",
+      "emailLabel": "Email for receipt / restore",
+      "emailPlaceholder": "you@example.com",
+      "select": "Choose",
+      "starting": "Starting…",
+      "comingSoon": "Stripe checkout will activate once billing keys are configured on the server.",
+      "restoreHint": "Already paid on another device?",
+      "restoreCta": "Email me a restore link",
+      "restoreSent": "If a license exists, a restore link is on its way.",
+      "restoreFailed": "Unable to send restore email.",
+      "checkoutUnavailable": "Checkout is unavailable right now.",
+      "portalUnavailable": "Billing portal is unavailable.",
+      "manageBilling": "Manage billing",
+      "activeTitle": "You’re ad-free on this device",
+      "activeBody": "{plan} plan for {email}"
     }
   },
   "Journal": {

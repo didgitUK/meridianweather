@@ -364,6 +364,25 @@ CREATE INDEX IF NOT EXISTS idx_weather_places_country_slug
 
 CREATE INDEX IF NOT EXISTS idx_weather_places_population
   ON weather_places(population DESC);
+
+CREATE TABLE IF NOT EXISTS adfree_licenses (
+  id TEXT PRIMARY KEY,
+  email TEXT NOT NULL UNIQUE,
+  plan TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'active',
+  stripe_customer_id TEXT,
+  stripe_subscription_id TEXT,
+  stripe_session_id TEXT,
+  expires_at TEXT,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_adfree_licenses_customer
+  ON adfree_licenses(stripe_customer_id);
+
+CREATE INDEX IF NOT EXISTS idx_adfree_licenses_session
+  ON adfree_licenses(stripe_session_id);
 `;
 
 const PLATFORM_SETTING_MIGRATIONS = [
@@ -754,6 +773,29 @@ function migrateUkPlaces(database) {
         ON weather_places(country, slug);
       CREATE INDEX IF NOT EXISTS idx_weather_places_population
         ON weather_places(population DESC);
+    `);
+  } catch {
+    // Table already present.
+  }
+
+  try {
+    database.exec(`
+      CREATE TABLE IF NOT EXISTS adfree_licenses (
+        id TEXT PRIMARY KEY,
+        email TEXT NOT NULL UNIQUE,
+        plan TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'active',
+        stripe_customer_id TEXT,
+        stripe_subscription_id TEXT,
+        stripe_session_id TEXT,
+        expires_at TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_adfree_licenses_customer
+        ON adfree_licenses(stripe_customer_id);
+      CREATE INDEX IF NOT EXISTS idx_adfree_licenses_session
+        ON adfree_licenses(stripe_session_id);
     `);
   } catch {
     // Table already present.

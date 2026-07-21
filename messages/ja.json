@@ -184,7 +184,9 @@
       "pinToLocationsDescription": "この都市をダッシュボードに保存",
       "emailOptions": "メールオプション",
       "emailOptionsManage": "プラットフォーム全体の予報と天気アラートを管理",
-      "emailOptionsGet": "プラットフォーム全体の予報と天気アラートを受け取る"
+      "emailOptionsGet": "プラットフォーム全体の予報と天気アラートを受け取る",
+      "changeHeroImage": "ヒーロー写真を変更",
+      "changeHeroImageDescription": "この場所の写真を選び直す"
     },
     "inaccurateBanner": "チームのメンバーが不正確なデータの報告を調査中です。表示される天気と予報の改善まで、しばらくお待ちください。",
     "hero": {
@@ -356,7 +358,8 @@
     "tabs": {
       "label": "設定セクション",
       "cookies": "Cookie",
-      "accessibility": "アクセシビリティ"
+      "accessibility": "アクセシビリティ",
+      "adFree": "広告を消す"
     },
     "accessibility": {
       "intro": "この端末の表示と操作設定を調整します。変更はすぐに適用され、ブラウザに保存されます。",
@@ -395,6 +398,24 @@
         "125": "特大（125%）",
         "150": "最大（150%）"
       }
+    },
+    "adFree": {
+      "title": "Browse without ads",
+      "description": "Support Meridian and hide advertising on this device. No Meridian account required — Stripe uses your email.",
+      "emailLabel": "Email for receipt / restore",
+      "emailPlaceholder": "you@example.com",
+      "select": "Choose",
+      "starting": "Starting…",
+      "comingSoon": "Stripe checkout will activate once billing keys are configured on the server.",
+      "restoreHint": "Already paid on another device?",
+      "restoreCta": "Email me a restore link",
+      "restoreSent": "If a license exists, a restore link is on its way.",
+      "restoreFailed": "Unable to send restore email.",
+      "checkoutUnavailable": "Checkout is unavailable right now.",
+      "portalUnavailable": "Billing portal is unavailable.",
+      "manageBilling": "Manage billing",
+      "activeTitle": "You’re ad-free on this device",
+      "activeBody": "{plan} plan for {email}"
     }
   },
   "Journal": {

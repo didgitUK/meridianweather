@@ -9,7 +9,8 @@
  *   avoid fan-out of location/subscription listeners on every weather write
  * - `consent` — canonical privacy JSON; `cookieConsent` is a legacy banner flag still
  *   written on accept for older readers
- * - `tier` — reserved / unused at runtime (tier currently hardcodes free)
+ * - `tier` — legacy reserved key
+ * - `adfree` — signed ad-free license mirror (cookie is source of truth)
  */
 export const STORAGE_KEYS = {
   clientId: 'meridian:client-id',
@@ -21,6 +22,7 @@ export const STORAGE_KEYS = {
   cookieConsent: 'meridian:cookie-consent',
   subscriptions: 'meridian:subscriptions',
   tier: 'meridian:tier',
+  adfree: 'meridian:adfree',
   consent: 'meridian:consent',
   accessibility: 'meridian:accessibility',
   cityDetailAccordion: 'meridian:city-detail-accordion',

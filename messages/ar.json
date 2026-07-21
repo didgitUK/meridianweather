@@ -184,7 +184,9 @@
       "pinToLocationsDescription": "حفظ هذه المدينة في لوحة التحكم",
       "emailOptions": "خيارات البريد",
       "emailOptionsManage": "إدارة التوقعات وتنبيهات الطقس على مستوى المنصة",
-      "emailOptionsGet": "الحصول على التوقعات وتنبيهات الطقس على مستوى المنصة"
+      "emailOptionsGet": "الحصول على التوقعات وتنبيهات الطقس على مستوى المنصة",
+      "changeHeroImage": "تغيير صورة الغلاف",
+      "changeHeroImageDescription": "اختر صورة مختلفة لهذا الموقع"
     },
     "inaccurateBanner": "أحد أعضاء فريقنا يفحص بلاغًا عن بيانات غير دقيقة. شكرًا لصبركم بينما نحسّن الطقس والتوقعات المعروضة.",
     "hero": {
@@ -356,7 +358,8 @@
     "tabs": {
       "label": "أقسام الإعدادات",
       "cookies": "ملفات تعريف الارتباط",
-      "accessibility": "إمكانية الوصول"
+      "accessibility": "إمكانية الوصول",
+      "adFree": "إزالة الإعلانات"
     },
     "accessibility": {
       "intro": "اضبط العرض والتفاعل لهذا الجهاز. تُطبَّق التغييرات فورًا وتُحفظ في المتصفح.",
@@ -395,6 +398,24 @@
         "125": "كبير جدًا (125%)",
         "150": "الحد الأقصى (150%)"
       }
+    },
+    "adFree": {
+      "title": "Browse without ads",
+      "description": "Support Meridian and hide advertising on this device. No Meridian account required — Stripe uses your email.",
+      "emailLabel": "Email for receipt / restore",
+      "emailPlaceholder": "you@example.com",
+      "select": "Choose",
+      "starting": "Starting…",
+      "comingSoon": "Stripe checkout will activate once billing keys are configured on the server.",
+      "restoreHint": "Already paid on another device?",
+      "restoreCta": "Email me a restore link",
+      "restoreSent": "If a license exists, a restore link is on its way.",
+      "restoreFailed": "Unable to send restore email.",
+      "checkoutUnavailable": "Checkout is unavailable right now.",
+      "portalUnavailable": "Billing portal is unavailable.",
+      "manageBilling": "Manage billing",
+      "activeTitle": "You’re ad-free on this device",
+      "activeBody": "{plan} plan for {email}"
     }
   },
   "Journal": {

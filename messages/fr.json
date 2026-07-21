@@ -184,7 +184,9 @@
       "pinToLocationsDescription": "Enregistrer cette ville sur votre tableau de bord",
       "emailOptions": "Options e-mail",
       "emailOptionsManage": "Gérer les prévisions et alertes météo à l’échelle de la plateforme",
-      "emailOptionsGet": "Recevoir les prévisions et alertes météo à l’échelle de la plateforme"
+      "emailOptionsGet": "Recevoir les prévisions et alertes météo à l’échelle de la plateforme",
+      "changeHeroImage": "Changer la photo",
+      "changeHeroImageDescription": "Choisir une autre photo pour ce lieu"
     },
     "inaccurateBanner": "Un membre de notre équipe examine un signalement de données inexactes. Merci de votre patience pendant que nous améliorons la météo et les prévisions affichées.",
     "hero": {
@@ -356,7 +358,8 @@
     "tabs": {
       "label": "Sections des paramètres",
       "cookies": "Cookies",
-      "accessibility": "Accessibilité"
+      "accessibility": "Accessibilité",
+      "adFree": "Sans pubs"
     },
     "accessibility": {
       "intro": "Ajustez l’affichage et l’interaction pour cet appareil. Les changements s’appliquent immédiatement et sont enregistrés dans le navigateur.",
@@ -395,6 +398,24 @@
         "125": "Très grand (125%)",
         "150": "Maximum (150%)"
       }
+    },
+    "adFree": {
+      "title": "Browse without ads",
+      "description": "Support Meridian and hide advertising on this device. No Meridian account required — Stripe uses your email.",
+      "emailLabel": "Email for receipt / restore",
+      "emailPlaceholder": "you@example.com",
+      "select": "Choose",
+      "starting": "Starting…",
+      "comingSoon": "Stripe checkout will activate once billing keys are configured on the server.",
+      "restoreHint": "Already paid on another device?",
+      "restoreCta": "Email me a restore link",
+      "restoreSent": "If a license exists, a restore link is on its way.",
+      "restoreFailed": "Unable to send restore email.",
+      "checkoutUnavailable": "Checkout is unavailable right now.",
+      "portalUnavailable": "Billing portal is unavailable.",
+      "manageBilling": "Manage billing",
+      "activeTitle": "You’re ad-free on this device",
+      "activeBody": "{plan} plan for {email}"
     }
   },
   "Journal": {

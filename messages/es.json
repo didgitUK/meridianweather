@@ -184,7 +184,9 @@
       "pinToLocationsDescription": "Guardar esta ciudad en tu panel",
       "emailOptions": "Opciones de correo",
       "emailOptionsManage": "Gestionar pronósticos y alertas meteorológicas de la plataforma",
-      "emailOptionsGet": "Recibir pronósticos y alertas meteorológicas de la plataforma"
+      "emailOptionsGet": "Recibir pronósticos y alertas meteorológicas de la plataforma",
+      "changeHeroImage": "Cambiar foto de cabecera",
+      "changeHeroImageDescription": "Elige otra foto para esta ubicación"
     },
     "inaccurateBanner": "Un miembro de nuestro equipo está revisando un informe de datos inexactos. Gracias por tu paciencia mientras mejoramos el tiempo y los pronósticos mostrados.",
     "hero": {
@@ -356,7 +358,8 @@
     "tabs": {
       "label": "Secciones de ajustes",
       "cookies": "Cookies",
-      "accessibility": "Accesibilidad"
+      "accessibility": "Accesibilidad",
+      "adFree": "Sin anuncios"
     },
     "accessibility": {
       "intro": "Ajusta la visualización y la interacción en este dispositivo. Los cambios se aplican de inmediato y se guardan en el navegador.",
@@ -395,6 +398,24 @@
         "125": "Extra grande (125%)",
         "150": "Máximo (150%)"
       }
+    },
+    "adFree": {
+      "title": "Browse without ads",
+      "description": "Support Meridian and hide advertising on this device. No Meridian account required — Stripe uses your email.",
+      "emailLabel": "Email for receipt / restore",
+      "emailPlaceholder": "you@example.com",
+      "select": "Choose",
+      "starting": "Starting…",
+      "comingSoon": "Stripe checkout will activate once billing keys are configured on the server.",
+      "restoreHint": "Already paid on another device?",
+      "restoreCta": "Email me a restore link",
+      "restoreSent": "If a license exists, a restore link is on its way.",
+      "restoreFailed": "Unable to send restore email.",
+      "checkoutUnavailable": "Checkout is unavailable right now.",
+      "portalUnavailable": "Billing portal is unavailable.",
+      "manageBilling": "Manage billing",
+      "activeTitle": "You’re ad-free on this device",
+      "activeBody": "{plan} plan for {email}"
     }
   },
   "Journal": {

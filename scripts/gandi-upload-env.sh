@@ -26,11 +26,6 @@ source "$SECRETS"
 : "${GANDI_TOKEN:?}"
 : "${GANDI_SFTP_HOST:?}"
 
-if ! command -v sshpass >/dev/null 2>&1; then
-  echo "sshpass is required" >&2
-  exit 1
-fi
-
 TMP="$(mktemp)"
 trap 'rm -f "$TMP"' EXIT
 
@@ -42,7 +37,7 @@ src, dst = Path(sys.argv[1]), Path(sys.argv[2])
 keep_prefixes = (
   'OPENWEATHER_', 'UNSPLASH_', 'PEXELS_', 'RESEND_', 'SENDGRID_', 'AWS_',
   'SMTP_', 'DATABASE_', 'CRON_', 'ADMIN_', 'NEXT_PUBLIC_', 'GOOGLE_',
-  'MERIDIAN_',
+  'MERIDIAN_', 'STRIPE_', 'ADFEEE_',
 )
 lines = []
 for line in src.read_text().splitlines():
@@ -69,18 +64,48 @@ print(f'wrote {len(out)} keys')
 PY
 
 REMOTE_ENV="/lamp0/home/meridian.env"
-export SSHPASS="$GANDI_TOKEN"
-OUT="$(
-  sshpass -e sftp -o StrictHostKeyChecking=accept-new -o PreferredAuthentications=password -o PubkeyAuthentication=no \
-    "${GANDI_USER}@${GANDI_SFTP_HOST}" <<EOF
+
+upload_with_sshpass() {
+  export SSHPASS="$GANDI_TOKEN"
+  OUT="$(
+    sshpass -e sftp -o StrictHostKeyChecking=accept-new -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+      "${GANDI_USER}@${GANDI_SFTP_HOST}" <<EOF
 put ${TMP} ${REMOTE_ENV}
 bye
 EOF
-)"
-printf '%s\n' "$OUT"
-if printf '%s\n' "$OUT" | grep -qi 'Permission denied\|Failure\|No such file'; then
-  echo "SFTP upload failed for ${REMOTE_ENV}" >&2
-  exit 1
+  )"
+  printf '%s\n' "$OUT"
+  if printf '%s\n' "$OUT" | grep -qi 'Permission denied\|Failure\|No such file'; then
+    return 1
+  fi
+  return 0
+}
+
+upload_with_paramiko() {
+  python3 - <<PY
+from pathlib import Path
+import paramiko
+payload = Path(${TMP@Q}).read_text()
+transport = paramiko.Transport(("${GANDI_SFTP_HOST}", 22))
+transport.connect(username="${GANDI_USER}", password="${GANDI_TOKEN}")
+sftp = paramiko.SFTPClient.from_transport(transport)
+remote = "${REMOTE_ENV}"
+with sftp.file(remote, "w") as f:
+    f.write(payload)
+sftp.close()
+transport.close()
+print(f"uploaded {remote}")
+PY
+}
+
+if command -v sshpass >/dev/null 2>&1; then
+  upload_with_sshpass || { echo "SFTP upload failed for ${REMOTE_ENV}" >&2; exit 1; }
+else
+  python3 -c 'import paramiko' 2>/dev/null || {
+    echo "sshpass or python3-paramiko is required" >&2
+    exit 1
+  }
+  upload_with_paramiko || { echo "SFTP upload failed for ${REMOTE_ENV}" >&2; exit 1; }
 fi
 
 echo "Uploaded persistent env to Gandi (${REMOTE_ENV})."

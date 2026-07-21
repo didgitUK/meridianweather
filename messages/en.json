@@ -189,7 +189,9 @@
       "pinToLocationsDescription": "Save this city on your dashboard",
       "emailOptions": "Email options",
       "emailOptionsManage": "Manage platform-wide forecasts and weather alerts",
-      "emailOptionsGet": "Get platform-wide forecasts and weather alerts"
+      "emailOptionsGet": "Get platform-wide forecasts and weather alerts",
+      "changeHeroImage": "Change hero photo",
+      "changeHeroImageDescription": "Pick a different photo for this location"
     },
     "inaccurateBanner": "A member of our team is looking into a report of inaccurate data. Please bear with us whilst we improve our weather and forecasts shown.",
     "hero": {
@@ -356,7 +358,26 @@
     "tabs": {
       "label": "Settings sections",
       "cookies": "Cookies",
-      "accessibility": "Accessibility"
+      "accessibility": "Accessibility",
+      "adFree": "Remove ads"
+    },
+    "adFree": {
+      "title": "Browse without ads",
+      "description": "Support Meridian and hide advertising on this device. No Meridian account required — Stripe uses your email.",
+      "emailLabel": "Email for receipt / restore",
+      "emailPlaceholder": "you@example.com",
+      "select": "Choose",
+      "starting": "Starting…",
+      "comingSoon": "Stripe checkout will activate once billing keys are configured on the server.",
+      "restoreHint": "Already paid on another device?",
+      "restoreCta": "Email me a restore link",
+      "restoreSent": "If a license exists, a restore link is on its way.",
+      "restoreFailed": "Unable to send restore email.",
+      "checkoutUnavailable": "Checkout is unavailable right now.",
+      "portalUnavailable": "Billing portal is unavailable.",
+      "manageBilling": "Manage billing",
+      "activeTitle": "You’re ad-free on this device",
+      "activeBody": "{plan} plan for {email}"
     },
     "accessibility": {
       "intro": "Adjust display and interaction settings for this device. Changes apply immediately and are saved in your browser.",

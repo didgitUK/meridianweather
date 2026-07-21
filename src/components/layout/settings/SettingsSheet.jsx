@@ -11,6 +11,7 @@ import {
   createAcceptedConsentDraft,
   createRejectedOptionalDraft,
 } from '@/components/layout/settings/CookiePreferencesPanel';
+import { AdFreePlansPanel } from '@/components/monetization/AdFreePlansPanel';
 import { SettingsSheetBrand } from '@/components/layout/settings/SettingsSheetBrand';
 import { SettingsTabList } from '@/components/layout/settings/SettingsTabList';
 import { Button } from '@/components/ui/button';
@@ -36,6 +37,10 @@ function SettingsPanel({ activeTab, cookieDraft, setCookieDraft, accessibilityDr
     );
   }
 
+  if (activeTab === 'adFree') {
+    return <AdFreePlansPanel />;
+  }
+
   return (
     <AccessibilityPreferencesPanel
       draft={accessibilityDraft}
@@ -56,6 +61,10 @@ function SettingsFooterActions({
 }) {
   const tCookie = useTranslations('Cookie.preferences');
   const tA11y = useTranslations('Settings.accessibility');
+
+  if (activeTab === 'adFree') {
+    return null;
+  }
 
   if (activeTab === 'cookies') {
     return (
