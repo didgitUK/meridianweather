@@ -8,6 +8,7 @@ import {
   capPlacePois,
   classifyOsmTags,
   mapOverpassElement,
+  buildOverpassQuery,
 } from '@/lib/places/overpass-pois';
 import { parseRssItems as parseRssFromPipeline } from '@/lib/places/place-content-pipeline';
 import {
@@ -21,6 +22,7 @@ import {
   replacePlacePois,
   listPlacePois,
   countPlacePois,
+  getPlacePoi,
 } from '@/lib/places/place-pois-repo';
 import {
   upsertPlaceArticle,
@@ -41,7 +43,11 @@ describe('place content OSM helpers', () => {
     expect(classifyOsmTags({ amenity: 'pub', name: 'Z' })).toBe(
       PLACE_POI_CATEGORIES.nightlife,
     );
+    expect(classifyOsmTags({ leisure: 'golf_course', name: 'Links' })).toBe(
+      PLACE_POI_CATEGORIES.outdoors,
+    );
     expect(classifyOsmTags({ tourism: 'hotel', name: 'H' })).toBeNull();
+    expect(buildOverpassQuery({ lat: 54.9, lon: -2.9 })).toContain('golf_course');
   });
 
   it('maps and caps Overpass elements', () => {
@@ -142,6 +148,9 @@ describe('place content repos', () => {
     ]);
     expect(countPlacePois(slug)).toBe(1);
     expect(listPlacePois(slug)[0].name).toBe('Promenade Park');
+    const stored = listPlacePois(slug)[0];
+    expect(getPlacePoi(slug, stored.id)?.name).toBe('Promenade Park');
+    expect(getPlacePoi(slug, 'missing')).toBeNull();
 
     const article = upsertPlaceArticle({
       placeSlug: slug,

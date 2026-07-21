@@ -612,11 +612,12 @@
   "PlaceContent": {
     "thingsToDo": {
       "title": "Things to do in {place}",
-      "description": "Nearby places from OpenStreetMap — filter by category and open the map for directions.",
+      "description": "Nearby places from OpenStreetMap — filter by category, open a satellite map, or explore on OpenStreetMap.",
       "categoriesLabel": "Things to do categories",
       "emptyCategory": "No places in this category yet.",
       "distance": "{km} away",
       "openMap": "Open map",
+      "openOsm": "Open in OpenStreetMap",
       "attribution": "Venue data © OpenStreetMap contributors.",
       "categories": {
         "family": "Family days",
@@ -629,9 +630,10 @@
     "guides": {
       "title": "Local guides for {place}",
       "description": "Meridian weather planners grounded in the forecast, OpenStreetMap, and cited sources.",
+      "generatedDisclaimer": "Guides may be auto-generated summaries until an editor reviews them. Always confirm opening times and conditions locally.",
       "carouselLabel": "Local guides for {place}",
       "byline": "Meridian guide · sources listed · weather for",
-      "generatedDisclaimer": "Guides may be auto-generated summaries until an editor reviews them. Always confirm opening times and conditions locally."
+      "readGuide": "Read guide"
     },
     "localCoverage": {
       "title": "Local coverage — {place}",
@@ -643,7 +645,20 @@
       "sourcesTitle": "Sources",
       "imageCredit": "Image",
       "updated": "Updated {date}",
-      "byline": "Meridian guide · sources listed"
+      "byline": "Meridian guide · sources listed",
+      "generatedDisclaimer": "This guide may be auto-generated until an editor reviews it. Always confirm opening times and conditions locally.",
+      "liveWeather": "Live weather for {place}",
+      "thingsToDo": "Things to do in {place}",
+      "relatedTitle": "More for {place}"
+    },
+    "poiPage": {
+      "title": "Things to do in {place}: {poi}",
+      "metaDescription": "Satellite map and nearby {poi} options around {place}.",
+      "backToPlace": "← {place} weather",
+      "categoryLabel": "Category: {category}",
+      "nearbyInCategory": "More {category} nearby",
+      "listHint": "Same category pins are shown on the map. Pick another venue to focus it.",
+      "openOsm": "Open in OpenStreetMap"
     }
   },
   "Pwa": {

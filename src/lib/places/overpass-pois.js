@@ -104,11 +104,11 @@ export function buildOverpassQuery(options) {
 (
   node(around:${radius},${lat},${lon})[name][amenity~"^(restaurant|cafe|fast_food|ice_cream|cinema|community_centre|pub|bar|nightclub|biergarten)$"];
   node(around:${radius},${lat},${lon})[name][tourism];
-  node(around:${radius},${lat},${lon})[name][leisure~"^(playground|park|nature_reserve|garden)$"];
+  node(around:${radius},${lat},${lon})[name][leisure~"^(playground|park|nature_reserve|garden|golf_course)$"];
   node(around:${radius},${lat},${lon})[name][natural~"^(beach|cliff)$"];
   way(around:${radius},${lat},${lon})[name][amenity~"^(restaurant|cafe|fast_food|ice_cream|cinema|community_centre|pub|bar|nightclub|biergarten)$"];
   way(around:${radius},${lat},${lon})[name][tourism];
-  way(around:${radius},${lat},${lon})[name][leisure~"^(playground|park|nature_reserve|garden)$"];
+  way(around:${radius},${lat},${lon})[name][leisure~"^(playground|park|nature_reserve|garden|golf_course)$"];
   way(around:${radius},${lat},${lon})[name][natural~"^(beach|cliff)$"];
 );
 out center tags;

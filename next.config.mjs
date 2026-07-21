@@ -44,9 +44,12 @@ const SECURITY_HEADERS = [
 ];
 
 if (process.env.NODE_ENV === 'production') {
+  // Apex-only HSTS until www resolves to the same host with working HTTPS.
+  // includeSubDomains/preload forces HTTPS on www; Gandi parking currently
+  // refuses :443 there, which Google reports as a blocked connection.
   SECURITY_HEADERS.push({
     key: 'Strict-Transport-Security',
-    value: 'max-age=63072000; includeSubDomains; preload',
+    value: 'max-age=63072000',
   });
 }
 

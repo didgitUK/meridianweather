@@ -8,6 +8,7 @@ import { WeatherIcon } from '@/features/weather/components/WeatherIcon';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { stashCheckedCity } from '@/features/cities/utils/checked-city-store';
+import { buildPlaceDetailHref } from '@/features/cities/utils/weather-place-href';
 import { buildCityId, cn } from '@/lib/utils';
 
 function buildCheckHref(check) {
@@ -15,14 +16,16 @@ function buildCheckHref(check) {
     return null;
   }
 
-  const cityId = check.cityId
-    ?? (check.cityName ? buildCityId(check.cityName, check.country ?? 'XX', check.lat) : null);
-
-  if (!cityId) {
-    return null;
-  }
-
-  return `/city/${encodeURIComponent(cityId)}`;
+  return buildPlaceDetailHref({
+    cityId: check.cityId,
+    name: check.cityName,
+    cityName: check.cityName,
+    country: check.country,
+    lat: check.lat,
+    lon: check.lon,
+    state: check.state,
+    seoSlug: check.seoSlug,
+  });
 }
 
 /**

@@ -3,7 +3,10 @@ import { hasLocale } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { PlaceGuidePage } from '@/features/weather/components/PlaceGuidePage';
 import { PLACE_ARTICLE_STATUS } from '@/constants/place-content';
-import { getPlaceArticle } from '@/lib/places/place-articles-repo';
+import {
+  getPlaceArticle,
+  listPublishedPlaceArticles,
+} from '@/lib/places/place-articles-repo';
 import { resolveWeatherPlaceOrCreate } from '@/lib/places/resolve-weather-place-or-create';
 import { buildPageMetadata } from '@/lib/seo';
 import { buildLanguageAlternates, buildLocalizedPath, getOgLocale } from '@/i18n/seo';
@@ -51,17 +54,23 @@ export default async function WeatherPlaceGuideRoute({ params, searchParams }) {
     notFound();
   }
 
-  const article = getPlaceArticle(city.seoSlug ?? decodedPlace, decodedSlug);
+  const placeSlugResolved = city.seoSlug ?? decodedPlace;
+  const article = getPlaceArticle(placeSlugResolved, decodedSlug);
   if (!article || article.status !== PLACE_ARTICLE_STATUS.published) {
     notFound();
   }
+
+  const relatedArticles = listPublishedPlaceArticles(placeSlugResolved).filter(
+    (row) => row.slug !== decodedSlug,
+  );
 
   const path = article.href;
   return (
     <PlaceGuidePage
       article={article}
-      place={{ name: city.name, slug: city.seoSlug ?? decodedPlace }}
+      place={{ name: city.name, slug: placeSlugResolved }}
       localePath={buildLocalizedPath(path, locale)}
+      relatedArticles={relatedArticles}
     />
   );
 }

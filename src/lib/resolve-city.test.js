@@ -20,6 +20,27 @@ CREATE TABLE IF NOT EXISTS locations (
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_locations_city_slug ON locations(city_slug);
+
+CREATE TABLE IF NOT EXISTS uk_places (
+  id TEXT PRIMARY KEY,
+  slug TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  country TEXT NOT NULL,
+  admin_area TEXT,
+  lat REAL NOT NULL,
+  lon REAL NOT NULL,
+  population INTEGER,
+  place_type TEXT,
+  tier INTEGER NOT NULL DEFAULT 3,
+  city_slug TEXT,
+  view_count INTEGER NOT NULL DEFAULT 0,
+  last_viewed_at TEXT,
+  last_fetched_at TEXT,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_uk_places_city_slug ON uk_places(city_slug);
 `;
 
 const memoryDb = new Database(':memory:');
@@ -39,6 +60,7 @@ import { getShowcaseCities, resolveCity } from '@/lib/resolve-city';
 describe('resolveCity', () => {
   beforeEach(() => {
     memoryDb.exec('DELETE FROM locations');
+    memoryDb.exec('DELETE FROM uk_places');
   });
 
   it('resolves showcase cities with coordinates', () => {
@@ -75,6 +97,39 @@ describe('resolveCity', () => {
 
     expect(resolveCity('manchester-GB-53.4808')).toMatchObject({
       lon: -2.2426,
+    });
+  });
+
+  it('resolves UK inventory by city_slug without a locations row', () => {
+    const now = new Date().toISOString();
+    memoryDb
+      .prepare(
+        `INSERT INTO uk_places (
+          id, slug, name, country, admin_area, lat, lon, population, place_type, tier, city_slug, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        'carlisle',
+        'carlisle',
+        'Carlisle',
+        'GB',
+        'England',
+        54.8951,
+        -2.9382,
+        75000,
+        'city',
+        2,
+        'carlisle-GB-54.8951',
+        now,
+        now,
+      );
+
+    expect(resolveCity('carlisle-GB-54.8951')).toMatchObject({
+      name: 'Carlisle',
+      country: 'GB',
+      lat: 54.8951,
+      lon: -2.9382,
+      seoSlug: 'carlisle',
     });
   });
 

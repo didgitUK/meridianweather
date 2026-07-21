@@ -47,3 +47,23 @@ export function buildCityDetailHref(place) {
   const id = place.cityId ?? place.id ?? buildCityId(name, country, lat);
   return `/city/${encodeURIComponent(id)}`;
 }
+
+/**
+ * Prefer UK weather place pages (with coords for on-demand create);
+ * fall back to legacy /city/{id} for non-GB places.
+ */
+export function buildPlaceDetailHref(place) {
+  const country = String(place?.country ?? '').toUpperCase();
+  if (country === 'GB' || country === 'UK') {
+    return buildWeatherPlaceHref({
+      name: place.name ?? place.cityName,
+      country: 'GB',
+      lat: place.lat,
+      lon: place.lon,
+      state: place.state ?? place.adminArea ?? null,
+      seoSlug: place.seoSlug ?? null,
+    });
+  }
+
+  return buildCityDetailHref(place);
+}

@@ -12,6 +12,7 @@ import {
   writeLocalWeatherCache,
 } from '@/features/weather/utils/weather-cache';
 import { stashCheckedCity } from '@/features/cities/utils/checked-city-store';
+import { buildPlaceDetailHref } from '@/features/cities/utils/weather-place-href';
 import { WEATHER_CHECK_TRIGGERS } from '@/constants/weather-check-triggers';
 import { DASHBOARD_CURRENT_MAX_AGE_MS } from '@/constants/weather';
 import { cacheMeetsMaxAge } from '@/lib/weather-cache-age';
@@ -39,6 +40,8 @@ function toNearbyChecks(places, batchCities) {
       temperature: current?.temperature ?? null,
       description: current?.description ?? null,
       icon: current?.icon ?? null,
+      seoSlug: place.seoSlug ?? place.slug ?? null,
+      state: place.state ?? place.adminArea ?? null,
     };
   });
 }
@@ -64,6 +67,8 @@ function readNearbyFromLocalCache(places) {
       description: payload?.description ?? null,
       icon: payload?.icon ?? null,
       fromCache: Boolean(payload),
+      seoSlug: place.seoSlug ?? place.slug ?? null,
+      state: place.state ?? place.adminArea ?? null,
     };
   });
 }
@@ -74,7 +79,16 @@ function TinyNearbyCard({ check }) {
   const distanceLabel = Number.isFinite(check.distanceKm)
     ? `${Math.round(check.distanceKm)} km`
     : null;
-  const href = check.cityId ? `/city/${encodeURIComponent(check.cityId)}` : null;
+  const href = buildPlaceDetailHref({
+    cityId: check.cityId,
+    name: check.cityName,
+    cityName: check.cityName,
+    country: check.country,
+    lat: check.lat,
+    lon: check.lon,
+    state: check.state,
+    seoSlug: check.seoSlug,
+  });
 
   const inner = (
     <div className="dashboard-hero__nearby-chip flex h-11 w-full items-center gap-2 rounded-xl px-2.5 text-left">

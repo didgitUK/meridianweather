@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { PLACE_POI_CATEGORY_ORDER } from '@/constants/place-content';
 import { SPACING, TYPOGRAPHY } from '@/constants/design-tokens';
 import { haversineKm } from '@/lib/geo/distance';
@@ -10,6 +11,7 @@ import { cn } from '@/lib/utils';
 /**
  * @param {{
  *   placeName: string,
+ *   placeSlug: string,
  *   placeLat: number,
  *   placeLon: number,
  *   pois: Array<{
@@ -22,7 +24,13 @@ import { cn } from '@/lib/utils';
  *   }>,
  * }} props
  */
-export function PlaceThingsToDoSection({ placeName, placeLat, placeLon, pois }) {
+export function PlaceThingsToDoSection({
+  placeName,
+  placeSlug,
+  placeLat,
+  placeLon,
+  pois,
+}) {
   const t = useTranslations('PlaceContent.thingsToDo');
   const [category, setCategory] = useState(PLACE_POI_CATEGORY_ORDER[0]);
 
@@ -110,6 +118,7 @@ export function PlaceThingsToDoSection({ placeName, placeLat, placeLon, pois }) 
       ) : (
         <ul className="divide-y divide-border/60 border-y border-border/60">
           {visible.map((poi) => {
+            const detailHref = `/weather/${placeSlug}/things-to-do/${poi.id}`;
             const mapsUrl =
               `https://www.openstreetmap.org/?mlat=${poi.lat}&mlon=${poi.lon}#map=17/${poi.lat}/${poi.lon}`;
             const osmUrl = poi.osmId
@@ -122,7 +131,12 @@ export function PlaceThingsToDoSection({ placeName, placeLat, placeLon, pois }) 
                 className="flex flex-col gap-1 py-3 sm:flex-row sm:items-baseline sm:justify-between"
               >
                 <div>
-                  <p className="font-medium text-foreground">{poi.name}</p>
+                  <Link
+                    href={detailHref}
+                    className="font-medium text-foreground underline-offset-4 hover:underline"
+                  >
+                    {poi.name}
+                  </Link>
                   <p className="text-sm text-muted-foreground">
                     {t('distance', { km: formatDistance(poi.distanceKm) })}
                   </p>
@@ -131,9 +145,9 @@ export function PlaceThingsToDoSection({ placeName, placeLat, placeLon, pois }) 
                   href={osmUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
+                  className="text-sm font-medium text-muted-foreground underline-offset-4 hover:underline"
                 >
-                  {t('openMap')}
+                  {t('openOsm')}
                 </a>
               </li>
             );
