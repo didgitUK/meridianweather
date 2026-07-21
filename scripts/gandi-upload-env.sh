@@ -37,7 +37,8 @@ src, dst = Path(sys.argv[1]), Path(sys.argv[2])
 keep_prefixes = (
   'OPENWEATHER_', 'UNSPLASH_', 'PEXELS_', 'RESEND_', 'SENDGRID_', 'AWS_',
   'SMTP_', 'DATABASE_', 'CRON_', 'ADMIN_', 'NEXT_PUBLIC_', 'GOOGLE_',
-  'MERIDIAN_', 'STRIPE_', 'ADFEEE_',
+  'MERIDIAN_', 'STRIPE_', 'ADFEEE_', 'PLACE_CONTENT_', 'GEMINI_', 'OPENAI_',
+  'VAPID_',
 )
 lines = []
 for line in src.read_text().splitlines():
