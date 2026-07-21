@@ -86,6 +86,18 @@ export function HourlyForecastChart({
       <h2 className="font-heading text-xl">{heading}</h2>
       <p className="mt-1 text-sm text-muted-foreground">{body}</p>
 
+      <ol className="sr-only">
+        {ordered.map((point) => (
+          <li key={`sr-${point.dt}`}>
+            {formatHourLabel(point.dt, timezone)}
+            {': '}
+            {formatTemp(point.temp)}
+            {point.description ? ` — ${point.description}` : ''}
+            {buildHourMeta(point, formatTemp) ? ` — ${buildHourMeta(point, formatTemp)}` : ''}
+          </li>
+        ))}
+      </ol>
+
       <div
         className={cn(
           'mt-4 grid gap-2',
@@ -94,6 +106,7 @@ export function HourlyForecastChart({
             'grid-cols-1 sm:grid-cols-2 sm:grid-flow-col sm:grid-rows-6',
           resolvedLayout === 'multi' && 'grid-cols-1 sm:grid-cols-2',
         )}
+        aria-hidden="true"
       >
         {ordered.map((point) => {
           const meta = buildHourMeta(point, formatTemp);

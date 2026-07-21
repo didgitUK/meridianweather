@@ -151,6 +151,8 @@
       "refresh": "Refresh weather for {city}",
       "updated": "Updated {age}",
       "staleUpdated": "Cached · updated {age}",
+      "offlineUpdated": "Offline · last updated {age}",
+      "offlineBanner": "Showing the last saved weather for this place. Reconnect to refresh.",
       "sevenDayOutlook": "7-day outlook",
       "viewFullForecast": "View full forecast",
       "dailyUnavailable": "Daily forecast unavailable.",
@@ -320,7 +322,12 @@
     "storeBadges": {
       "appStore": "Download on the App Store",
       "googlePlay": "Get it on Google Play"
-    }
+    },
+    "installHint": "Install meridian as a progressive web app for full-screen weather and offline backup of your pinned places.",
+    "installCta": "Install app",
+    "appInstalled": "You’re using the installed meridian app.",
+    "iosInstallHint": "On iPhone or iPad: Share → Add to Home Screen.",
+    "installUnavailable": "Use your browser menu → Install app / Add to Home Screen when available. Or open Settings → App."
   },
   "Cookie": {
     "banner": {
@@ -354,12 +361,49 @@
   },
   "Settings": {
     "title": "Settings",
-    "description": "Manage cookies and accessibility options for meridian on this device.",
+    "description": "Manage cookies, install options, and accessibility for meridian on this device.",
     "tabs": {
       "label": "Settings sections",
       "cookies": "Cookies",
       "accessibility": "Accessibility",
+      "app": "App",
       "adFree": "Remove ads"
+    },
+    "app": {
+      "installTitle": "Install meridian",
+      "installDescription": "Add meridian to your home screen for a full-screen weather app with offline backup for your pinned places.",
+      "installCta": "Install app",
+      "installAccepted": "meridian is installing on this device.",
+      "alreadyInstalled": "You’re using the installed app.",
+      "iosHint": "On iPhone or iPad: tap Share, then Add to Home Screen.",
+      "installUnavailable": "Your browser doesn’t offer an install prompt here. Use the browser menu → Install app / Add to Home Screen if available.",
+      "offlineTitle": "Offline backup",
+      "offlineDescription": "With Functional cookies on, meridian keeps recent weather for pinned and frequently checked places on this device. When you’re online it refreshes; offline it shows the last saved data with an update time.",
+      "pushTitle": "Device notifications",
+      "pushDescription": "Choose what meridian may notify you about, then enable notifications so this device can refresh in the background.",
+      "notifyModeLegend": "Notify me about",
+      "notifyMode": {
+        "daily": {
+          "label": "Daily refresh",
+          "description": "About once a day when your places are updated on this device."
+        },
+        "severe": {
+          "label": "Severe weather only",
+          "description": "Only when conditions look severe near a pinned or recent place."
+        },
+        "both": {
+          "label": "Daily + severe",
+          "description": "Daily refresh, plus an extra alert when severe weather is detected."
+        }
+      },
+      "notifyModeSaved": "Notification preference saved.",
+      "pushEnableCta": "Enable notifications",
+      "pushDisableCta": "Turn off notifications",
+      "pushEnabled": "Notifications are on for this device.",
+      "pushDisabled": "Notifications are off.",
+      "pushFailed": "Could not update notification settings.",
+      "pushUnsupported": "Push notifications aren’t available in this browser.",
+      "needFunctionalConsent": "Turn on Functional cookies in Settings → Cookies first, so weather can be saved on this device."
     },
     "accessibility": {
       "intro": "Adjust display and interaction settings for this device. Changes apply immediately and are saved in your browser.",
@@ -406,7 +450,7 @@
       "emailPlaceholder": "you@example.com",
       "select": "Choose",
       "starting": "Starting…",
-      "comingSoon": "Stripe checkout will activate once billing keys are configured on the server.",
+      "comingSoon": "Ad-free checkout is not configured on this server yet.",
       "restoreHint": "Already paid on another device?",
       "restoreCta": "Email me a restore link",
       "restoreSent": "If a license exists, a restore link is on its way.",
@@ -415,7 +459,9 @@
       "portalUnavailable": "Billing portal is unavailable.",
       "manageBilling": "Manage billing",
       "activeTitle": "You’re ad-free on this device",
-      "activeBody": "{plan} plan for {email}"
+      "activeBody": "{plan} plan for {email}",
+      "unavailableTitle": "Ad-free plans unavailable",
+      "unavailableBody": "Stripe billing keys are not configured. Advertising stays on unless an operator enables checkout."
     }
   },
   "Journal": {
@@ -525,6 +571,12 @@
     "weatherPlaceDescriptionWithSummary": "What is the weather like in {city}? {summary}. Live forecast for {city}, {region} on meridian.",
     "weatherPlaceH1": "Weather in {city}",
     "weatherPlaceLede": "What is the weather like in {city} today? Check live conditions, hourly detail, and the 10-day outlook for {city}, {region}.",
+    "weatherPlaceDidYouKnow": "Did you know?",
+    "weatherPlaceFactLat": "{city} sits near {lat}°{hemisphere} — a latitude band where daylight hours swing hard between seasons, so today’s outlook can feel very different from midwinter or midsummer.",
+    "weatherPlaceFactEquator": "{city} is roughly {km} km from the equator. That distance shapes how strong the sun feels at noon and how quickly evenings cool after sunset.",
+    "weatherPlaceFactPrime": "{city} lies about {lon}° {side} of the prime meridian, so local clock time and solar noon often diverge from nearby longitudes in {region}.",
+    "weatherPlaceFactRegion": "{city} in {region} has its own microclimate quirks — hills, coasts, and urban heat can nudge temperatures a few degrees from the regional average.",
+    "weatherPlaceSeoBridge": "Whether you searched Weather in {city}, {city} weather, or Weather {city}, this page keeps the long, medium, and short forms covered with live conditions below.",
     "weatherPlaceFaqWhatLikeQ": "What is the weather like in {city}?",
     "weatherPlaceFaqWhatLikeA": "Right now in {city}, {country}: {summary}. Updated throughout the day on meridian.",
     "weatherPlaceFaqWhatLikeAFallback": "See live conditions and the forecast for {city}, {country} on this page.",
@@ -556,5 +608,55 @@
     "search": "Search",
     "myPlaces": "My places",
     "settings": "Settings"
+  },
+  "PlaceContent": {
+    "thingsToDo": {
+      "title": "Things to do in {place}",
+      "description": "Nearby places from OpenStreetMap — filter by category and open the map for directions.",
+      "categoriesLabel": "Things to do categories",
+      "emptyCategory": "No places in this category yet.",
+      "distance": "{km} away",
+      "openMap": "Open map",
+      "attribution": "Venue data © OpenStreetMap contributors.",
+      "categories": {
+        "family": "Family days",
+        "restaurants": "Restaurants",
+        "attractions": "Attractions",
+        "outdoors": "Outdoors",
+        "nightlife": "Nightlife"
+      }
+    },
+    "guides": {
+      "title": "Local guides for {place}",
+      "description": "Meridian weather planners grounded in the forecast, OpenStreetMap, and cited sources.",
+      "carouselLabel": "Local guides for {place}",
+      "byline": "Meridian guide · sources listed · weather for",
+      "generatedDisclaimer": "Guides may be auto-generated summaries until an editor reviews them. Always confirm opening times and conditions locally."
+    },
+    "localCoverage": {
+      "title": "Local coverage — {place}",
+      "description": "Headlines from publisher feeds. Opens on the original site; Meridian does not host the article.",
+      "disclaimer": "Local coverage — opens on publisher site."
+    },
+    "guidePage": {
+      "backToPlace": "← {place} weather",
+      "sourcesTitle": "Sources",
+      "imageCredit": "Image",
+      "updated": "Updated {date}",
+      "byline": "Meridian guide · sources listed"
+    }
+  },
+  "Pwa": {
+    "installNudge": {
+      "title": "Install meridian",
+      "body": "Add the app to your home screen for offline weather on your places.",
+      "iosBody": "On iPhone: Share → Add to Home Screen for the full app experience.",
+      "install": "Install",
+      "howTo": "How to install",
+      "dismiss": "Not now"
+    },
+    "updateAvailable": "Update available",
+    "updateDescription": "Reload to get the latest meridian app shell.",
+    "reload": "Reload"
   }
 }

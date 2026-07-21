@@ -17,6 +17,7 @@ import {
   LayoutDashboard,
   Mail,
   Newspaper,
+  MapPin,
   Radar,
   Scale,
   ScrollText,
@@ -56,6 +57,7 @@ const ADMIN_NAV_ICONS = {
   Inbox,
   Settings,
   ScrollText,
+  MapPin,
 };
 
 const UNLABELED_GROUPS = ADMIN_NAV_GROUPS.filter((group) => !group.label);

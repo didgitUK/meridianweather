@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
@@ -14,9 +15,9 @@ import {
 import { TOUCH } from '@/constants/design-tokens';
 import { cn } from '@/lib/utils';
 
-/** Sit just above the fixed left floating controls dock (h-11 + gap). */
-const BANNER_ABOVE_DOCK =
-  'bottom-[calc(3.75rem+var(--safe-area-inset-bottom,0px))]';
+/** Sit above mobile bottom nav (md+) or floating dock (desktop). */
+const BANNER_ABOVE_MOBILE_NAV =
+  'bottom-[calc(var(--mobile-nav-offset,0px)+0.75rem)] md:bottom-[calc(3.75rem+var(--safe-area-inset-bottom,0px))]';
 
 export function CookieBanner() {
   const t = useTranslations('Cookie.banner');
@@ -24,8 +25,52 @@ export function CookieBanner() {
   const cookieConsent = useLocalStorageValue(STORAGE_KEYS.cookieConsent);
   const { setConsent, acknowledgeCookieConsent } = useConsent();
   const { openSettings } = useSettings();
+  const panelRef = useRef(null);
+  const previouslyFocusedRef = useRef(null);
 
-  if (!isMounted || cookieConsent === 'accepted') {
+  const isVisible = isMounted && cookieConsent !== 'accepted';
+
+  useEffect(() => {
+    if (!isVisible || !panelRef.current) {
+      return undefined;
+    }
+
+    previouslyFocusedRef.current = document.activeElement;
+    const panel = panelRef.current;
+    const focusable = panel.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    first?.focus();
+
+    function onKeyDown(event) {
+      if (event.key === 'Escape') {
+        return;
+      }
+      if (event.key !== 'Tab' || focusable.length === 0) {
+        return;
+      }
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    }
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      const previous = previouslyFocusedRef.current;
+      if (previous && typeof previous.focus === 'function') {
+        previous.focus();
+      }
+    };
+  }, [isVisible]);
+
+  if (!isVisible) {
     return null;
   }
 
@@ -46,13 +91,14 @@ export function CookieBanner() {
 
   return (
     <div
+      ref={panelRef}
       role="dialog"
       aria-modal="true"
       aria-labelledby="cookie-banner-title"
       aria-describedby="cookie-banner-description"
       className={cn(
         'fixed left-4 z-40 max-h-[min(70dvh,28rem)] w-[min(100vw-2rem,22rem)] overflow-y-auto rounded-xl border bg-card p-4 shadow-lg',
-        BANNER_ABOVE_DOCK,
+        BANNER_ABOVE_MOBILE_NAV,
       )}
     >
       <p id="cookie-banner-title" className="text-sm font-medium">

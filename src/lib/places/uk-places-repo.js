@@ -3,6 +3,7 @@ import { buildCityId } from '@/lib/utils';
 import { UK_PLACE_TIER_A, UK_PLACES_PHASE_A } from '@/constants/uk-places-phase-a';
 import { UK_PLACE_TIER_B, UK_PLACES_PHASE_B } from '@/constants/uk-places-phase-b';
 import { PLACE_SEO_HOT_REFRESH_LIMIT } from '@/constants/weather-places';
+import { normalizePlaceSlug } from '@/lib/places/normalize-place-slug';
 import {
   findWeatherPlaceBySlug,
   weatherPlaceToCityRecord,
@@ -47,17 +48,21 @@ export function ukPlaceToCityRecord(place) {
     seoSlug: place.slug,
     placeType: place.placeType ?? null,
     population: place.population ?? null,
+    tier: place.tier ?? null,
+    viewCount: place.viewCount ?? 0,
+    lastViewedAt: place.lastViewedAt ?? null,
   };
 }
 
 export function findUkPlaceBySlug(slug) {
-  if (!slug) {
+  const normalized = normalizePlaceSlug(slug);
+  if (!normalized) {
     return null;
   }
 
   const row = getDb()
     .prepare('SELECT * FROM uk_places WHERE slug = ?')
-    .get(decodeURIComponent(slug));
+    .get(normalized);
 
   return mapPlaceRow(row);
 }
@@ -138,7 +143,8 @@ export function countUkPlaces() {
 }
 
 export function recordUkPlaceView(slug) {
-  if (!slug) {
+  const normalized = normalizePlaceSlug(slug);
+  if (!normalized) {
     return;
   }
 
@@ -150,11 +156,12 @@ export function recordUkPlaceView(slug) {
            last_viewed_at = ?
        WHERE slug = ?`,
     )
-    .run(now, decodeURIComponent(slug));
+    .run(now, normalized);
 }
 
 export function recordUkPlaceFetched(slug) {
-  if (!slug) {
+  const normalized = normalizePlaceSlug(slug);
+  if (!normalized) {
     return;
   }
 
@@ -165,7 +172,7 @@ export function recordUkPlaceFetched(slug) {
        SET last_fetched_at = ?
        WHERE slug = ?`,
     )
-    .run(now, decodeURIComponent(slug));
+    .run(now, normalized);
 }
 
 function upsertUkPlaces(places, defaultTier) {

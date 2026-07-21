@@ -29,4 +29,6 @@ export const STORAGE_KEYS = {
   temperatureUnit: 'meridian:temperature-unit',
   preferredLocale: 'meridian:preferred-locale',
   weatherRefreshMode: 'meridian:weather-refresh-mode',
+  pwaInstallNudgeDismissed: 'meridian:pwa-install-nudge-dismissed',
+  pwaNotifyMode: 'meridian:pwa-notify-mode',
 };

@@ -1,43 +1,31 @@
 export const monetizationDoc = {
   slug: 'monetization',
-  title: 'Monetization & consent',
-  lastUpdated: '2026-07-15',
+  title: 'Monetization',
+  lastUpdated: '2026-07-21',
   sections: [
     {
-      id: 'tiers',
-      title: 'Free for everyone today',
+      id: 'advertising',
+      title: 'Advertising (AdSense)',
       body:
-        'meridian runs as a free weather site. There is no working Premium checkout or paid plan that removes ads. Advertising only appears if you allow advertising consent and the operator configured Google AdSense.',
+        'Google AdSense Auto ads run when GOOGLE_ADSENSE_CLIENT_ID (or MERIDIAN_ADSENSE_CLIENT_ID) is set and the visitor has turned on advertising consent. The adsbygoogle.js runtime loader injects only after that consent. Root HTML may include a google-adsense-account meta tag for publisher verification without loading the script. Ad-free licenses suppress fills. Placeholder PNGs under public/ads/ remain for offline or unfilled creatives.',
     },
     {
-      id: 'consent-model',
-      title: 'Your privacy choices',
+      id: 'ad-free',
+      title: 'Ad-free (Stripe)',
       body:
-        'The first visit banner lets you choose:\n\n• Accept all — useful features plus advertising\n• Accept functional — useful features without advertising\n• Essential only — basics for the site to work\n• Manage preferences — turn categories on or off yourself\n\nUseful categories explained simply:\n• Functional — remember weather on this device between visits; precise location helpers if you allow them\n• Advertising — Google ads when configured\n• Analytics — optional site usage measurement and Google Analytics when configured (not turned on by “Accept all”)\n\nChange your mind later under Settings → Cookies when the floating Settings control is available (it can hide while scrolling, and may be offline under reduced motion).',
+        'Optional Stripe checkout removes ads on this device (license cookie). Requires STRIPE_* keys and ADFEEE_LICENSE_SECRET. When billing is not configured, Settings → Remove ads shows an unavailable status — no fake checkout buttons. Restore-by-email and Customer Portal live under /api/billing/*.',
     },
     {
-      id: 'adsense',
-      title: 'Ads you might see',
+      id: 'premium',
+      title: 'Weather Premium',
       body:
-        'When advertising is allowed and AdSense is configured, ads can appear on the home hero, under Your locations, under city-page tabs, and in some journal layouts. If ads are not configured or you declined advertising, you see a branded placeholder instead of a live ad. Home dashboard ad + Journal teaser are on by default (hide with NEXT_PUBLIC_SHOW_HOME_STRETCH=0).',
+        'There is no paid weather Premium tier. meridian:tier is reserved and unused. The minutely precipitation API scope may exist for future use but is not a gated product UI.',
     },
     {
       id: 'analytics',
-      title: 'Usage measurement',
+      title: 'Analytics',
       body:
-        'If you switch Analytics on, the site may record simple first-party usage (such as which pages were viewed) and, when configured, load Google Analytics. Ad-slot visibility counting also needs advertising consent. Declining analytics keeps those loaders off.',
-    },
-    {
-      id: 'data',
-      title: 'We do not sell your data',
-      body:
-        'meridian does not sell personal data. Any future paid data product would need clear notice and fresh consent.',
-    },
-    {
-      id: 'operators',
-      title: 'For site operators',
-      body:
-        'Tier hardcoded free; meridian:tier unused; PremiumGate / minutely UI not wired. AdSense: GOOGLE_ADSENSE_CLIENT_ID plus GOOGLE_ADSENSE_SLOT_DASHBOARD, GOOGLE_ADSENSE_SLOT_HERO, GOOGLE_ADSENSE_SLOT_RECENT, GOOGLE_ADSENSE_SLOT_CITY_DETAIL, GOOGLE_ADSENSE_SLOT_DEFAULT. Active AdSlots: dashboard, hero, city-detail; recent-checks placement has no home UI. Placeholders: public/ads/*.png (sr-only overlay). Analytics: SiteAnalyticsBeacon + POST /api/analytics/collect when consent.analytics; GA4 needs NEXT_PUBLIC_GA_MEASUREMENT_ID + same consent. Stripe not implemented.',
+        'SiteAnalyticsBeacon posts to /api/analytics/collect when analytics consent is on. The collect route trusts the signed meridian_consent HttpOnly cookie only (not body consent flags) and requires same-origin. GA4 needs NEXT_PUBLIC_GA_MEASUREMENT_ID plus analytics consent. “Accept all” on the cookie banner enables functional + advertising, not analytics.',
     },
   ],
 };

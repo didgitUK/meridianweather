@@ -122,33 +122,22 @@ function isDevBypassEnabled() {
 }
 
 function sessionFromParsed(parsed) {
-  if (parsed.sub) {
-    const row = getAdminUserById(parsed.sub);
-    if (!row || !row.active) {
-      return { authenticated: false, user: null };
-    }
-    const user = publicAdminUser(row);
-    const tokenSv = typeof parsed.sv === 'number' ? parsed.sv : 0;
-    const userSv = typeof user.sessionVersion === 'number' ? user.sessionVersion : 0;
-    if (tokenSv !== userSv) {
-      return { authenticated: false, user: null };
-    }
-    return { authenticated: true, user };
+  // Reject legacy null-sub sessions — they skip session_version invalidation.
+  if (!parsed.sub) {
+    return { authenticated: false, user: null };
   }
 
-  return {
-    authenticated: true,
-    user: {
-      id: null,
-      email: parsed.email ?? null,
-      displayName: parsed.name ?? 'Admin',
-      active: true,
-      createdAt: null,
-      updatedAt: null,
-      lastLoginAt: null,
-      sessionVersion: 0,
-    },
-  };
+  const row = getAdminUserById(parsed.sub);
+  if (!row || !row.active) {
+    return { authenticated: false, user: null };
+  }
+  const user = publicAdminUser(row);
+  const tokenSv = typeof parsed.sv === 'number' ? parsed.sv : 0;
+  const userSv = typeof user.sessionVersion === 'number' ? user.sessionVersion : 0;
+  if (tokenSv !== userSv) {
+    return { authenticated: false, user: null };
+  }
+  return { authenticated: true, user };
 }
 
 const DEV_ADMIN_USER = {

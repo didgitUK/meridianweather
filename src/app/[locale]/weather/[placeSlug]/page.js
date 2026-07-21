@@ -3,7 +3,10 @@ import { notFound } from 'next/navigation';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { hasLocale } from 'next-intl';
 import { CityDetailPage } from '@/features/weather/components/CityDetailPage';
-import { HomeBlogSection } from '@/features/weather/components/HomeBlogSection';
+import { BrandLoadingScreen } from '@/features/weather/components/CityDetailLoadingScreen';
+import { PlaceGuidesSection } from '@/features/weather/components/PlaceGuidesSection';
+import { PlaceLocalCoverageSection } from '@/features/weather/components/PlaceLocalCoverageSection';
+import { PlaceThingsToDoSection } from '@/features/weather/components/PlaceThingsToDoSection';
 import { PageSection } from '@/components/layout/PageSection';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { UK_PLACE_TIER_A } from '@/constants/uk-places-phase-a';
@@ -14,14 +17,19 @@ import {
 import { summarizeCityWeather } from '@/lib/city-weather-seo';
 import {
   listUkPlaces,
-  resolveWeatherPlace,
   seedAllUkPlaces,
   countUkPlaces,
 } from '@/lib/places/uk-places-repo';
+import { resolveWeatherPlaceOrCreate } from '@/lib/places/resolve-weather-place-or-create';
 import {
   buildWeatherPlaceFaqItems,
   getPlaceWeatherForSeo,
 } from '@/lib/places/weather-place-seo';
+import { resolvePlaceDidYouKnow } from '@/lib/places/place-did-you-know';
+import { enqueuePlaceContentIfNeeded } from '@/lib/places/enqueue-place-content';
+import { listPublishedPlaceArticles } from '@/lib/places/place-articles-repo';
+import { listPlaceLocalLinks } from '@/lib/places/place-local-links-repo';
+import { listPlacePois } from '@/lib/places/place-pois-repo';
 import {
   buildCityWebPageSchema,
   buildFaqSchema,
@@ -61,15 +69,16 @@ export function generateStaticParams() {
   );
 }
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata({ params, searchParams }) {
   const { placeSlug, locale } = await params;
+  const query = await searchParams;
 
   if (!hasLocale(routing.locales, locale)) {
     return {};
   }
 
   ensureUkPlacesSeeded();
-  const city = resolveWeatherPlace(placeSlug);
+  const city = await resolveWeatherPlaceOrCreate(placeSlug, query);
   if (!city) {
     return {};
   }
@@ -78,7 +87,9 @@ export async function generateMetadata({ params }) {
   const weather = await getPlaceWeatherForSeo(city, getOpenWeatherLang(locale));
   const summary = summarizeCityWeather(weather, city);
   const region = city.state || city.country;
-  const path = `/weather/${city.seoSlug ?? placeSlug}`;
+  const canonicalSlug = city.seoSlug ?? city.id ?? placeSlug;
+  const path = `/weather/${canonicalSlug}`;
+  const title = t('weatherPlaceTitle', { city: city.name });
   const description = summary.condition || summary.temperature != null
     ? t('weatherPlaceDescriptionWithSummary', {
         city: city.name,
@@ -93,7 +104,7 @@ export async function generateMetadata({ params }) {
     : t('weatherPlaceDescription', { city: city.name, region });
 
   return buildPageMetadata({
-    title: t('weatherPlaceTitle', { city: city.name }),
+    title,
     description,
     path: buildLocalizedPath(path, locale),
     locale: getOgLocale(locale),
@@ -101,13 +112,14 @@ export async function generateMetadata({ params }) {
   });
 }
 
-export default async function WeatherPlacePage({ params }) {
+export default async function WeatherPlacePage({ params, searchParams }) {
   const { placeSlug, locale } = await params;
+  const query = await searchParams;
   setRequestLocale(locale);
   ensureUkPlacesSeeded();
 
-  const decodedSlug = decodeURIComponent(placeSlug);
-  const city = resolveWeatherPlace(decodedSlug);
+  const decodedSlug = placeSlug;
+  const city = await resolveWeatherPlaceOrCreate(decodedSlug, query);
 
   if (!city) {
     notFound();
@@ -119,11 +131,34 @@ export default async function WeatherPlacePage({ params }) {
   // images are not resolved or shown for UK place pages.
   const heroImage = null;
 
-  const path = `/weather/${city.seoSlug ?? decodedSlug}`;
+  const placeSlugResolved = city.seoSlug ?? city.id;
+  const path = `/weather/${placeSlugResolved}`;
   const region = city.state || city.country;
   const faqItems = buildWeatherPlaceFaqItems(city, weather, t);
   const pageTitle = t('weatherPlaceTitle', { city: city.name });
-  const pageDescription = t('weatherPlaceDescription', { city: city.name, region });
+  const summary = summarizeCityWeather(weather, city);
+  const pageDescription = summary.condition || summary.temperature != null
+    ? t('weatherPlaceDescriptionWithSummary', {
+        city: city.name,
+        region,
+        summary: [
+          summary.temperature != null ? `${Math.round(summary.temperature)}°C` : null,
+          summary.condition,
+        ]
+          .filter(Boolean)
+          .join(', '),
+      })
+    : t('weatherPlaceDescription', { city: city.name, region });
+  const didYouKnow = resolvePlaceDidYouKnow(city);
+  const factKeyByVariant = {
+    lat: 'weatherPlaceFactLat',
+    equator: 'weatherPlaceFactEquator',
+    prime: 'weatherPlaceFactPrime',
+    region: 'weatherPlaceFactRegion',
+  };
+  const seoFact = didYouKnow
+    ? t(factKeyByVariant[didYouKnow.key], didYouKnow.params)
+    : null;
   const initialScopes = weather
     ? {
         current: { data: weather.current, meta: weather.currentMeta },
@@ -133,6 +168,29 @@ export default async function WeatherPlacePage({ params }) {
           : {}),
       }
     : null;
+
+  const pois = listPlacePois(placeSlugResolved);
+  const guides = listPublishedPlaceArticles(placeSlugResolved);
+  const localLinks = listPlaceLocalLinks(placeSlugResolved);
+
+  enqueuePlaceContentIfNeeded(
+    {
+      slug: placeSlugResolved,
+      name: city.name,
+      lat: city.lat,
+      lon: city.lon,
+      adminArea: city.state,
+      country: city.country,
+      population: city.population,
+      placeType: city.placeType,
+      tier: city.tier,
+      viewCount: city.viewCount,
+      lastViewedAt: city.lastViewedAt,
+    },
+    weather,
+  );
+
+  const hasLocalContent = pois.length > 0 || guides.length > 0 || localLinks.length > 0;
 
   return (
     <>
@@ -146,28 +204,48 @@ export default async function WeatherPlacePage({ params }) {
             })}
           />
           <JsonLd data={buildFaqSchema(faqItems)} />
-          <Suspense fallback={<p className="text-sm text-muted-foreground">Loading forecast…</p>}>
+          <Suspense fallback={<BrandLoadingScreen stageKey="loadingLocation" />}>
             <CityDetailPage
               cityId={city.id}
               initialCity={city}
               initialScopes={initialScopes}
               heroImage={heroImage}
-              showMidAd
               seoIntro={{
                 title: t('weatherPlaceH1', { city: city.name }),
+                factLabel: t('weatherPlaceDidYouKnow'),
+                fact: seoFact,
                 lede: t('weatherPlaceLede', { city: city.name, region }),
+                bridge: t('weatherPlaceSeoBridge', { city: city.name }),
               }}
             />
           </Suspense>
         </div>
       </PageSection>
 
-      <PageSection
-        className="border-b-0 bg-[#f7f7f7] dark:bg-background"
-        innerClassName="!pb-[calc(var(--space-section-block)*2)]"
-      >
-        <HomeBlogSection />
-      </PageSection>
+      {hasLocalContent ? (
+        <PageSection
+          className="border-b-0 bg-[#f7f7f7] dark:bg-background"
+          innerClassName="!pb-[calc(var(--space-section-block)*2)]"
+        >
+          <div className="flex flex-col gap-12">
+            <PlaceThingsToDoSection
+              placeName={city.name}
+              placeLat={city.lat}
+              placeLon={city.lon}
+              pois={pois}
+            />
+            <PlaceGuidesSection
+              placeName={city.name}
+              placeSlug={placeSlugResolved}
+              articles={guides}
+            />
+            <PlaceLocalCoverageSection
+              placeName={city.name}
+              links={localLinks}
+            />
+          </div>
+        </PageSection>
+      ) : null}
     </>
   );
 }

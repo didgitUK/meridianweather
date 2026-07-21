@@ -8,8 +8,6 @@ import { useHomeLocationWeather } from '@/features/cities/hooks/useHomeLocationW
 import { DashboardHeroTitle } from '@/features/weather/components/DashboardHeroTitle';
 import { DashboardHeroActions } from '@/features/weather/components/DashboardHeroActions';
 import { HeroNearbyLocationsCarousel } from '@/features/weather/components/HeroNearbyLocationsCarousel';
-import { AdSlot } from '@/components/monetization/AdSlot';
-import { AD_PLACEMENTS, SHOW_HOME_STRETCH_SECTIONS } from '@/constants/platform';
 import { TYPOGRAPHY } from '@/constants/design-tokens';
 import { cn } from '@/lib/utils';
 
@@ -49,7 +47,7 @@ function HeroCardFrame({ children, className, glow = true, allowOverflow = false
   );
 }
 
-export function DashboardHero({ onCheckCity, heroImage = null }) {
+export function DashboardHero({ onCheckCity }) {
   const tBrand = useTranslations('Brand');
   const tHero = useTranslations('Dashboard.hero');
   const tCommon = useTranslations('Common');
@@ -66,10 +64,6 @@ export function DashboardHero({ onCheckCity, heroImage = null }) {
   } = useHomeLocationWeather();
 
   const showLocalCard = hasCoordinates || isLoading;
-  const adImageUrl = heroImage?.landscape?.imageUrl ?? null;
-  const adLocation = city
-    ? { name: city.name, country: city.country }
-    : null;
 
   function handleConfirmLocation(selected) {
     confirmHomeLocation(selected);
@@ -93,15 +87,8 @@ export function DashboardHero({ onCheckCity, heroImage = null }) {
       </div>
 
       <div className="flex w-full max-w-6xl flex-col gap-2 sm:gap-2.5">
-      <div
-        className={cn(
-          'pointer-events-auto relative z-20 grid w-full grid-cols-1 items-stretch gap-4 overflow-visible sm:gap-5',
-          SHOW_HOME_STRETCH_SECTIONS
-            ? 'md:grid-cols-[1fr_2fr_1fr]'
-            : 'md:grid-cols-[1fr_2fr]',
-        )}
-      >
-        <HeroCardFrame className="justify-center p-4 text-left sm:p-5">
+      <div className="pointer-events-auto relative z-20 grid w-full grid-cols-1 items-stretch gap-4 overflow-visible sm:gap-5 md:grid-cols-2">
+        <HeroCardFrame className="justify-start p-4 text-left sm:p-5">
           {showLocalCard ? (
             <HeroLocalWeatherCard
               city={city}
@@ -115,7 +102,7 @@ export function DashboardHero({ onCheckCity, heroImage = null }) {
               onConfirmLocation={handleConfirmLocation}
             />
           ) : (
-            <div className="flex flex-1 flex-col justify-center gap-2">
+            <div className="flex flex-1 flex-col justify-start gap-2">
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
                 {tCommon('nearYou')}
               </p>
@@ -146,24 +133,6 @@ export function DashboardHero({ onCheckCity, heroImage = null }) {
             </div>
           </div>
         </HeroCardFrame>
-
-        {SHOW_HOME_STRETCH_SECTIONS ? (
-          <HeroCardFrame
-            glow={false}
-            className="mx-auto aspect-square w-full max-w-[14rem] border-0 bg-transparent p-0 shadow-none md:mx-0 md:max-w-none md:aspect-auto md:min-h-0"
-          >
-            <AdSlot
-              placement={AD_PLACEMENTS.hero}
-              imageUrl={
-                typeof adImageUrl === 'string' && /^https?:\/\//.test(adImageUrl)
-                  ? adImageUrl
-                  : null
-              }
-              location={adLocation}
-              className="size-full min-h-0 border-0 bg-transparent p-0 shadow-none [&_[role=complementary]]:size-full [&_[role=complementary]]:rounded-[inherit]"
-            />
-          </HeroCardFrame>
-        ) : null}
       </div>
 
       <HeroNearbyLocationsCarousel className="w-full" />

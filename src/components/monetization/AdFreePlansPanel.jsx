@@ -85,6 +85,11 @@ export function AdFreePlansPanel() {
             {t('manageBilling')}
           </Button>
         </div>
+      ) : !billingEnabled ? (
+        <div className="rounded-xl border border-border/70 bg-muted/20 p-4 text-sm" role="status">
+          <p className="font-medium">{t('unavailableTitle')}</p>
+          <p className="mt-1 text-muted-foreground">{t('unavailableBody')}</p>
+        </div>
       ) : (
         <>
           <label className="flex flex-col gap-1.5 text-sm">
@@ -106,7 +111,7 @@ export function AdFreePlansPanel() {
                 <button
                   key={planId}
                   type="button"
-                  disabled={!billingEnabled || Boolean(busy)}
+                  disabled={Boolean(busy)}
                   onClick={() => handleCheckout(planId)}
                   className={cn(
                     'flex items-center justify-between rounded-xl border border-border/80 bg-card px-4 py-3 text-left transition-colors',
@@ -126,10 +131,6 @@ export function AdFreePlansPanel() {
             })}
           </div>
 
-          {!billingEnabled ? (
-            <p className="text-xs text-muted-foreground">{t('comingSoon')}</p>
-          ) : null}
-
           <div className="border-t border-border/60 pt-3">
             <p className="text-xs text-muted-foreground">{t('restoreHint')}</p>
             <Button
@@ -137,7 +138,7 @@ export function AdFreePlansPanel() {
               variant="ghost"
               size="sm"
               className="mt-2 px-0"
-              disabled={!billingEnabled || busy === 'restore' || !email.includes('@')}
+              disabled={busy === 'restore' || !email.includes('@')}
               onClick={handleRestore}
             >
               {t('restoreCta')}

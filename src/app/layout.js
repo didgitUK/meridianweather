@@ -24,6 +24,7 @@ export const metadata = {
   ...(googleSiteVerification
     ? { verification: { google: googleSiteVerification } }
     : {}),
+  // Meta-only verification — runtime adsbygoogle.js loads after advertising consent.
   ...(adsenseClientId
     ? { other: { 'google-adsense-account': adsenseClientId } }
     : {}),
@@ -37,14 +38,6 @@ export default function RootLayout({ children }) {
     >
       <head>
         <link rel="preconnect" href="https://openweathermap.org" />
-        {/* AdSense site verification requires this snippet in initial HTML (not consent-gated). */}
-        {adsenseClientId ? (
-          <script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
-            crossOrigin="anonymous"
-          />
-        ) : null}
       </head>
       <body className="flex min-h-full flex-col text-base leading-normal">{children}</body>
     </html>

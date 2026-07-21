@@ -10,9 +10,7 @@
  * When unset, city headers prefer OpenStreetMap (see CityDetailOsmBackdrop).
  */
 
-export function isCityHeroStreetViewEnabled() {
-  return process.env.NEXT_PUBLIC_CITY_HERO_STREET_VIEW === '1';
-}
+export { isCityHeroStreetViewEnabled } from '@/lib/city-hero-flags';
 
 /**
  * @param {number} lat

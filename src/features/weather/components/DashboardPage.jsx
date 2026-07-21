@@ -13,7 +13,6 @@ import { hasActiveCitySubscriptions } from '@/features/subscriptions/utils/subsc
 import { useWeatherData } from '@/features/weather/hooks/useWeatherData';
 import { useCheckCityNavigation } from '@/features/cities/hooks/useCheckCityNavigation';
 import { WeatherGrid } from '@/features/weather/components/WeatherGrid';
-import { AdSlot } from '@/components/monetization/AdSlot';
 import {
   DASHBOARD_LOCATIONS_SECTION_ID,
   DASHBOARD_RECENT_CHECKS_SECTION_ID,
@@ -23,7 +22,7 @@ import { SPACING, TYPOGRAPHY } from '@/constants/design-tokens';
 import { singleFlight } from '@/lib/client/single-flight';
 import { cn } from '@/lib/utils';
 
-export function DashboardPage({ heroImage = null }) {
+export function DashboardPage() {
   const t = useTranslations('Dashboard.locations');
   const tCommon = useTranslations('Common');
   const clientId = useClientId();
@@ -114,26 +113,12 @@ export function DashboardPage({ heroImage = null }) {
       </PageSection>
 
       {SHOW_HOME_STRETCH_SECTIONS ? (
-        <>
-          <PageSection tone="muted" className="border-b-0" innerClassName="py-8 sm:py-10">
-            <AdSlot
-              placement="dashboard"
-              imageUrl={
-                typeof heroImage?.landscape?.imageUrl === 'string'
-                && /^https?:\/\//.test(heroImage.landscape.imageUrl)
-                  ? heroImage.landscape.imageUrl
-                  : null
-              }
-            />
-          </PageSection>
-
-          <PageSection
-            className="border-b-0 bg-[#f7f7f7] dark:bg-background"
-            innerClassName="!pb-[calc(var(--space-section-block)*2)]"
-          >
-            <HomeBlogSection />
-          </PageSection>
-        </>
+        <PageSection
+          className="border-b-0 bg-[#f7f7f7] dark:bg-background"
+          innerClassName="!pb-[calc(var(--space-section-block)*2)]"
+        >
+          <HomeBlogSection />
+        </PageSection>
       ) : null}
 
       <RemoveCityDialog

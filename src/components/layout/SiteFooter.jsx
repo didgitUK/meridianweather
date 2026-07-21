@@ -32,14 +32,7 @@ function FooterMarketing() {
       <div className="grid gap-8 sm:gap-10 lg:grid-cols-[1fr_22rem] lg:items-start">
         <div className="flex flex-col gap-8">
           <FooterBrand />
-          <FooterColumn
-            title={
-              <>
-                <span className="line-through opacity-70">{t('getTheApp')}</span>
-                <span className="ml-2 normal-case tracking-normal">{t('comingSoon')}</span>
-              </>
-            }
-          >
+          <FooterColumn title={t('getTheApp')}>
             <FooterAppDownloads />
           </FooterColumn>
         </div>
@@ -78,7 +71,7 @@ export function SiteFooter() {
   }
 
   return (
-    <footer className="mt-auto border-t" style={footerStyle}>
+    <footer className="mt-auto border-t pb-[var(--mobile-nav-offset,0px)] md:pb-0" style={footerStyle}>
       <FooterMarketing />
       <FooterLegalSection variant="default" />
     </footer>

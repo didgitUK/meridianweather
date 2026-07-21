@@ -11,8 +11,10 @@ import { AdSenseProvider } from '@/providers/AdSenseProvider';
 import { AdFreeProvider } from '@/providers/AdFreeProvider';
 import { UserLocationProfileProvider } from '@/features/cities/hooks/useUserLocationProfile';
 import { PwaRegistrar } from '@/components/layout/PwaRegistrar';
+import { PwaInstallNudge } from '@/components/layout/PwaInstallNudge';
 import { ScrollToTop } from '@/components/layout/ScrollToTop';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
+import { BottomEdgeSwipeSearchListener } from '@/hooks/useBottomEdgeSwipeSearch';
 import { Toaster } from 'sonner';
 import { TOAST_DURATION_MS, TOAST_VISIBLE_LIMIT } from '@/constants/toast';
 
@@ -30,6 +32,8 @@ export function AppProviders({ children }) {
                       <AdSenseProvider>
                         <ScrollToTop />
                         <PwaRegistrar />
+                        <PwaInstallNudge />
+                        <BottomEdgeSwipeSearchListener />
                         {children}
                         <MobileBottomNav />
                         <Toaster

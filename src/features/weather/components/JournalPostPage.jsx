@@ -3,13 +3,10 @@ import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { CmsBody } from '@/components/cms/CmsBody';
 import { PageSection } from '@/components/layout/PageSection';
-import { AdSlot } from '@/components/monetization/AdSlot';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { BlogArticleCard } from '@/features/weather/components/BlogArticleCard';
-import { JournalPostComments } from '@/features/weather/components/JournalPostComments';
 import { JournalPostSidebar } from '@/features/weather/components/JournalPostSidebar';
 import { getDocsPages } from '@/content/docs';
-import { AD_PLACEMENTS } from '@/constants/platform';
 import { SPACING, TYPOGRAPHY } from '@/constants/design-tokens';
 import { buildArticleSchema, buildBreadcrumbSchema } from '@/lib/seo';
 import { cn } from '@/lib/utils';
@@ -131,15 +128,6 @@ export async function JournalPostPage({ post, relatedPosts = [], locale = 'en' }
                 className="flex flex-col gap-5 text-base leading-relaxed text-foreground/90 [&_a]:text-primary [&_a]:underline [&_h2]:font-heading [&_h2]:text-2xl [&_h3]:font-heading [&_h3]:text-xl [&_li]:ms-5 [&_ol]:list-decimal [&_ul]:list-disc"
               />
             </article>
-
-            <JournalPostComments slug={post.id} />
-
-            <section aria-label={tPost('bannerAdLabel')} className="w-full">
-              <AdSlot
-                placement={AD_PLACEMENTS.dashboard}
-                className="w-full [&_[role=complementary]]:aspect-[4466/1302] [&_[role=complementary]]:w-full"
-              />
-            </section>
           </div>
 
           <JournalPostSidebar schemaLinks={schemaLinks} />

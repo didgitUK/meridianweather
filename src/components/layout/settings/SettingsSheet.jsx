@@ -6,6 +6,7 @@ import { DEFAULT_ACCESSIBILITY_PREFERENCES } from '@/constants/accessibility';
 import {
   AccessibilityPreferencesPanel,
 } from '@/components/layout/settings/AccessibilityPreferencesPanel';
+import { AppInstallPanel } from '@/components/layout/settings/AppInstallPanel';
 import {
   CookiePreferencesPanel,
   createAcceptedConsentDraft,
@@ -41,6 +42,10 @@ function SettingsPanel({ activeTab, cookieDraft, setCookieDraft, accessibilityDr
     return <AdFreePlansPanel />;
   }
 
+  if (activeTab === 'app') {
+    return <AppInstallPanel />;
+  }
+
   return (
     <AccessibilityPreferencesPanel
       draft={accessibilityDraft}
@@ -62,7 +67,7 @@ function SettingsFooterActions({
   const tCookie = useTranslations('Cookie.preferences');
   const tA11y = useTranslations('Settings.accessibility');
 
-  if (activeTab === 'adFree') {
+  if (activeTab === 'adFree' || activeTab === 'app') {
     return null;
   }
 

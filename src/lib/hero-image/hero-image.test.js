@@ -335,7 +335,7 @@ describe('hero image resolver', () => {
     expect(image?.portrait).toBeNull();
   });
 
-  it('falls through to static when only country tourist photos would match a small town', async () => {
+  it('returns null when photo cascade yields no match (static fallbacks withdrawn)', async () => {
     const fetchImpl = vi.fn(async () => ({
       ok: true,
       json: async () => ({
@@ -355,10 +355,10 @@ describe('hero image resolver', () => {
       { fetchImpl, accessKey: 'test-key', force: true },
     );
 
-    expect(image?.landscape?.queryUsed).toBe('static-fallback');
+    expect(image).toBeNull();
   });
 
-  it('returns static fallback when unsplash access key is missing', async () => {
+  it('returns null when unsplash access key is missing (no static SVG fallback)', async () => {
     const image = await getHeroImageForRegion(
       { country: 'GB', city: 'StaticFallbackProbeCity' },
       {
@@ -367,8 +367,7 @@ describe('hero image resolver', () => {
       },
     );
 
-    expect(image?.landscape?.imageUrl).toBe('/hero/gb-landscape.svg');
-    expect(image?.portrait?.imageUrl).toBe('/hero/gb-portrait.svg');
+    expect(image).toBeNull();
   });
 
   it('falls through to Wikimedia via injected cascade when Unsplash misses', async () => {

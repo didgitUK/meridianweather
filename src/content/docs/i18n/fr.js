@@ -235,7 +235,7 @@ export const DOCS_PAGES_I18N = [
         id: 'operators',
         title: 'Pour les opérateurs du site',
         body:
-          'Niveau codé en dur gratuit ; meridian:tier inutilisé ; PremiumGate / UI minutely non branchés. AdSense : GOOGLE_ADSENSE_CLIENT_ID plus GOOGLE_ADSENSE_SLOT_DASHBOARD, GOOGLE_ADSENSE_SLOT_HERO, GOOGLE_ADSENSE_SLOT_RECENT, GOOGLE_ADSENSE_SLOT_CITY_DETAIL, GOOGLE_ADSENSE_SLOT_DEFAULT. AdSlots actifs : dashboard, hero, city-detail ; emplacement recent-checks sans UI accueil. Placeholders : public/ads/*.png (overlay sr-only). Analytics : SiteAnalyticsBeacon + POST /api/analytics/collect quand consent.analytics ; GA4 nécessite NEXT_PUBLIC_GA_MEASUREMENT_ID + même consentement. Stripe non implémenté.',
+          'Tier always free; meridian:tier unused; no Premium weather UI. AdSense: GOOGLE_ADSENSE_CLIENT_ID (runtime script after advertising consent; meta verification only in root HTML). Auto ads; ad-free via Stripe when STRIPE_* + ADFEEE_LICENSE_SECRET set. Analytics: SiteAnalyticsBeacon + POST /api/analytics/collect with signed meridian_consent cookie; GA4 needs NEXT_PUBLIC_GA_MEASUREMENT_ID + analytics consent.',
       },
     ],
   },

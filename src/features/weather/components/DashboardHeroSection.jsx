@@ -4,12 +4,14 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { DashboardHeroBackdrop, DashboardHeroAttribution } from '@/features/weather/components/DashboardHeroBackdrop';
 import {
   CityDetailOsmBackdrop,
-  isCityHeroOsmEnabled,
 } from '@/features/weather/components/CityDetailOsmBackdrop';
+import { isCityHeroOsmEnabled } from '@/lib/city-hero-flags';
+import { HeroWeatherTimeline } from '@/features/weather/components/HeroWeatherTimeline';
 import {
   HomeLocationWeatherProvider,
   useHomeLocationWeather,
 } from '@/features/cities/hooks/useHomeLocationWeather';
+import { useHeroWeatherTheater } from '@/features/weather/hooks/useHeroWeatherTheater';
 import { deriveHeroWeatherScene } from '@/lib/hero-image/hero-weather-scene';
 import { fetchPlaceholderBg } from '@/lib/client/fetch-placeholder-bg';
 import { SPACING } from '@/constants/design-tokens';
@@ -190,14 +192,22 @@ function useResolvedDashboardHeroImage(initialHeroImage, { skipPhotoCascade = fa
 }
 
 function DashboardHeroSectionInner({ children, heroImage: initialHeroImage = null }) {
-  const { profile } = useHomeLocationWeather();
+  const { profile, weather, hourly } = useHomeLocationWeather();
   const mapCoords = resolveHomeMapCoords(profile);
-  const useSatellite = isCityHeroOsmEnabled() && Boolean(mapCoords);
+  const osmEnabled = isCityHeroOsmEnabled();
+  const useSatellite = osmEnabled && Boolean(mapCoords);
   const heroImage = useResolvedDashboardHeroImage(initialHeroImage, {
-    skipPhotoCascade: useSatellite,
+    // Map-first: never cascade stock photos while OSM heroes are enabled.
+    skipPhotoCascade: osmEnabled,
   });
-  const hasPhoto = Boolean(heroImage?.landscape?.imageUrl || heroImage?.portrait?.imageUrl);
+  const hasPhoto = !osmEnabled
+    && Boolean(heroImage?.landscape?.imageUrl || heroImage?.portrait?.imageUrl);
   const hasBackdrop = useSatellite || hasPhoto;
+  const theater = useHeroWeatherTheater({
+    hourlyPoints: hourly,
+    weather,
+    enabled: useSatellite,
+  });
 
   return (
     <DashboardHeroImageContext.Provider value={heroImage}>
@@ -205,7 +215,7 @@ function DashboardHeroSectionInner({ children, heroImage: initialHeroImage = nul
         className={cn(
           // overflow-visible so hero city-search dropdowns can escape card shells;
           // photo clipping stays on the backdrop layer.
-          'dashboard-hero relative isolate w-full overflow-visible border-b border-border/60 bg-background',
+          'dashboard-hero relative isolate w-full overflow-visible border-b border-border/60 bg-black',
           hasBackdrop && 'dashboard-hero--has-photo',
           useSatellite && 'dashboard-hero--weather-map',
         )}
@@ -218,8 +228,11 @@ function DashboardHeroSectionInner({ children, heroImage: initialHeroImage = nul
               showScrim={false}
               showClouds
               showPrecipitation
-              cloudOpacity={0.72}
-              precipOpacity={0.45}
+              showCityLights
+              cloudOpacity={theater.frame.cloudOpacity}
+              precipOpacity={theater.frame.precipOpacity}
+              lightsOpacity={theater.frame.lights}
+              nightDarkOpacity={theater.frame.wash}
               zoom={9}
             />
             <div
@@ -227,19 +240,36 @@ function DashboardHeroSectionInner({ children, heroImage: initialHeroImage = nul
               className="dashboard-hero__satellite-scrim pointer-events-none absolute inset-0 z-[1]"
             />
           </>
-        ) : (
+        ) : hasPhoto ? (
           <DashboardHeroBackdrop heroImage={heroImage} />
+        ) : (
+          <div aria-hidden className="pointer-events-none absolute inset-0 bg-black" />
         )}
         <div
           className={cn(
             'relative z-10 mx-auto flex min-h-[22rem] w-full max-w-6xl flex-col justify-center overflow-visible py-10 sm:min-h-[28rem] sm:py-16 md:min-h-[32rem] md:py-20 lg:min-h-[36rem] lg:py-24',
             SPACING.pageX,
             useSatellite && 'pointer-events-none',
+            useSatellite && 'pb-24 sm:pb-28',
           )}
         >
           {children}
-          {useSatellite ? null : <DashboardHeroAttribution heroImage={heroImage} />}
+          {useSatellite || !hasPhoto ? null : <DashboardHeroAttribution heroImage={heroImage} />}
         </div>
+        {useSatellite && theater.hours.length >= 2 ? (
+          <HeroWeatherTimeline
+            hours={theater.hours}
+            hourIndex={theater.hourIndex}
+            playing={theater.playing}
+            onScrub={theater.scrubTo}
+            onTogglePlaying={theater.togglePlaying}
+            reducedMotion={theater.reducedMotion}
+            timezone={weather?.timezone ?? null}
+            timezoneOffset={weather?.timezoneOffset ?? null}
+            sunrise={weather?.sunrise ?? null}
+            sunset={weather?.sunset ?? null}
+          />
+        ) : null}
       </section>
     </DashboardHeroImageContext.Provider>
   );
@@ -247,7 +277,7 @@ function DashboardHeroSectionInner({ children, heroImage: initialHeroImage = nul
 
 export function DashboardHeroSection({ children, heroImage = null }) {
   return (
-    <HomeLocationWeatherProvider>
+    <HomeLocationWeatherProvider includeHourly={isCityHeroOsmEnabled()}>
       <DashboardHeroSectionInner heroImage={heroImage}>
         {children}
       </DashboardHeroSectionInner>

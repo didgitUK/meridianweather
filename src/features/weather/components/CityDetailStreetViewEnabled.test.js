@@ -1,5 +1,5 @@
 import { describe, expect, it, afterEach } from 'vitest';
-import { isCityHeroStreetViewEnabled } from '@/features/weather/components/CityDetailStreetViewBackdrop';
+import { isCityHeroStreetViewEnabled } from '@/lib/city-hero-flags';
 
 describe('isCityHeroStreetViewEnabled', () => {
   const previous = process.env.NEXT_PUBLIC_CITY_HERO_STREET_VIEW;

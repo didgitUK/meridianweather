@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocale } from 'next-intl';
 import {
   DASHBOARD_CURRENT_MAX_AGE_MS,
+  OFFLINE_EMERGENCY_STALE_MAX_MS,
   SCOPE_TTL,
 } from '@/constants/weather';
 import { WEATHER_CHECK_TRIGGERS } from '@/constants/weather-check-triggers';
@@ -38,14 +39,20 @@ function readCachedScopeState(cityId, scope) {
   }
 
   const fetchedAt = cached.fetchedAt ?? null;
+  const ageMs = getSnapshotAgeMs(fetchedAt);
+  if (ageMs != null && ageMs > OFFLINE_EMERGENCY_STALE_MAX_MS) {
+    return null;
+  }
+
   const maxAgeMs = DASHBOARD_MAX_AGE_MS[scope] ?? null;
+  const withinFreshWindow = cacheMeetsMaxAge({ meta: { fetchedAt } }, maxAgeMs);
 
   return {
     data: cached.payload,
     meta: {
-      freshness: cacheMeetsMaxAge({ meta: { fetchedAt } }, maxAgeMs) ? 'acceptable' : 'stale',
+      freshness: withinFreshWindow ? 'acceptable' : 'stale',
       fetchedAt,
-      ageMs: getSnapshotAgeMs(fetchedAt),
+      ageMs,
       cacheLayer: 'client',
     },
   };
@@ -187,7 +194,18 @@ export function useWeatherData(savedCities, isHydrated) {
       setWeatherByCity((current) => {
         const fallback = { ...current };
         for (const city of citiesToFetch) {
-          if (!fallback[city.id]) {
+          const existing = fallback[city.id];
+          if (existing?.data) {
+            fallback[city.id] = {
+              ...existing,
+              meta: {
+                ...existing.meta,
+                freshness: 'stale',
+                offline: true,
+              },
+              warning: existing.warning ?? error.message,
+            };
+          } else {
             fallback[city.id] = { error: error.message };
           }
         }
@@ -197,7 +215,18 @@ export function useWeatherData(savedCities, isHydrated) {
       setForecastByCity((current) => {
         const fallback = { ...current };
         for (const city of citiesToFetch) {
-          if (!fallback[city.id]) {
+          const existing = fallback[city.id];
+          if (existing?.data?.points?.length) {
+            fallback[city.id] = {
+              ...existing,
+              meta: {
+                ...existing.meta,
+                freshness: 'stale',
+                offline: true,
+              },
+              loading: false,
+            };
+          } else if (!fallback[city.id]) {
             fallback[city.id] = { error: error.message, loading: false };
           }
         }

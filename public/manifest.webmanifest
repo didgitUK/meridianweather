@@ -1,13 +1,17 @@
 {
+  "id": "/",
   "name": "meridian — weather dashboard",
   "short_name": "meridian",
   "description": "Monitor current weather across the cities that matter to you.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "background_color": "#0a0a0a",
   "theme_color": "#0a0a0a",
+  "categories": ["weather", "utilities"],
+  "lang": "en-GB",
+  "dir": "ltr",
   "icons": [
     {
       "src": "/brand/favicon.png",
@@ -26,6 +30,20 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Search cities",
+      "short_name": "Search",
+      "url": "/search",
+      "description": "Find weather for a city"
+    },
+    {
+      "name": "Journal",
+      "short_name": "Journal",
+      "url": "/journal",
+      "description": "Weather journal articles"
     }
   ]
 }

@@ -175,6 +175,16 @@
   --scrollbar-track: #ececec;
   --scrollbar-thumb: #b3b3b3;
   --scrollbar-thumb-hover: #8a8a8a;
+  /* Mobile bottom nav clearance — 0 on desktop (nav hidden at md+). */
+  --mobile-nav-offset: 0px;
+}
+
+@media (max-width: 767px) {
+  :root,
+  .light,
+  .dark {
+    --mobile-nav-offset: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 .dark {

@@ -24,6 +24,7 @@ Cold miss ≈ **3** upstream calls (current + daily + hourly).
 
 - Seed: `npm run seed:uk-places` (Phase A + B)
 - Cron: `GET /api/cron/weather-place-seo` with `Authorization: Bearer $CRON_SECRET`
+- Sitemap: only tier ≤ 2 places, max **200** URLs per locale (`getWeatherPlaceSitemapEntries`) — do not list thousands of cold places
 - Snapshot keys isolate SEO TTL (`@seo`) so 24h SEO rows cannot poison dashboard freshness
 - Public `/api/weather` cannot pass `trigger=weather_place_seo`
 
@@ -31,3 +32,8 @@ Cold miss ≈ **3** upstream calls (current + daily + hourly).
 
 - Weekly-refresh thousands of places (forecast horizon goes stale mid-week and burns quota)
 - Raise SSG beyond ~100 places on Gandi
+- Seed Phase C / worldwide `weather_places` until Phase A+B hot/warm refresh stays within budget for ≥2 weeks and place-guide QA is stable
+
+## Phase C (deferred)
+
+Global place inventory remains a scaffold only (`weather_places` upserts). Do not mass-seed until SEO cron + content QA prove the UK corpus is healthy.

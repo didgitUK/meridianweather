@@ -18,7 +18,8 @@
 | Cookie legacy | `meridian:cookie-consent` | Banner accept flag | Consent | Until cleared |
 | Theme | `meridian:theme` | light / dark / system | Legitimate interest | Until cleared |
 | Analytics session | `sessionStorage` `meridian_analytics_sid` | First-party analytics session id | Consent (`analytics`) | Session |
-| Journal comments | `meridian:journal-comments:{slug}` | Device-only demo comments | Legitimate interest | Until cleared |
+| Journal comments | — | Removed; journal posts are read-only | — | — |
+| Consent cookie | HttpOnly `meridian_consent` | Analytics ingest binding | Consent | 1 year |
 | Admin session | HttpOnly cookie `meridian_admin_session` | Staff admin console | Legitimate interest | Session / expiry |
 | Email + subscription rows | SQLite `subscriptions` | Digests/alerts/newsletter | Consent | Until unsubscribe / admin delete |
 | Alert dedup | SQLite `subscription_send_log` | Prevent duplicate alert emails (`condition` stores dedup keys) | Legitimate interest | Indefinite in v1 |
@@ -29,7 +30,7 @@
 | Observations / archive | SQLite `weather_observations`, `weather_forecast_archive` | Upstream observation / forecast archives | Legitimate interest | Indefinite in v1 |
 | Hero cache | SQLite `hero_image_cache` | Dual-orientation hero URLs | Legitimate interest | Until refreshed |
 | AdSense reports | SQLite `adsense_report_snapshots` | Cached Management API rows | Legitimate interest | Until re-synced |
-| First-party analytics | SQLite `site_analytics_events` | Page path, engagement, scroll, ad-slot views | Consent (`analytics` / `advertising` for ad views) | Admin retention / indefinite in v1 |
+| First-party analytics | SQLite `site_analytics_events` | Page path, engagement, scroll, ad-slot views | Consent (`analytics` / `advertising` for ad views) | 90 days default (`/api/cron/data-retention`) |
 | Email templates | SQLite `email_templates` | Editable branded HTML | Legitimate interest | Until updated |
 | CMS pages | SQLite `cms_pages` | Editable legal/docs copy | Legitimate interest | Until updated |
 | Admin users | SQLite `admin_users`, `admin_invites`, `admin_password_resets` | Staff accounts and auth flows | Legitimate interest | Until deleted |
@@ -39,6 +40,12 @@
 | Email send log | SQLite `email_send_log` | Transactional send attempts (recipient redacted) | Legitimate interest | Indefinite in v1 |
 | App / error JSONL | `data/logs/*.jsonl` | Filesystem mirror of structured logger | Legitimate interest | Local disk until rotated/deleted |
 | Blog posts | SQLite `blog_posts` | Journal CMS (EN) | Legitimate interest | Until updated |
+| Place POIs | SQLite `place_pois` | OSM “Things to do” per weather place | Legitimate interest | Until refreshed / place deleted |
+| Place articles | SQLite `place_articles` | Generated local guides (stub/LLM) | Legitimate interest | Until unpublished / deleted |
+| Place local links | SQLite `place_local_links` | Outbound local-coverage URLs | Legitimate interest | Until refreshed |
+| Place content runs | SQLite `place_content_runs` | Pipeline job audit | Legitimate interest | Indefinite in v1 |
+| Place content budget | SQLite `place_content_budget` | Daily LLM/generation caps | Legitimate interest | Rolling day |
+| Push subscriptions | SQLite `push_subscriptions` | PWA Web Push endpoints + priority cities | Consent | Until unsubscribe / erase |
 
 ## Consent JSON shape (`meridian:consent`)
 
@@ -56,8 +63,18 @@ Functional consent gates **localStorage** L0 weather-cache writes. Analytics con
 
 ## Cache keys (L2)
 
-- Weather: `{lat.toFixed(4)},{lon.toFixed(4)},{scope}` plus `,{lang}` when `lang` is not `en`
+- Weather: `{lat.toFixed(4)},{lon.toFixed(4)},{scope}[@{ttlClass}]` plus `,{lang}` when `lang` is not `en`
+  - Product/dashboard fetches use the default TTL class
+  - SEO place warmers use `ttlClass=seo` (key suffix `@seo`) so 24h SEO snapshots cannot poison fresher city/dashboard reads
 - Geocode: `geocode:{normalisedQuery}`
+
+## Consent cookie (server)
+
+| Data | Location | Purpose |
+| --- | --- | --- |
+| Signed consent | HttpOnly cookie `meridian_consent` | Analytics/ad-view ingest binding (HMAC via `ADMIN_SECRET`) | Consent | 1 year |
+
+First-party analytics events are accepted only when this cookie matches; client body `consent` flags are ignored.
 
 ## Forecast payload fields
 

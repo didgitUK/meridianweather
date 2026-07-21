@@ -1,5 +1,6 @@
 import { getDb } from '@/lib/db';
 import { buildCityId } from '@/lib/utils';
+import { normalizePlaceSlug } from '@/lib/places/normalize-place-slug';
 
 function mapWeatherPlaceRow(row) {
   if (!row) {
@@ -40,29 +41,34 @@ export function weatherPlaceToCityRecord(place) {
     seoSlug: place.slug,
     placeType: place.placeType ?? null,
     population: place.population ?? null,
+    tier: place.tier ?? null,
+    viewCount: place.viewCount ?? 0,
+    lastViewedAt: place.lastViewedAt ?? null,
   };
 }
 
 export function findWeatherPlaceBySlug(slug) {
-  if (!slug) {
+  const normalized = normalizePlaceSlug(slug);
+  if (!normalized) {
     return null;
   }
 
   const row = getDb()
     .prepare('SELECT * FROM weather_places WHERE slug = ?')
-    .get(decodeURIComponent(slug));
+    .get(normalized);
 
   return mapWeatherPlaceRow(row);
 }
 
 export function findWeatherPlaceByCountrySlug(country, slug) {
-  if (!country || !slug) {
+  const normalized = normalizePlaceSlug(slug);
+  if (!country || !normalized) {
     return null;
   }
 
   const row = getDb()
     .prepare('SELECT * FROM weather_places WHERE country = ? AND slug = ?')
-    .get(String(country).toUpperCase(), decodeURIComponent(slug));
+    .get(String(country).toUpperCase(), normalized);
 
   return mapWeatherPlaceRow(row);
 }

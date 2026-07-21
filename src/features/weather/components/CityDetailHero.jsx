@@ -141,7 +141,6 @@ export function CityDetailHero({
                 icon={current.icon}
                 alt={current.description ?? tCommon('weatherIcon')}
                 size={96}
-                className="size-16 shrink-0 sm:size-20 md:size-24"
               />
             ) : null}
             <div className="min-w-0 flex-1">

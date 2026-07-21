@@ -77,9 +77,12 @@ function useUserLocationProfileState() {
     async function bootstrap() {
       setIsLoading(true);
 
-      const region = await loadRegionHintOnce();
-      if (!cancelled && region) {
-        writeUserLocationMeta({ ipHint: region });
+      // IP region hint is functional-consent gated (approximate network location).
+      if (consent.functional) {
+        const region = await loadRegionHintOnce();
+        if (!cancelled && region) {
+          writeUserLocationMeta({ ipHint: region });
+        }
       }
 
       if (!cancelled) {
@@ -97,7 +100,7 @@ function useUserLocationProfileState() {
       cancelled = true;
       window.removeEventListener('meridian:storage', handleStorage);
     };
-  }, [refreshProfile]);
+  }, [consent.functional, refreshProfile]);
 
   const requestPreciseLocation = useCallback(async () => {
     if (!consent.functional) {

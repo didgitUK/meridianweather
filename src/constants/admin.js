@@ -27,6 +27,7 @@ export const ADMIN_SECTION_IDS = {
   policies: 'policies',
   documentation: 'documentation',
   blog: 'blog',
+  placeGuides: 'place-guides',
   profile: 'profile',
   users: 'users',
 };
@@ -168,6 +169,12 @@ export const ADMIN_NAV_GROUPS = [
         label: 'Blog Articles',
         hint: 'Public /journal posts',
         icon: 'Newspaper',
+      },
+      {
+        id: ADMIN_SECTION_IDS.placeGuides,
+        label: 'Place guides',
+        hint: 'Auto-generated /weather location guides',
+        icon: 'MapPin',
       },
     ],
   },

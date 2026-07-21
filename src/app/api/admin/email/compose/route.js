@@ -4,6 +4,7 @@ import { getEmailTemplate } from '@/lib/email-templates/email-template-repo';
 import { sendAdminComposeEmail } from '@/lib/email';
 import { logAdminAuditEvent } from '@/lib/admin-audit-repo';
 import { getAdminSessionFromRequest } from '@/lib/server/admin-auth';
+import { parseEmail } from '@/lib/validators';
 
 function getAppUrl() {
   return process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
@@ -17,8 +18,7 @@ export async function POST(request) {
 
   const body = await request.json().catch(() => ({}));
   const slug = body.slug?.trim() ?? '';
-  const to = body.to?.trim() ?? '';
-  const recipientName = body.recipientName?.trim() || to;
+  const recipientNameRaw = body.recipientName?.trim() ?? '';
   const subjectOverride = body.subject?.trim() ?? '';
   const messageHtml = body.messageHtml?.trim() || '<p></p>';
 
@@ -29,9 +29,17 @@ export async function POST(request) {
     );
   }
 
-  if (!to) {
-    return NextResponse.json({ error: 'validation', message: 'Recipient email is required' }, { status: 400 });
+  let to;
+  try {
+    to = parseEmail(body.to);
+  } catch {
+    return NextResponse.json(
+      { error: 'validation', message: 'A valid recipient email is required' },
+      { status: 400 },
+    );
   }
+
+  const recipientName = recipientNameRaw || to;
 
   const template = getEmailTemplate(slug);
   if (!template) {

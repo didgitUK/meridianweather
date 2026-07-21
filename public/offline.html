@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <title>Offline — meridian</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Segoe UI", system-ui, sans-serif;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: #0a0a0a;
+        color: #f5f5f5;
+        padding: 1.5rem;
+      }
+      main {
+        max-width: 28rem;
+        text-align: center;
+      }
+      h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0 0 0.75rem;
+      }
+      p {
+        margin: 0 0 1.25rem;
+        line-height: 1.5;
+        color: #a3a3a3;
+      }
+      a {
+        color: #e5e5e5;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 id="offline-title">You’re offline</h1>
+      <p id="offline-body">
+        meridian can’t reach the network right now. Open a pinned place you’ve
+        viewed before, or reconnect and try again.
+      </p>
+      <p><a id="offline-home" href="/">Try the home page</a></p>
+    </main>
+    <script>
+      (function () {
+        var copy = {
+          en: {
+            title: "You’re offline",
+            body: "meridian can’t reach the network right now. Open a pinned place you’ve viewed before, or reconnect and try again.",
+            home: "Try the home page",
+          },
+          de: {
+            title: "Sie sind offline",
+            body: "meridian erreicht das Netzwerk gerade nicht. Öffnen Sie einen zuvor angesehenen gespeicherten Ort, oder stellen Sie die Verbindung wieder her.",
+            home: "Zur Startseite",
+          },
+          fr: {
+            title: "Vous êtes hors ligne",
+            body: "meridian ne peut pas joindre le réseau pour le moment. Ouvrez un lieu épinglé déjà consulté, ou reconnectez-vous.",
+            home: "Essayer l’accueil",
+          },
+          es: {
+            title: "Está sin conexión",
+            body: "meridian no puede alcanzar la red ahora. Abra un lugar fijado que ya haya visto, o vuelva a conectarse.",
+            home: "Ir al inicio",
+          },
+          ja: {
+            title: "オフラインです",
+            body: "現在ネットワークに接続できません。以前表示したピン留めの場所を開くか、再接続してください。",
+            home: "ホームを試す",
+          },
+          ar: {
+            title: "أنت غير متصل",
+            body: "لا يمكن لـ meridian الوصول إلى الشبكة الآن. افتح مكانًا مثبتًا شاهدته من قبل، أو أعد الاتصال.",
+            home: "جرّب الصفحة الرئيسية",
+          },
+        };
+        var lang = (navigator.language || "en").toLowerCase();
+        var key = lang.split("-")[0];
+        if (key === "en") key = "en";
+        var selected = copy[key] || copy.en;
+        document.documentElement.lang = key === "ar" ? "ar" : key;
+        if (key === "ar") document.documentElement.dir = "rtl";
+        document.getElementById("offline-title").textContent = selected.title;
+        document.getElementById("offline-body").textContent = selected.body;
+        document.getElementById("offline-home").textContent = selected.home;
+        document.title = selected.title + " — meridian";
+      })();
+    </script>
+  </body>
+</html>

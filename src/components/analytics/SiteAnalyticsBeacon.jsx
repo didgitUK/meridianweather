@@ -46,7 +46,8 @@ function createQueue() {
     }
 
     const batch = items.splice(0, items.length);
-    const body = JSON.stringify({ events: batch, consent: { analytics: true } });
+    // Consent is bound server-side via signed meridian_consent cookie — do not send flags.
+    const body = JSON.stringify({ events: batch });
 
     try {
       if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
@@ -61,6 +62,7 @@ function createQueue() {
 
     void fetch('/api/analytics/collect', {
       method: 'POST',
+      credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
       body,
       keepalive: true,
@@ -189,9 +191,9 @@ export function trackSiteAdView(placement) {
 
   void fetch('/api/analytics/collect', {
     method: 'POST',
+    credentials: 'same-origin',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      consent: { advertising: true },
       events: [
         {
           type: SITE_ANALYTICS_EVENT_TYPES.adView,
