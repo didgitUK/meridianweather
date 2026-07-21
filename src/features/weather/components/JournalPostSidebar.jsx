@@ -2,8 +2,6 @@
 
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { AdSlot } from '@/components/monetization/AdSlot';
-import { AD_PLACEMENTS } from '@/constants/platform';
 import { JournalPostLocalityCard } from '@/features/weather/components/JournalPostLocalityCard';
 import { TYPOGRAPHY } from '@/constants/design-tokens';
 import { cn } from '@/lib/utils';
@@ -47,16 +45,6 @@ export function JournalPostSidebar({ schemaLinks = [] }) {
       </section>
 
       <JournalPostLocalityCard />
-
-      <section
-        aria-label={t('sidebarAdLabel')}
-        className="relative mx-auto aspect-square w-full max-w-[17.5rem] overflow-hidden rounded-[1.25rem]"
-      >
-        <AdSlot
-          placement={AD_PLACEMENTS.hero}
-          className="size-full min-h-0 border-0 bg-transparent p-0 shadow-none [&_[role=complementary]]:size-full [&_[role=complementary]]:rounded-[inherit]"
-        />
-      </section>
     </aside>
   );
 }

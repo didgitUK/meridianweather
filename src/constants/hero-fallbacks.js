@@ -50,12 +50,12 @@ export const HERO_STATIC_FALLBACKS = Object.freeze({
 });
 
 /**
- * @param {{ country?: string | null }} region
+ * Static SVG / stock fallbacks are withdrawn — map heroes fade in from black.
+ * Kept for tests and email tooling that still reference the asset map.
+ *
+ * @param {{ country?: string | null }} _region
+ * @returns {null}
  */
-export function resolveStaticHeroFallback(region) {
-  const country = region?.country?.trim()?.toUpperCase();
-  if (country && HERO_STATIC_FALLBACKS[country]) {
-    return HERO_STATIC_FALLBACKS[country];
-  }
-  return HERO_STATIC_FALLBACKS.DEFAULT;
+export function resolveStaticHeroFallback(_region) {
+  return null;
 }

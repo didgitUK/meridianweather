@@ -36,7 +36,7 @@ export function CityDetailMetrics({ current, hourlyPoints = [] }) {
         {current.condition ?? 'Weather'}
         {current.weatherId != null ? ` · ID ${current.weatherId}` : ''}
       </p>
-      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3">
         <MetricTile className={tileClassName} iconName={METRIC_METEOCON.temperature} label={t('temperature')} value={formatTemp(current.temperature)} trend={trends.temperature} />
         <MetricTile className={tileClassName} iconName={METRIC_METEOCON.feelsLike} label={t('feelsLike')} value={formatTemp(current.feelsLike)} trend={trends.feelsLike} />
         <MetricTile className={tileClassName} iconName={METRIC_METEOCON.humidity} label={t('humidity')} value={formatPercent(current.humidity)} trend={trends.humidity} />

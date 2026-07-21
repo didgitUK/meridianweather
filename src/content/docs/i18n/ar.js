@@ -235,7 +235,7 @@ export const DOCS_PAGES_I18N = [
         id: 'operators',
         title: 'لمشغّلي الموقع',
         body:
-          'المستوى مثبت مجانيًا؛ meridian:tier غير مستخدم؛ PremiumGate / واجهة minutely غير موصولة. AdSense: GOOGLE_ADSENSE_CLIENT_ID مع GOOGLE_ADSENSE_SLOT_DASHBOARD وGOOGLE_ADSENSE_SLOT_HERO وGOOGLE_ADSENSE_SLOT_RECENT وGOOGLE_ADSENSE_SLOT_CITY_DETAIL وGOOGLE_ADSENSE_SLOT_DEFAULT. AdSlots النشطة: dashboard وhero وcity-detail؛ موضع recent-checks بلا واجهة رئيسية. عناصر نائبة: public/ads/*.png (overlay sr-only). Analytics: SiteAnalyticsBeacon + POST /api/analytics/collect عند consent.analytics؛ GA4 يحتاج NEXT_PUBLIC_GA_MEASUREMENT_ID + نفس الموافقة. Stripe غير منفّذ.',
+          'Tier always free; meridian:tier unused; no Premium weather UI. AdSense: GOOGLE_ADSENSE_CLIENT_ID (runtime script after advertising consent; meta verification only in root HTML). Auto ads; ad-free via Stripe when STRIPE_* + ADFEEE_LICENSE_SECRET set. Analytics: SiteAnalyticsBeacon + POST /api/analytics/collect with signed meridian_consent cookie; GA4 needs NEXT_PUBLIC_GA_MEASUREMENT_ID + analytics consent.',
       },
     ],
   },

@@ -6,6 +6,7 @@ import { AdminSidebar } from '@/features/admin/components/shell/AdminSidebar';
 import { CMS_COLLECTION } from '@/constants/cms';
 import { AdminAdSensePanel } from '@/features/admin/components/adsense/AdminAdSensePanel';
 import { AdminBlogPostsPanel } from '@/features/admin/components/AdminBlogPostsPanel';
+import { AdminPlaceGuidesPanel } from '@/features/admin/components/AdminPlaceGuidesPanel';
 import { AdminCmsPagesPanel } from '@/features/admin/components/AdminCmsPagesPanel';
 import { AdminEmailConnectorsPanel } from '@/features/admin/components/email-connectors/AdminEmailConnectorsPanel';
 import { AdminInaccuraciesPanel } from '@/features/admin/components/AdminInaccuraciesPanel';
@@ -254,6 +255,8 @@ export function AdminDashboard() {
         );
       case 'blog':
         return <AdminBlogPostsPanel />;
+      case 'place-guides':
+        return <AdminPlaceGuidesPanel />;
       case 'inaccuracies':
         return (
           <AdminInaccuraciesPanel

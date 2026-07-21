@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocale } from 'next-intl';
 import { WEATHER_CHECK_TRIGGERS } from '@/constants/weather-check-triggers';
-import { SCOPE_TTL } from '@/constants/weather';
+import { SCOPE_TTL, OFFLINE_EMERGENCY_STALE_MAX_MS } from '@/constants/weather';
 import { resolveOpenWeatherLang } from '@/i18n/locales';
-import { cacheMeetsMaxAge } from '@/lib/weather-cache-age';
+import { cacheMeetsMaxAge, getSnapshotAgeMs } from '@/lib/weather-cache-age';
 import {
   FORCE_REFRESH_MAX_AGE_MS,
   loadWeatherBatchForCity,
@@ -93,9 +93,24 @@ export function useCityWeather(city, isHydrated, initialScopes = null, options =
 
       const cached = readLocalWeatherCache(cityId, scope);
       if (cached?.payload) {
+        const ageMs = getSnapshotAgeMs(cached.fetchedAt);
+        if (ageMs != null && ageMs > OFFLINE_EMERGENCY_STALE_MAX_MS) {
+          continue;
+        }
         initial[scope] = {
           data: cached.payload,
-          meta: { fetchedAt: cached.fetchedAt, cacheLayer: 'client' },
+          meta: {
+            fetchedAt: cached.fetchedAt,
+            cacheLayer: 'client',
+            ageMs,
+            freshness: scopeIsFresh(
+              { data: cached.payload, meta: { fetchedAt: cached.fetchedAt } },
+              scope,
+              defaultMaxAgeMs,
+            )
+              ? 'acceptable'
+              : 'stale',
+          },
         };
       }
     }
@@ -163,7 +178,33 @@ export function useCityWeather(city, isHydrated, initialScopes = null, options =
       if (generation !== loadGenerationRef.current) {
         return;
       }
-      setError(loadError.message);
+      const hasCachedData = DETAIL_SCOPES.some((scope) => initial[scope]?.data);
+      if (hasCachedData) {
+        setScopes(
+          Object.fromEntries(
+            DETAIL_SCOPES.map((scope) => {
+              const entry = initial[scope];
+              if (!entry?.data) {
+                return [scope, entry];
+              }
+              return [
+                scope,
+                {
+                  ...entry,
+                  meta: {
+                    ...entry.meta,
+                    freshness: 'stale',
+                    offline: true,
+                  },
+                },
+              ];
+            }),
+          ),
+        );
+        setError(null);
+      } else {
+        setError(loadError.message);
+      }
       setLoadProgress(1);
     } finally {
       if (generation === loadGenerationRef.current) {

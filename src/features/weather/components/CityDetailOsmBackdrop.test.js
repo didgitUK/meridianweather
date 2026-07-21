@@ -1,5 +1,5 @@
 import { describe, expect, it, afterEach } from 'vitest';
-import { isCityHeroOsmEnabled } from '@/features/weather/components/CityDetailOsmBackdrop';
+import { isCityHeroOsmEnabled } from '@/lib/city-hero-flags';
 
 describe('isCityHeroOsmEnabled', () => {
   const previous = process.env.NEXT_PUBLIC_CITY_HERO_OSM;

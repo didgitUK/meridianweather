@@ -8,26 +8,31 @@ import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { CityDetailOptionsMenu } from '@/features/cities/components/CityDetailOptionsMenu';
 import { countryCodeToFlagEmoji } from '@/features/cities/utils/city-search';
-import { CITY_HERO_IMAGE_FALLBACK } from '@/constants/monetization';
 import { getHeroSourceLabel } from '@/constants/hero-sources';
 import { ICONS, SPACING, TYPOGRAPHY } from '@/constants/design-tokens';
 import { deriveHeroWeatherScene } from '@/lib/hero-image/hero-weather-scene';
 import { fetchPlaceholderBg } from '@/lib/client/fetch-placeholder-bg';
 import {
   CityDetailOsmBackdrop,
-  isCityHeroOsmEnabled,
 } from '@/features/weather/components/CityDetailOsmBackdrop';
 import {
   CityDetailStreetViewBackdrop,
-  isCityHeroStreetViewEnabled,
 } from '@/features/weather/components/CityDetailStreetViewBackdrop';
+import { isCityHeroOsmEnabled, isCityHeroStreetViewEnabled } from '@/lib/city-hero-flags';
+import { HeroWeatherTimeline } from '@/features/weather/components/HeroWeatherTimeline';
+import { useHeroWeatherTheater } from '@/features/weather/hooks/useHeroWeatherTheater';
 import { cn } from '@/lib/utils';
+import '@/features/weather/components/dashboard-hero.css';
 
 function resolveHeroDisplayUrl(url) {
   if (typeof url !== 'string' || !url) {
     return null;
   }
-  if (/^https?:\/\//.test(url) || url.startsWith('/hero/')) {
+  // Withdraw static /public/hero SVG placeholders from the UI.
+  if (url.startsWith('/hero/')) {
+    return null;
+  }
+  if (/^https?:\/\//.test(url)) {
     return url;
   }
   return null;
@@ -61,6 +66,7 @@ function buildHeroImageParams(city, weather = null, { refresh = false, exclude =
 export function CityDetailPageHeader({
   city,
   weather = null,
+  hourlyPoints = [],
   isPinned,
   onRerunCheck,
   isRefreshing = false,
@@ -81,9 +87,7 @@ export function CityDetailPageHeader({
     && isCityHeroStreetViewEnabled()
     && hasMapCoords;
   const useMapBackdrop = useOsm || useStreetView;
-  const initialSrc =
-    resolveHeroDisplayUrl(heroImage?.landscape?.imageUrl)
-    ?? CITY_HERO_IMAGE_FALLBACK;
+  const initialSrc = resolveHeroDisplayUrl(heroImage?.landscape?.imageUrl);
   const [imageSrc, setImageSrc] = useState(initialSrc);
   const [credit, setCredit] = useState({
     photographer: heroImage?.landscape?.photographer ?? heroImage?.photographer ?? null,
@@ -107,6 +111,12 @@ export function CityDetailPageHeader({
     weatherScene ?? 'none',
     resolveHeroDisplayUrl(heroImage?.landscape?.imageUrl) ?? '',
   ].join('|');
+
+  const theater = useHeroWeatherTheater({
+    hourlyPoints,
+    weather,
+    enabled: useOsm,
+  });
 
   useEffect(() => {
     if (useMapBackdrop) {
@@ -198,25 +208,47 @@ export function CityDetailPageHeader({
     }
   }
 
+  const showTheater = useOsm && theater.hours.length >= 2;
+
   return (
     <section
       aria-labelledby="city-detail-title"
       className={cn(
-        'relative isolate z-40 w-screen max-w-[100vw] overflow-visible border-b border-border/60',
-        // ~half the previous hero band so the forecast starts earlier.
-        'ml-[calc(50%-50vw)] aspect-[32/9] min-h-[7rem] max-h-[min(14rem,28vw)]',
+        'dashboard-hero relative isolate z-40 w-screen max-w-[100vw] overflow-visible border-b border-border/60 bg-black',
+        useOsm && 'dashboard-hero--weather-map',
+        // Modestly taller than the prior slim band so the map theater reads.
+        'ml-[calc(50%-50vw)] aspect-[21/9] min-h-[10rem] max-h-[min(19rem,38vw)]',
+        showTheater && 'pb-14 sm:pb-16',
       )}
     >
       {useOsm ? (
-        <CityDetailOsmBackdrop lat={mapLat} lon={mapLon} />
+        <>
+          <CityDetailOsmBackdrop
+            lat={mapLat}
+            lon={mapLon}
+            showScrim={false}
+            showClouds
+            showPrecipitation
+            showCityLights
+            cloudOpacity={theater.frame.cloudOpacity}
+            precipOpacity={theater.frame.precipOpacity}
+            lightsOpacity={theater.frame.lights}
+            nightDarkOpacity={theater.frame.wash}
+            zoom={9}
+          />
+          <div
+            aria-hidden
+            className="dashboard-hero__satellite-scrim pointer-events-none absolute inset-0 z-[1]"
+          />
+        </>
       ) : useStreetView ? (
         <CityDetailStreetViewBackdrop
           lat={mapLat}
           lon={mapLon}
           title={`${city.name} Street View`}
         />
-      ) : (
-        <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden>
+      ) : imageSrc ? (
+        <div className="absolute inset-0 z-0 overflow-hidden bg-black" aria-hidden>
           <Image
             key={imageSrc}
             src={imageSrc}
@@ -229,6 +261,8 @@ export function CityDetailPageHeader({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/45 to-black/25" />
         </div>
+      ) : (
+        <div className="absolute inset-0 z-0 bg-black" aria-hidden />
       )}
 
       <div
@@ -236,6 +270,7 @@ export function CityDetailPageHeader({
           'relative z-10 mx-auto flex h-full w-full max-w-6xl flex-col justify-between gap-2',
           SPACING.pageX,
           'pb-4 pt-5 sm:pb-5 sm:pt-6',
+          showTheater && 'pb-16 sm:pb-20',
         )}
       >
         <div className="flex items-start justify-between gap-3">
@@ -305,6 +340,22 @@ export function CityDetailPageHeader({
           </div>
         </div>
       </div>
+
+      {showTheater ? (
+        <HeroWeatherTimeline
+          hours={theater.hours}
+          hourIndex={theater.hourIndex}
+          playing={theater.playing}
+          onScrub={theater.scrubTo}
+          onTogglePlaying={theater.togglePlaying}
+          reducedMotion={theater.reducedMotion}
+          timezone={weather?.timezone ?? null}
+          timezoneOffset={weather?.timezoneOffset ?? null}
+          sunrise={weather?.sunrise ?? null}
+          sunset={weather?.sunset ?? null}
+          className="z-20"
+        />
+      ) : null}
     </section>
   );
 }

@@ -52,7 +52,7 @@ describe('ip geolocation', () => {
     expect(fetchImpl).toHaveBeenCalledWith('https://ipwho.is/', expect.any(Object));
   });
 
-  it('reads the first forwarded ip address', () => {
+  it('reads the nearest proxy hop from x-forwarded-for', () => {
     const request = {
       headers: {
         get(name) {
@@ -65,6 +65,24 @@ describe('ip geolocation', () => {
       },
     };
 
-    expect(getClientIpFromRequest(request)).toBe('203.0.113.10');
+    expect(getClientIpFromRequest(request)).toBe('10.0.0.1');
+  });
+
+  it('prefers cf-connecting-ip over spoofable x-forwarded-for', () => {
+    const request = {
+      headers: {
+        get(name) {
+          if (name === 'cf-connecting-ip') {
+            return '198.51.100.20';
+          }
+          if (name === 'x-forwarded-for') {
+            return '203.0.113.10, 10.0.0.1';
+          }
+          return null;
+        },
+      },
+    };
+
+    expect(getClientIpFromRequest(request)).toBe('198.51.100.20');
   });
 });

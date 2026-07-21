@@ -383,6 +383,90 @@ CREATE INDEX IF NOT EXISTS idx_adfree_licenses_customer
 
 CREATE INDEX IF NOT EXISTS idx_adfree_licenses_session
   ON adfree_licenses(stripe_session_id);
+
+CREATE TABLE IF NOT EXISTS place_pois (
+  id TEXT PRIMARY KEY,
+  place_slug TEXT NOT NULL,
+  category TEXT NOT NULL,
+  name TEXT NOT NULL,
+  lat REAL NOT NULL,
+  lon REAL NOT NULL,
+  osm_id TEXT,
+  tags_json TEXT NOT NULL DEFAULT '{}',
+  fetched_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_place_pois_place_category
+  ON place_pois(place_slug, category);
+
+CREATE TABLE IF NOT EXISTS place_articles (
+  id TEXT PRIMARY KEY,
+  place_slug TEXT NOT NULL,
+  slug TEXT NOT NULL,
+  title TEXT NOT NULL,
+  excerpt TEXT NOT NULL,
+  category TEXT NOT NULL,
+  body_html TEXT NOT NULL,
+  word_count INTEGER NOT NULL DEFAULT 0,
+  status TEXT NOT NULL DEFAULT 'draft',
+  sources_json TEXT NOT NULL DEFAULT '[]',
+  image_url TEXT,
+  image_credit TEXT,
+  image_source_url TEXT,
+  model TEXT,
+  prompt_version TEXT,
+  context_hash TEXT,
+  generated_at TEXT NOT NULL,
+  published_at TEXT,
+  locked_by_admin INTEGER NOT NULL DEFAULT 0,
+  updated_at TEXT NOT NULL,
+  UNIQUE(place_slug, slug)
+);
+
+CREATE INDEX IF NOT EXISTS idx_place_articles_place_status
+  ON place_articles(place_slug, status);
+
+CREATE INDEX IF NOT EXISTS idx_place_articles_status
+  ON place_articles(status, generated_at DESC);
+
+CREATE TABLE IF NOT EXISTS place_local_links (
+  id TEXT PRIMARY KEY,
+  place_slug TEXT NOT NULL,
+  title TEXT NOT NULL,
+  url TEXT NOT NULL,
+  publisher TEXT,
+  published_at TEXT,
+  fetched_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_place_local_links_place
+  ON place_local_links(place_slug, fetched_at DESC);
+
+CREATE TABLE IF NOT EXISTS place_content_runs (
+  id TEXT PRIMARY KEY,
+  place_slug TEXT,
+  job TEXT NOT NULL,
+  status TEXT NOT NULL,
+  started_at TEXT NOT NULL,
+  finished_at TEXT,
+  model TEXT,
+  prompt_version TEXT,
+  tokens_in INTEGER,
+  tokens_out INTEGER,
+  cost_usd REAL,
+  error_summary TEXT,
+  meta_json TEXT NOT NULL DEFAULT '{}'
+);
+
+CREATE INDEX IF NOT EXISTS idx_place_content_runs_started
+  ON place_content_runs(started_at DESC);
+
+CREATE TABLE IF NOT EXISTS place_content_budget (
+  day_key TEXT PRIMARY KEY,
+  overpass_calls INTEGER NOT NULL DEFAULT 0,
+  llm_generations INTEGER NOT NULL DEFAULT 0,
+  updated_at TEXT NOT NULL
+);
 `;
 
 const PLATFORM_SETTING_MIGRATIONS = [
@@ -802,6 +886,126 @@ function migrateUkPlaces(database) {
   }
 }
 
+function migratePushSubscriptions(database) {
+  try {
+    database.exec(`
+      CREATE TABLE IF NOT EXISTS push_subscriptions (
+        id TEXT PRIMARY KEY,
+        endpoint TEXT NOT NULL UNIQUE,
+        p256dh TEXT NOT NULL,
+        auth TEXT NOT NULL,
+        client_id TEXT,
+        cities_json TEXT NOT NULL DEFAULT '[]',
+        notify_mode TEXT NOT NULL DEFAULT 'daily',
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        last_notified_at TEXT
+      );
+      CREATE INDEX IF NOT EXISTS idx_push_subscriptions_client
+        ON push_subscriptions(client_id);
+      CREATE INDEX IF NOT EXISTS idx_push_subscriptions_updated
+        ON push_subscriptions(updated_at DESC);
+    `);
+  } catch {
+    // Table already present.
+  }
+
+  try {
+    database.exec(
+      `ALTER TABLE push_subscriptions ADD COLUMN notify_mode TEXT NOT NULL DEFAULT 'daily'`,
+    );
+  } catch {
+    // Column already present.
+  }
+}
+
+function migratePlaceContent(database) {
+  try {
+    database.exec(`
+      CREATE TABLE IF NOT EXISTS place_pois (
+        id TEXT PRIMARY KEY,
+        place_slug TEXT NOT NULL,
+        category TEXT NOT NULL,
+        name TEXT NOT NULL,
+        lat REAL NOT NULL,
+        lon REAL NOT NULL,
+        osm_id TEXT,
+        tags_json TEXT NOT NULL DEFAULT '{}',
+        fetched_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_place_pois_place_category
+        ON place_pois(place_slug, category);
+
+      CREATE TABLE IF NOT EXISTS place_articles (
+        id TEXT PRIMARY KEY,
+        place_slug TEXT NOT NULL,
+        slug TEXT NOT NULL,
+        title TEXT NOT NULL,
+        excerpt TEXT NOT NULL,
+        category TEXT NOT NULL,
+        body_html TEXT NOT NULL,
+        word_count INTEGER NOT NULL DEFAULT 0,
+        status TEXT NOT NULL DEFAULT 'draft',
+        sources_json TEXT NOT NULL DEFAULT '[]',
+        image_url TEXT,
+        image_credit TEXT,
+        image_source_url TEXT,
+        model TEXT,
+        prompt_version TEXT,
+        context_hash TEXT,
+        generated_at TEXT NOT NULL,
+        published_at TEXT,
+        locked_by_admin INTEGER NOT NULL DEFAULT 0,
+        updated_at TEXT NOT NULL,
+        UNIQUE(place_slug, slug)
+      );
+      CREATE INDEX IF NOT EXISTS idx_place_articles_place_status
+        ON place_articles(place_slug, status);
+      CREATE INDEX IF NOT EXISTS idx_place_articles_status
+        ON place_articles(status, generated_at DESC);
+
+      CREATE TABLE IF NOT EXISTS place_local_links (
+        id TEXT PRIMARY KEY,
+        place_slug TEXT NOT NULL,
+        title TEXT NOT NULL,
+        url TEXT NOT NULL,
+        publisher TEXT,
+        published_at TEXT,
+        fetched_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_place_local_links_place
+        ON place_local_links(place_slug, fetched_at DESC);
+
+      CREATE TABLE IF NOT EXISTS place_content_runs (
+        id TEXT PRIMARY KEY,
+        place_slug TEXT,
+        job TEXT NOT NULL,
+        status TEXT NOT NULL,
+        started_at TEXT NOT NULL,
+        finished_at TEXT,
+        model TEXT,
+        prompt_version TEXT,
+        tokens_in INTEGER,
+        tokens_out INTEGER,
+        cost_usd REAL,
+        error_summary TEXT,
+        meta_json TEXT NOT NULL DEFAULT '{}'
+      );
+      CREATE INDEX IF NOT EXISTS idx_place_content_runs_started
+        ON place_content_runs(started_at DESC);
+
+      CREATE TABLE IF NOT EXISTS place_content_budget (
+        day_key TEXT PRIMARY KEY,
+        overpass_calls INTEGER NOT NULL DEFAULT 0,
+        llm_generations INTEGER NOT NULL DEFAULT 0,
+        updated_at TEXT NOT NULL
+      );
+    `);
+  } catch {
+    // Tables already present.
+  }
+}
+
 export function getDb() {
   if (db) return db;
 
@@ -824,6 +1028,8 @@ export function getDb() {
   migrateHeroImageCache(db);
   migrateWeatherCheckTriggers(db);
   migrateUkPlaces(db);
+  migratePlaceContent(db);
+  migratePushSubscriptions(db);
 
   const existing = db.prepare('SELECT id FROM platform_settings WHERE id = 1').get();
   if (!existing) {

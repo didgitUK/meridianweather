@@ -58,19 +58,19 @@
 
 **Trade-off:** Product copy, not legal counsel. CMS SQLite rows may diverge until reset to file defaults.
 
-## ADR-008: AdSense live; Premium / tier reserved (unwired)
+## ADR-008: AdSense live; ad-free Stripe; Premium weather tier retired
 
-**Context:** Monetization without Stripe in v1.
+**Context:** Monetization without a separate weather “Premium” product.
 
-**Decision:** Consent in localStorage (`meridian:consent`). Google AdSense loads when env configured and `consent.advertising` (`AdSenseProvider`, `AdSlot`, `/api/ads`, `/ads.txt`). `ConsentProvider` **hardcodes** `tier: free`; `meridian:tier` is reserved and unused. `PremiumGate` / minutely precip UI are **not wired**; city detail fetches `current` + `hourly` + `daily` only. Stripe checkout remains stubbed / roadmap.
+**Decision:** Consent in localStorage (`meridian:consent`) plus signed HttpOnly `meridian_consent` for analytics ingest. Google AdSense **runtime** script loads only when `consent.advertising` and config are on (`AdSenseProvider`). Publisher verification uses meta `google-adsense-account` only (no pre-consent script). `ConsentProvider` hardcodes weather `tier: free`; `meridian:tier` remains reserved/unused. Weather **PremiumGate / minutely UI are removed** — paid product is **ad-free Stripe** (`/api/billing/*`, Settings → Remove ads) when `isBillingConfigured()`. When Stripe env is unset, Settings shows an unavailable state (no “coming soon” checkout buttons).
 
-**Trade-off:** Docs and legal must not claim live Premium or minutely gating; advertising is consent-gated only.
+**Trade-off:** Docs and legal must not claim live Premium weather features; advertising is consent-gated; ad-free requires Stripe + `ADFEEE_LICENSE_SECRET` on the host.
 
 ## ADR-009: No data sale; first-party analytics ships (consent-gated)
 
 **Context:** Privacy stance vs operator visibility.
 
-**Decision:** No sale of personal data. A first-party beacon (`SiteAnalyticsBeacon` → `POST /api/analytics/collect` → `site_analytics_events`) ships and records only when `consent.analytics` is on (collect endpoint also requires a matching consent flag). Optional GA4 loads only when `NEXT_PUBLIC_GA_MEASUREMENT_ID` is set **and** `consent.analytics` is on. Ad-slot view events require `consent.advertising`. Data-licensing products remain roadmap.
+**Decision:** No sale of personal data. A first-party beacon (`SiteAnalyticsBeacon` → `POST /api/analytics/collect` → `site_analytics_events`) ships and records only when a signed HttpOnly `meridian_consent` cookie grants analytics (body consent flags are ignored). Optional GA4 loads only when `NEXT_PUBLIC_GA_MEASUREMENT_ID` is set **and** `consent.analytics` is on. Ad-slot view events require advertising consent on the same signed cookie. Data-licensing products remain roadmap.
 
 **Trade-off:** “Accept all” on the cookie banner enables functional + advertising, not analytics — GA4 and the first-party beacon stay off until analytics is toggled in preferences.
 
@@ -88,7 +88,7 @@
 
 **Decision (current):** Home UI shows “Near you” (nearby places + current weather) and “Popular searches” (5 cards each). Popular searches data: `GET /api/recent-checks` → `getRecentChecksPayload()` → `listPopularSearchChecks` on `location_weather_checks` (`search_select` / `search_preview`), default limit **20**, `source: popular|empty`. The API does not showcase-hydrate. When empty, the UI may demo-fill Popular searches from `PLATFORM_SHOWCASE_CITIES` while `SHOW_DEMO_POPULAR_SEARCHES` is on (default). `npm run seed:checks` seeds `weather_snapshots` only and does **not** feed this API.
 
-**Superseded:** Earlier v1 used deduped `weather_snapshots` + API-level showcase fallback (`listRecentPlatformChecks` remains dead code).
+**Superseded:** Earlier v1 used deduped `weather_snapshots` + API-level showcase fallback (`listRecentPlatformChecks` removed).
 
 **Trade-off:** Demo popular cities avoid making the strip look broken on fresh installs; operators should disable the flag for production honesty. Seed script must not be sold as populating Popular searches.
 
@@ -147,4 +147,20 @@
 - Do **not** enforce a once-per-day upstream cap; freshness remains TTL-based (default ~1h for `current`).
 
 **Trade-off:** Cache-hit rows are not represented in Checks Log; operators see token-spending traffic only. Concurrent in-flight dedupe still records a single upstream check for coalesced waiters.
+
+## ADR-018: Place content hybrid guides (OSM + generated prose)
+
+**Context:** Weather place pages need location-relevant content beyond forecasts without manually authoring thousands of pages or scraping news bodies.
+
+**Decision:** Phase 1 hybrid pipeline — Overpass/OSM POIs for “Things to do”, original Meridian guides via Gemini/OpenAI (or stub) with validation (≥1500 words, H2s, sources, image credits), plus optional outbound local-coverage links. Persist in `place_*` tables; admin publish/lock; cron + `populate:place-content` for hot UK places first. Weather remains primary above the fold.
+
+**Trade-off:** Stub mode ships readable placeholders until `PLACE_CONTENT_LLM_MODE=gemini|openai` + keys; Overpass is rate-limited and needs a polite User-Agent; Phase 2 global inventory stays deferred.
+
+## ADR-019: Hero weather theater on satellite map
+
+**Context:** Dashboard/city heroes use Esri World Imagery via Leaflet. Operators need a 24h scrub/play control tied to local solar framing without breaking the map mount.
+
+**Decision:** `HeroWeatherTimeline` + `useHeroWeatherTheater` drive continuous hour scrubbing, sunrise/sunset markers, and night wash. Leaflet mounts on a **stable inner DOM node** so React className updates (fade/ready) cannot strip `leaflet-container`. Live hour label tracks under the playhead.
+
+**Trade-off:** Map needs finite lat/lon (location or place coords); empty-location OSM hero can still look black until coords exist.
 

@@ -41,9 +41,11 @@ export const AD_PLACEHOLDER_IMAGES = Object.freeze({
   default: '/ads/BannerAds-Placeholder.png',
 });
 
-/** Location photo fallback for city headers (not AdSense chrome). */
-export const CITY_HERO_IMAGE_FALLBACK =
-  'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=1600&h=900&q=80';
+/**
+ * Location photo fallback for city headers (not AdSense chrome).
+ * Withdrawn — heroes use a black base until the map (or a real photo) loads.
+ */
+export const CITY_HERO_IMAGE_FALLBACK = null;
 
 /** @deprecated Alias — AdSlot placeholders use AD_PLACEHOLDER_IMAGES. */
 export const AD_PLACEHOLDER_UNSPLASH = AD_PLACEHOLDER_IMAGES;

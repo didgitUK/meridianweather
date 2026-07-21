@@ -16,6 +16,9 @@ export const WEATHER_CHECK_TRIGGERS = Object.freeze({
   adminConnectionCheck: 'admin_connection_check',
   geocodeSearch: 'geocode_search',
   geocodeReverse: 'geocode_reverse',
+  pwaPrefetch: 'pwa_prefetch',
+  pwaPeriodicSync: 'pwa_periodic_sync',
+  pwaPushRefresh: 'pwa_push_refresh',
   /** Historic rows recorded before triggers were wired. */
   legacyUntagged: 'legacy_untagged',
   /** Soft fallback only — prefer fixing the caller instead of writing this. */
@@ -41,6 +44,9 @@ export const WEATHER_CHECK_TRIGGER_LABELS = Object.freeze({
   [WEATHER_CHECK_TRIGGERS.adminConnectionCheck]: 'Admin connection check',
   [WEATHER_CHECK_TRIGGERS.geocodeSearch]: 'Geocode search',
   [WEATHER_CHECK_TRIGGERS.geocodeReverse]: 'Geocode reverse',
+  [WEATHER_CHECK_TRIGGERS.pwaPrefetch]: 'PWA prefetch',
+  [WEATHER_CHECK_TRIGGERS.pwaPeriodicSync]: 'PWA periodic sync',
+  [WEATHER_CHECK_TRIGGERS.pwaPushRefresh]: 'PWA push refresh',
   [WEATHER_CHECK_TRIGGERS.legacyUntagged]: 'Legacy (pre-tagging)',
   [WEATHER_CHECK_TRIGGERS.unknown]: 'Unknown',
 });

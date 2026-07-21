@@ -24,13 +24,20 @@ export function getClientIpFromRequest(request) {
 }
 
 export function getClientIpFromHeaders(headers) {
-  const forwarded = readHeader(headers, ['x-forwarded-for', 'x-real-ip', 'cf-connecting-ip']);
+  // Prefer headers set by the edge / CDN (not client-spoofable XFF first hop).
+  const dedicated = readHeader(headers, ['cf-connecting-ip', 'x-real-ip', 'true-client-ip']);
+  if (dedicated) {
+    return dedicated.split(',')[0]?.trim() || null;
+  }
 
+  const forwarded = readHeader(headers, ['x-forwarded-for']);
   if (forwarded) {
-    const firstHop = forwarded.split(',')[0]?.trim();
-    if (firstHop) {
-      return firstHop;
+    const hops = forwarded.split(',').map((part) => part.trim()).filter(Boolean);
+    if (hops.length === 0) {
+      return null;
     }
+    // Rightmost hop is added by the nearest trusted proxy when proxies append.
+    return hops[hops.length - 1] ?? null;
   }
 
   return null;

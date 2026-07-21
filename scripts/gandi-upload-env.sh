@@ -44,9 +44,13 @@ for line in src.read_text().splitlines():
   raw = line.strip()
   if not raw or raw.startswith('#') or '=' not in raw:
     continue
-  key = raw.split('=', 1)[0].strip()
+  key, val = raw.split('=', 1)
+  key = key.strip()
+  # Skip empty values so uploads never wipe live secrets with blanks.
+  if not val.strip().strip('"').strip("'"):
+    continue
   if any(key.startswith(p) for p in keep_prefixes):
-    lines.append(raw)
+    lines.append(f'{key}={val}')
 # Force production app URL + sqlite path on the volume
 overrides = {
   'NEXT_PUBLIC_APP_URL': 'https://meridianweather.co.uk',

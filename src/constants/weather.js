@@ -8,6 +8,8 @@ export const DEFAULT_REFRESH_INTERVAL_MS = 60 * 60 * 1000;
 export const DEFAULT_STALE_CACHE_MAX_MS = 2 * 60 * 60 * 1000;
 /** Client L0 reuse window for dashboard/home/nearby current weather (aligns with current TTL). */
 export const DASHBOARD_CURRENT_MAX_AGE_MS = DEFAULT_REFRESH_INTERVAL_MS;
+/** Max age to keep serving last-good weather offline for priority cities. */
+export const OFFLINE_EMERGENCY_STALE_MAX_MS = 48 * 60 * 60 * 1000;
 
 export const SCOPE_TTL = {
   current: { fresh: DEFAULT_REFRESH_INTERVAL_MS, stale: DEFAULT_STALE_CACHE_MAX_MS },

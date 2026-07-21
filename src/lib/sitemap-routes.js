@@ -7,6 +7,7 @@ import {
   listUkPlaces,
   seedAllUkPlaces,
 } from '@/lib/places/uk-places-repo';
+import { listPublishedPlaceArticlePaths } from '@/lib/places/place-articles-repo';
 import { UK_PLACES_PHASE_A_LIMIT, UK_PLACES_PHASE_B_LIMIT } from '@/constants/weather-places';
 import { getShowcaseCities } from '@/lib/resolve-city';
 import { routing } from '@/i18n/routing';
@@ -54,7 +55,10 @@ export function getWeatherPlaceSitemapEntries() {
     seedAllUkPlaces();
   }
 
-  return listUkPlaces({ limit: 5000 }).map((place) => ({
+  // Cap crawl surface to hot/warm tiers (tier ≤ 2) so multi-locale sitemaps
+  // cannot schedule thousands of cold places against the OWM daily budget.
+  const SITEMAP_PLACE_LIMIT = 200;
+  return listUkPlaces({ tier: 2, limit: SITEMAP_PLACE_LIMIT }).map((place) => ({
     path: `/weather/${place.slug}`,
     lastModified: new Date(place.updatedAt ?? Date.now()),
   }));
@@ -63,6 +67,7 @@ export function getWeatherPlaceSitemapEntries() {
 export function getLocalizedSitemapEntries() {
   const cityPaths = getCitySitemapEntries();
   const weatherPaths = getWeatherPlaceSitemapEntries();
+  const guidePaths = listPublishedPlaceArticlePaths();
   const staticPaths = getStaticPaths();
   const entries = [];
 
@@ -120,6 +125,24 @@ export function getLocalizedSitemapEntries() {
         lastModified: place.lastModified,
         changeFrequency: 'daily',
         priority: 0.95,
+      });
+    }
+
+    for (const guide of guidePaths) {
+      const localizedPath = `${prefix}${guide.path}`;
+      const languages = Object.fromEntries(
+        routing.locales.map((entryLocale) => {
+          const entryPrefix = entryLocale === routing.defaultLocale ? '' : `/${entryLocale}`;
+          return [entryLocale, `${entryPrefix}${guide.path}`];
+        }),
+      );
+
+      entries.push({
+        path: localizedPath,
+        languages,
+        lastModified: guide.lastModified,
+        changeFrequency: 'weekly',
+        priority: 0.75,
       });
     }
   }

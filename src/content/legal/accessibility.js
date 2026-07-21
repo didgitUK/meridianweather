@@ -1,13 +1,13 @@
 export const accessibilityPolicy = {
   slug: 'accessibility',
   title: 'Accessibility Statement',
-  lastUpdated: '2026-07-14',
+  lastUpdated: '2026-07-21',
   sections: [
     {
       id: 'commitment',
       title: 'Our commitment',
       body:
-        'Website Servers Ltd trading as meridian wants meridianweather.co.uk to be usable by as many people as possible. We aim to conform to the Web Content Accessibility Guidelines (WCAG) 2.1 Level AA.\n\nThis statement applies to the public meridian weather Service. It follows the spirit of the UK model accessibility statement used for public-sector sites and reflects our duties under the Equality Act 2010 not to discriminate against disabled people in providing services.\n\nStatus: partially compliant with WCAG 2.1 AA. Some parts of the experience do not yet fully meet that standard. This page was last reviewed on 14 July 2026.',
+        'Website Servers Ltd trading as meridian wants meridianweather.co.uk to be usable by as many people as possible. We aim to conform to the Web Content Accessibility Guidelines (WCAG) 2.1 Level AA.\n\nThis statement applies to the public meridian weather Service. It follows the spirit of the UK model accessibility statement used for public-sector sites and reflects our duties under the Equality Act 2010 not to discriminate against disabled people in providing services.\n\nStatus: partially compliant with WCAG 2.1 AA. Some parts of the experience do not yet fully meet that standard. This page was last reviewed on 21 July 2026.',
     },
     {
       id: 'how-accessible',
@@ -19,13 +19,13 @@ export const accessibilityPolicy = {
       id: 'features',
       title: 'Measures we take',
       body:
-        'Semantic landmarks (header, main, footer); optional skip link to #main-content; labelled controls and visible focus styles; preference centre for accessibility and cookie settings; dialogs and sheets with close controls for subscribe, remove-city, and settings flows; cookie banner exposed as a dialog; city search presented as a combobox with live region updates for results; weather icons that supplement written condition text rather than replacing it; tabular figures for temperatures; charts that expose accessible names where implemented; touch targets sized for many interactive controls; reduced-motion support that suppresses non-essential animation and auto-advancing carousels.',
+        'Semantic landmarks (header, main, footer); optional skip link to #main-content; labelled controls and visible focus styles; preference centre for accessibility and cookie settings; dialogs and sheets with close controls for subscribe, remove-city, and settings flows; cookie banner exposed as a dialog with focus trap; city search presented as a combobox with arrow-key navigation and live region updates for results; weather icons that supplement written condition text rather than replacing it; tabular figures for temperatures; hourly forecasts expose a screen-reader text list equivalent to the visual grid; touch targets sized for many interactive controls; reduced-motion support that suppresses non-essential animation and auto-advancing carousels.',
     },
     {
       id: 'gaps',
       title: 'Non-accessible content',
       body:
-        'City search does not yet fully support arrow-key combobox navigation as documented in our product README.\n\nHourly and minutely forecast areas are primarily visual horizontal scroll regions and may lack equivalent non-visual detail.\n\nSome daily forecast rows pair an icon with a date without a separate visible condition sentence.\n\nPremium / upgrade controls may appear disabled with no alternative paid workflow while billing is not live.\n\nThird-party Google AdSense units, when consented and loaded, are outside our full editorial control; their accessibility may vary.\n\nThe admin console is operator-facing and is not covered by this public statement.\n\nThe cookie banner uses dialog semantics but may not trap focus as robustly as other modals.',
+        'Some daily forecast rows still pair an icon with a date without a separate visible condition sentence.\n\nWhen Stripe billing is not configured, Settings → Remove ads shows an unavailable status instead of a checkout path.\n\nThird-party Google AdSense units, when consented and loaded, are outside our full editorial control; their accessibility may vary.\n\nThe admin console is operator-facing and is not covered by this public statement.\n\nThe static offline fallback page is English-first (browser language negotiation is best-effort).',
     },
     {
       id: 'feedback',

@@ -1,0 +1,15 @@
+# Example host crontab for meridian (replace BASE_URL and keep CRON_SECRET out of git).
+# Load secrets from the host env file before curl, e.g.:
+#   set -a; source /srv/data/home/meridian.env; set +a
+
+# Weekly email digests — Monday 08:00
+0 8 * * 1 curl -fsS -H "Authorization: Bearer ${CRON_SECRET}" "${BASE_URL}/api/cron/weekly-digests"
+
+# Weather alert emails — every 20 minutes
+*/20 * * * * curl -fsS -H "Authorization: Bearer ${CRON_SECRET}" "${BASE_URL}/api/cron/weather-alerts"
+
+# PWA daily device refresh (Web Push) — 06:30
+30 6 * * * curl -fsS -H "Authorization: Bearer ${CRON_SECRET}" "${BASE_URL}/api/cron/pwa-daily-refresh"
+
+# Optional SEO place warm — nightly
+15 3 * * * curl -fsS -H "Authorization: Bearer ${CRON_SECRET}" "${BASE_URL}/api/cron/weather-place-seo"

@@ -23,9 +23,9 @@ import { WeatherCardHeaderActions } from '@/features/weather/components/WeatherC
 import { WeatherCardSkeleton } from '@/features/weather/components/WeatherCardSkeleton';
 import { countryCodeToFlagEmoji } from '@/features/cities/utils/city-search';
 import { formatPercent, formatWind } from '@/features/weather/utils/forecast-formatters';
-import { useNow } from '@/hooks/use-now';
 import { TYPOGRAPHY, TOUCH, ICONS } from '@/constants/design-tokens';
-import { cn, formatAge } from '@/lib/utils';
+import { cn } from '@/lib/utils';
+import { WeatherFreshnessLabel } from '@/features/weather/components/WeatherFreshnessLabel';
 
 
 function WeatherCardLocationLabel({ city }) {
@@ -61,7 +61,6 @@ export function WeatherCard({
   const { formatTemp } = useTemperatureUnit();
   const t = useTranslations('Dashboard.weatherCard');
   const tCommon = useTranslations('Common');
-  const now = useNow();
 
   if (!weatherState || weatherState.loading) {
     return <WeatherCardSkeleton />;
@@ -94,9 +93,6 @@ export function WeatherCard({
   }
 
   const weather = weatherState.data;
-  const fetchedAt = weatherState.meta?.fetchedAt ?? null;
-  const updatedAge = fetchedAt ? formatAge(now - Date.parse(fetchedAt)) : null;
-  const isStale = weatherState.meta?.freshness === 'stale';
 
   return (
     <Card
@@ -119,13 +115,19 @@ export function WeatherCard({
         />
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
+        {weatherState.meta?.offline ? (
+          <Alert className="border-amber-500/40 bg-amber-500/5 py-2">
+            <AlertDescription className="text-xs text-amber-800 dark:text-amber-300">
+              {t('offlineBanner')}
+            </AlertDescription>
+          </Alert>
+        ) : null}
         <Link href={`/city/${city.id}`} className="flex items-center gap-3 sm:gap-4">
           {weather.icon ? (
             <WeatherIcon
               icon={weather.icon}
               alt={weather.description ?? tCommon('weatherIcon')}
               size={72}
-              className="size-14 sm:size-16 md:size-[4.5rem]"
             />
           ) : null}
           <div className="min-w-0">
@@ -150,16 +152,7 @@ export function WeatherCard({
                 ) : null}
               </p>
             ) : null}
-            {updatedAge ? (
-              <p
-                className={cn(
-                  'mt-1.5 text-xs',
-                  isStale ? 'text-amber-700 dark:text-amber-400' : 'text-muted-foreground',
-                )}
-              >
-                {isStale ? t('staleUpdated', { age: updatedAge }) : t('updated', { age: updatedAge })}
-              </p>
-            ) : null}
+            <WeatherFreshnessLabel meta={weatherState.meta} />
           </div>
         </Link>
         <div>

@@ -274,6 +274,7 @@ If weather cards fail after install, check that `.env.local` has a valid `OPENWE
 | `NEXT_PUBLIC_GA_MEASUREMENT_ID` | Optional — GA4 (requires analytics consent) |
 | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Optional — Street View hero embed |
 | `CRON_SECRET` | Bearer for `/api/cron/*` (**required in production** if cron is used) |
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` / `VAPID_SUBJECT` | Optional — PWA Web Push daily device refresh (`npm run generate:vapid`) |
 | `ADMIN_SECRET` | Session HMAC + connector encryption (**required** for admin login cookies) |
 | `ADMIN_PASSWORD` / `ADMIN_EMAIL` | Root admin login |
 | `ALLOW_DEV_ADMIN_BYPASS` | Optional `1` — local admin bypass (dev only; see above) |
@@ -310,8 +311,12 @@ npm run start
 | `npm run verify` | Lint + test + build |
 | `npm run copy:icons` | Copy Meteocons → `public/weather-icons/` (also `postinstall`) |
 | `npm run seed:checks` | Seed North England `weather_snapshots` (L2 cache demo — not the popular-searches strip) |
+| `npm run seed:uk-places` | Seed UK weather place inventory |
+| `npm run populate:place-content` | Generate/stub place POIs + guides for hot UK places |
+| `npm run generate:vapid` | Print VAPID key pair for Web Push |
 | `npm run backfill:city-slugs` | Backfill location slugs |
 | `npm run audit:deps` | `npm audit --omit=dev` |
+| `npm run deploy:gandi` | Push HEAD → Gandi + remote deploy (GitHub push first) |
 
 ## Features
 
@@ -326,20 +331,26 @@ npm run start
 ### Optional extras
 
 - Near-you / popular-searches strips, fuller city-detail forecasts/alerts, journal
+- UK `/weather/{slug}` place pages with Things to do (OSM), local guides, hero weather theater
+- PWA install / offline / optional Web Push daily refresh
 - Newsletter / digests / alerts (Resend, SendGrid, SES, or SMTP + cron), AdSense (or demo placeholders)
 - Admin at `/login` → `/admin`, legal + docs pages, first-party analytics + optional GA4
 
 ## Known limitations / next steps
 
-- Premium / minutely precipitation UI is not wired (tier is always free).
-- Email and cron need external config (`CRON_SECRET` + a connector); there is no in-repo scheduler.
+- Ad-free Stripe checkout is env-gated; Settings shows unavailable when keys are missing.
+- Email and cron need external config (`CRON_SECRET` + a connector); there is no in-repo scheduler — see [`docs/OPS-RUNBOOK.md`](docs/OPS-RUNBOOK.md).
 - Legal pages are product templates, not counsel.
-- Store badges are not published native apps.
+- Native App Store / Play apps are out of scope; footer offers PWA install only.
+- Weather Premium / minutely product UI is retired (API scope may remain unused).
+- UK Phase C global place inventory and location-content Phase 2 remain deferred until SEO budget + content QA prove stable.
 
 ## Documentation map
 
 | Doc | Use when |
 | --- | --- |
+| [docs/OPS-RUNBOOK.md](docs/OPS-RUNBOOK.md) | Production env, cron, deploy checklist |
+| [docs/ERASURE-RUNBOOK.md](docs/ERASURE-RUNBOOK.md) | Retention purge + erasure steps |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Folder map and data flows |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Why choices were made (ADRs) |
 | [docs/SECURITY.md](docs/SECURITY.md) | Threat model and production checklist |

@@ -235,7 +235,7 @@ export const DOCS_PAGES_I18N = [
         id: 'operators',
         title: 'サイト運営者向け',
         body:
-          'ティアはハードコードで無料；meridian:tier 未使用；PremiumGate / minutely UI 未接続。AdSense：GOOGLE_ADSENSE_CLIENT_ID および GOOGLE_ADSENSE_SLOT_DASHBOARD、GOOGLE_ADSENSE_SLOT_HERO、GOOGLE_ADSENSE_SLOT_RECENT、GOOGLE_ADSENSE_SLOT_CITY_DETAIL、GOOGLE_ADSENSE_SLOT_DEFAULT。アクティブ AdSlot：dashboard、hero、city-detail；recent-checks 配置にホーム UI なし。プレースホルダー：public/ads/*.png（sr-only overlay）。Analytics：SiteAnalyticsBeacon + consent.analytics 時 POST /api/analytics/collect；GA4 は NEXT_PUBLIC_GA_MEASUREMENT_ID + 同じ同意。Stripe 未実装。',
+          'Tier always free; meridian:tier unused; no Premium weather UI. AdSense: GOOGLE_ADSENSE_CLIENT_ID (runtime script after advertising consent; meta verification only in root HTML). Auto ads; ad-free via Stripe when STRIPE_* + ADFEEE_LICENSE_SECRET set. Analytics: SiteAnalyticsBeacon + POST /api/analytics/collect with signed meridian_consent cookie; GA4 needs NEXT_PUBLIC_GA_MEASUREMENT_ID + analytics consent.',
       },
     ],
   },

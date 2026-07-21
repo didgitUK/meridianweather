@@ -13,6 +13,7 @@ import { resolveCity, getShowcaseCities } from '@/lib/resolve-city';
 import { buildCityWebPageSchema, buildPageMetadata, buildPlaceSchema } from '@/lib/seo';
 import { buildLanguageAlternates, buildLocalizedPath, getOgLocale, getOpenWeatherLang } from '@/i18n/seo';
 import { routing } from '@/i18n/routing';
+import { isCityHeroOsmEnabled } from '@/lib/city-hero-flags';
 
 export const revalidate = 900;
 export const dynamicParams = true;
@@ -77,18 +78,21 @@ export default async function CityPage({ params }) {
   }
 
   const weather = await getCityWeatherForSeo(city, getOpenWeatherLang(locale));
-  const heroImage = await getHeroImageForRegion({
-    city: city.name,
-    state: city.state,
-    country: city.country,
-    lat: city.lat,
-    lon: city.lon,
-    temperature: weather?.current?.temperature ?? null,
-    weatherId: weather?.current?.weatherId ?? null,
-    condition: weather?.current?.condition ?? null,
-    description: weather?.current?.description ?? null,
-    icon: weather?.current?.icon ?? null,
-  }).catch(() => null);
+  // Map-first heroes — skip stock photo cascade when satellite backdrop is on.
+  const heroImage = isCityHeroOsmEnabled()
+    ? null
+    : await getHeroImageForRegion({
+        city: city.name,
+        state: city.state,
+        country: city.country,
+        lat: city.lat,
+        lon: city.lon,
+        temperature: weather?.current?.temperature ?? null,
+        weatherId: weather?.current?.weatherId ?? null,
+        condition: weather?.current?.condition ?? null,
+        description: weather?.current?.description ?? null,
+        icon: weather?.current?.icon ?? null,
+      }).catch(() => null);
   const path = `/city/${city.id}`;
   const initialScopes = weather
     ? {

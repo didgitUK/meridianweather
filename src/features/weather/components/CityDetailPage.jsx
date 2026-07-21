@@ -17,7 +17,6 @@ import { useInaccurateReportStatus } from '@/features/weather/hooks/useInaccurat
 import { ForecastHistoryExplorer } from '@/features/weather/components/ForecastHistoryExplorer';
 import { AlertBanner } from '@/features/weather/components/AlertBanner';
 import { CityDetailLoadingScreen } from '@/features/weather/components/CityDetailLoadingScreen';
-import { AdSlot } from '@/components/monetization/AdSlot';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
@@ -25,7 +24,6 @@ import {
   CITY_DETAIL_TAB_IDS,
   normalizeCityDetailTab,
 } from '@/constants/city-detail';
-import { AD_PLACEMENTS } from '@/constants/platform';
 import { WEATHER_CHECK_TRIGGERS } from '@/constants/weather-check-triggers';
 import { WEATHER_PLACE_SEO_MAX_AGE_MS } from '@/constants/weather-places';
 import {
@@ -41,7 +39,6 @@ export function CityDetailPage({
   heroImage = null,
   preferPhotoHero = false,
   weatherCheckTrigger = null,
-  showMidAd = false,
   seoIntro = null,
 }) {
   const t = useTranslations('CityDetail');
@@ -194,15 +191,6 @@ export function CityDetailPage({
 
   return (
     <div className="flex flex-col gap-6">
-      {seoIntro ? (
-        <div className="space-y-2">
-          <h1 className="font-heading text-2xl tracking-tight text-foreground sm:text-3xl">
-            {seoIntro.title}
-          </h1>
-          <p className="max-w-3xl text-sm text-muted-foreground sm:text-base">{seoIntro.lede}</p>
-        </div>
-      ) : null}
-
       {inaccurateReport.isActive ? <CityDetailInaccurateReportBanner /> : null}
 
       <AlertBanner alertIds={current?.alertIds ?? []} />
@@ -210,6 +198,7 @@ export function CityDetailPage({
       <CityDetailPageHeader
         city={city}
         weather={current}
+        hourlyPoints={hourlyPoints}
         isPinned={isPinned}
         onRerunCheck={refresh}
         isRefreshing={isLoading}
@@ -234,12 +223,23 @@ export function CityDetailPage({
 
       <CityDetailForecastTabs activeTab={activeTab} onChange={handleTabChange} />
 
-      <div className="max-h-[280px] overflow-hidden rounded-xl">
-        <AdSlot
-          placement={AD_PLACEMENTS.cityDetail}
-          location={city ? { name: city.name, country: city.country } : null}
-        />
-      </div>
+      {seoIntro ? (
+        <div className="space-y-3">
+          <h2 className="font-heading text-2xl tracking-tight text-foreground sm:text-3xl">
+            {seoIntro.title}
+          </h2>
+          {seoIntro.fact ? (
+            <p className="max-w-3xl text-sm text-foreground sm:text-base">
+              <span className="font-medium text-foreground">{seoIntro.factLabel ?? 'Did you know?'} </span>
+              {seoIntro.fact}
+            </p>
+          ) : null}
+          <p className="max-w-3xl text-sm text-muted-foreground sm:text-base">{seoIntro.lede}</p>
+          {seoIntro.bridge ? (
+            <p className="max-w-3xl text-sm text-muted-foreground sm:text-base">{seoIntro.bridge}</p>
+          ) : null}
+        </div>
+      ) : null}
 
       <div
         role="tabpanel"
@@ -287,15 +287,6 @@ export function CityDetailPage({
           />
         ) : null}
       </div>
-
-      {showMidAd ? (
-        <div className="max-h-[280px] overflow-hidden rounded-xl">
-          <AdSlot
-            placement={AD_PLACEMENTS.weatherPlaceMid}
-            location={city ? { name: city.name, country: city.country } : null}
-          />
-        </div>
-      ) : null}
     </div>
   );
 }

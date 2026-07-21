@@ -113,13 +113,20 @@ export const ROOT_METADATA = {
   description: BRAND.description,
   applicationName: BRAND.name,
   manifest: '/manifest.webmanifest',
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: '#0a0a0a' },
+    { media: '(prefers-color-scheme: light)', color: '#0a0a0a' },
+  ],
   appleWebApp: {
     capable: true,
     title: BRAND.name,
     statusBarStyle: 'black-translucent',
   },
   icons: {
-    icon: '/brand/favicon.png',
+    icon: [
+      { url: '/brand/favicon.png', sizes: '192x192', type: 'image/png' },
+      { url: '/brand/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
     apple: '/brand/apple-touch-icon.png',
   },
   openGraph: {

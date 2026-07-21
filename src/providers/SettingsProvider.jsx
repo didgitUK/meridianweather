@@ -7,6 +7,7 @@ import { SettingsSheet } from '@/components/layout/settings/SettingsSheet';
 const SettingsContext = createContext({
   openSettings: () => {},
   openPrivacyPreferences: () => {},
+  isSettingsOpen: false,
 });
 
 export function SettingsProvider({ children }) {
@@ -28,8 +29,9 @@ export function SettingsProvider({ children }) {
     () => ({
       openSettings,
       openPrivacyPreferences,
+      isSettingsOpen: open,
     }),
-    [openPrivacyPreferences, openSettings],
+    [openPrivacyPreferences, openSettings, open],
   );
 
   return (

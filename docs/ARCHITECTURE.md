@@ -68,6 +68,10 @@ Route handlers return `{ error, message }` via `src/lib/server/api-response.js`.
 3. Cron routes reuse orchestrator snapshots; the active email connector sends templates when configured.
 4. `subscription_send_log` dedupes weather alert emails.
 
+## Data flow — PWA offline + daily refresh
+
+See [`docs/PWA.md`](PWA.md). Summary: `PwaRegistrar` registers `/sw.js`, syncs priority cities into Cache API, prefetches weather into L0, registers Periodic Background Sync on Chromium, and optionally syncs Web Push subscriptions. Cron `GET /api/cron/pwa-daily-refresh` warms snapshots and pushes subscribed devices.
+
 ## Data flow — advertising
 
 1. `AdSenseProvider` fetches `GET /api/ads/config` once.
@@ -90,6 +94,7 @@ SQLite (`src/lib/db/index.js`) — core plus stretch tables:
 | `weather_snapshots` | L2 cache; unique `cache_key` |
 | `api_call_log` | Quota audit (hit vs upstream) |
 | `subscriptions` | Email opt-ins (newsletter / weekly / alerts) |
+| `push_subscriptions` | PWA Web Push endpoints + priority cities JSON for daily device refresh |
 | `subscription_send_log` | Alert dedup |
 | `platform_settings` | Singleton refresh interval, limits, connectors, AdSense OAuth, digest defaults |
 | `adsense_report_snapshots` | Cached Management API report rows by range + dimension |
@@ -106,8 +111,19 @@ SQLite (`src/lib/db/index.js`) — core plus stretch tables:
 | `email_send_log` | Transactional email attempts (redacted recipient) |
 | `weather_observations` | Upstream-only observation archive |
 | `weather_forecast_archive` | Forecast archive rows |
+| `place_pois` | OSM Things to do points per place slug |
+| `place_articles` | Generated place guides (draft/published/locked) |
+| `place_local_links` | Licensed/outbound local coverage links |
+| `place_content_runs` / `place_content_budget` | Place-content cron audit + daily generation budget |
 
 Additional migrations may exist; treat `src/lib/db/index.js` as source of truth.
+
+## Data flow — place content (Phase 1)
+
+1. Cron `GET /api/cron/place-content` (or `npm run populate:place-content`) enqueues hot UK places within budget.
+2. Overpass fetch writes `place_pois`; Wikipedia context pack + LLM adapter (Gemini preferred / OpenAI / stub) writes `place_articles` after validation gates.
+3. Place pages render Things to do, Local guides, optional Local coverage; guides at `/weather/[placeSlug]/guides/[slug]`.
+4. Admin Place guides panel publish / unpublish / lock.
 
 ## Layer rules
 

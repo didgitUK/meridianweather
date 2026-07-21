@@ -17,13 +17,7 @@
 }
 
 .dashboard-hero__sky {
-  background:
-    linear-gradient(
-      180deg,
-      var(--hero-gradient-top) 0%,
-      var(--hero-gradient-mid) 42%,
-      var(--color-background) 100%
-    );
+  background: #000;
 }
 
 .dashboard-hero__photo-wrap {
@@ -74,16 +68,16 @@
     );
 }
 
-/* Dark overlay over the satellite map. */
+/* Dark overlay over the satellite map — softened so day/night wash can lead. */
 .dashboard-hero__satellite-scrim {
   background:
     linear-gradient(
       180deg,
-      rgba(0, 0, 0, 0.72) 0%,
-      rgba(0, 0, 0, 0.64) 28%,
-      rgba(0, 0, 0, 0.55) 48%,
-      rgba(0, 0, 0, 0.48) 72%,
-      rgba(0, 0, 0, 0.42) 100%
+      rgba(0, 0, 0, 0.38) 0%,
+      rgba(0, 0, 0, 0.32) 28%,
+      rgba(0, 0, 0, 0.28) 48%,
+      rgba(0, 0, 0, 0.24) 72%,
+      rgba(0, 0, 0, 0.22) 100%
     );
 }
 
@@ -91,12 +85,89 @@
   background:
     linear-gradient(
       180deg,
-      rgba(0, 0, 0, 0.78) 0%,
-      rgba(0, 0, 0, 0.7) 28%,
-      rgba(0, 0, 0, 0.6) 48%,
-      rgba(0, 0, 0, 0.52) 72%,
-      rgba(0, 0, 0, 0.48) 100%
+      rgba(0, 0, 0, 0.44) 0%,
+      rgba(0, 0, 0, 0.38) 28%,
+      rgba(0, 0, 0, 0.34) 48%,
+      rgba(0, 0, 0, 0.3) 72%,
+      rgba(0, 0, 0, 0.28) 100%
     );
+}
+
+/* Legacy HTML wash kept for non-map contexts; weather-map uses Leaflet night dark. */
+.dashboard-hero__day-night-wash {
+  background:
+    radial-gradient(
+      ellipse 95% 80% at 50% 18%,
+      rgba(8, 18, 40, 0.5) 0%,
+      rgba(4, 10, 24, 0.28) 45%,
+      transparent 78%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(6, 12, 28, 0.48) 0%,
+      rgba(10, 22, 48, 0.22) 42%,
+      rgba(4, 8, 18, 0.38) 100%
+    );
+  transition: opacity 0.55s ease;
+}
+
+/* NASA Black Marble soft glow — see city-detail-osm-backdrop.css for source of truth. */
+.meridian-city-lights-tiles {
+  mix-blend-mode: screen;
+  image-rendering: auto;
+  filter: blur(2.25px) brightness(1.4) contrast(1.1) saturate(1.08);
+  transform: translateZ(0) scale(1.035);
+  transform-origin: center center;
+}
+
+.meridian-night-dark-overlay {
+  will-change: opacity;
+}
+
+.meridian-night-dark-overlay {
+  will-change: opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-hero__day-night-wash {
+    transition: none;
+  }
+
+  .meridian-night-dark-overlay {
+    transition: none !important;
+  }
+
+  .dashboard-hero__timeline-playhead {
+    transition: none;
+  }
+}
+
+.dashboard-hero__timeline-playhead--dragging {
+  transition: none;
+}
+
+.dashboard-hero__weather-timeline {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.22) 55%,
+    rgba(0, 0, 0, 0.38) 100%
+  );
+}
+
+.dashboard-hero__timeline-playhead {
+  transition: left 0.12s ease;
+}
+
+.dashboard-hero__timeline-playhead--playing {
+  transition: none;
+}
+
+.dashboard-hero__timeline-range {
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
 }
 
 .dashboard-hero--weather-map .dashboard-hero__copy {

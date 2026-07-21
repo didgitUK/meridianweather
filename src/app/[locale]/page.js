@@ -4,6 +4,7 @@ import { DashboardPage } from '@/features/weather/components/DashboardPage';
 import { DashboardHeroSection } from '@/features/weather/components/DashboardHeroSection';
 import { DashboardHeroWithCheck } from '@/features/weather/components/DashboardHeroWithCheck';
 import { HeroImagePreload } from '@/features/weather/components/HeroImagePreload';
+import { isCityHeroOsmEnabled } from '@/lib/city-hero-flags';
 import { HomeIntro } from '@/components/seo/HomeIntro';
 import { buildLanguageAlternates, buildLocalizedPath, getOgLocale } from '@/i18n/seo';
 import { resolveRegionHint } from '@/lib/geo/resolve-region-hint';
@@ -27,9 +28,14 @@ export default async function Home({ params }) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const requestHeaders = await headers();
-  const region = await resolveRegionHint({ headers: requestHeaders });
-  const heroImage = region ? await getHeroImageForRegion(region) : null;
+  // Map-first heroes: skip stock Unsplash/static photo resolve on the home demo.
+  const heroImage = isCityHeroOsmEnabled()
+    ? null
+    : await (async () => {
+        const requestHeaders = await headers();
+        const region = await resolveRegionHint({ headers: requestHeaders });
+        return region ? getHeroImageForRegion(region) : null;
+      })();
 
   return (
     <>
@@ -39,9 +45,9 @@ export default async function Home({ params }) {
       />
       <HomeIntro />
       <DashboardHeroSection heroImage={heroImage}>
-        <DashboardHeroWithCheck heroImage={heroImage} />
+        <DashboardHeroWithCheck />
       </DashboardHeroSection>
-      <DashboardPage heroImage={heroImage} />
+      <DashboardPage />
     </>
   );
 }

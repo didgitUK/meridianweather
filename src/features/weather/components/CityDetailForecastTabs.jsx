@@ -29,7 +29,7 @@ export function CityDetailForecastTabs({ activeTab, onChange }) {
     >
       <div
         className={cn(
-          'mx-auto flex w-full max-w-6xl items-stretch gap-1 overflow-x-auto py-1 meridian-scrollbar',
+          'mx-auto flex w-full max-w-6xl items-stretch gap-1 py-1',
           SPACING.pageX,
         )}
       >
@@ -47,11 +47,11 @@ export function CityDetailForecastTabs({ activeTab, onChange }) {
               aria-controls={`city-tabpanel-${tab.id}`}
               onClick={() => onChange(tab.id)}
               className={cn(
-                'shrink-0 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors sm:flex-1 sm:px-4',
+                'min-w-0 flex-1 rounded-lg px-2 py-2.5 text-center text-sm font-medium transition-colors sm:px-4',
                 TOUCH.minH,
                 isActive
                   ? 'bg-black text-white hover:bg-black hover:text-white'
-                  : 'text-muted-foreground hover:bg-neutral-800 hover:text-white',
+                  : 'bg-[#f7f7f7] text-muted-foreground hover:bg-neutral-200 hover:text-foreground dark:bg-muted/60 dark:hover:bg-muted',
               )}
             >
               {t(messageKey)}

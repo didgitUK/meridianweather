@@ -84,7 +84,7 @@ export default async function LocaleLayout({ children, params }) {
           <SiteAnalyticsBeacon />
           <SkipToMainLink />
           <SiteHeader />
-          <main id="main-content" className="flex-1 scroll-mt-6 pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0">
+          <main id="main-content" className="flex-1 scroll-mt-6 pb-[var(--mobile-nav-offset,0px)] md:pb-0">
             {children}
           </main>
           <SiteFooter />

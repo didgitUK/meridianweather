@@ -13,7 +13,7 @@ function getEncryptionKey() {
   return crypto.createHash('sha256').update(secret).digest();
 }
 
-/** Encrypt a string for DB storage. Falls back to plaintext prefix if no admin secret. */
+/** Encrypt a string for DB storage. Production requires ADMIN_SECRET (no plain: fallback). */
 export function encryptSecret(plaintext) {
   if (!plaintext) {
     return '';
@@ -22,6 +22,9 @@ export function encryptSecret(plaintext) {
   const key = getEncryptionKey();
 
   if (!key) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('ADMIN_SECRET is required to encrypt connector secrets in production');
+    }
     return `plain:${plaintext}`;
   }
 

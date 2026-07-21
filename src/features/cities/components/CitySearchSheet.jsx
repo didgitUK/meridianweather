@@ -16,7 +16,7 @@ import { useCitySearch } from '@/features/cities/hooks/useCitySearch';
 import { useSearchResultPreview } from '@/features/cities/hooks/useSearchResultPreview';
 import { useUserLocationProfile } from '@/features/cities/hooks/useUserLocationProfile';
 import { buildSearchResultKey } from '@/features/cities/utils/city-search';
-import { TOUCH } from '@/constants/design-tokens';
+import { TOUCH, MOBILE_NAV } from '@/constants/design-tokens';
 import { cn } from '@/lib/utils';
 
 const MAX_PREVIEW_PREFETCHES = 6;
@@ -90,14 +90,18 @@ export function CitySearchSheet({ open, onOpenChange, initialQuery = '', onSelec
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="bottom"
-        className="flex h-[min(92dvh,40rem)] max-h-[92dvh] w-full max-w-full flex-col gap-0 rounded-t-2xl p-0"
+        className={cn(
+          'flex w-full max-w-full flex-col gap-0 rounded-t-2xl p-0',
+          MOBILE_NAV.sheetHeight,
+          MOBILE_NAV.sheetMaxHeight,
+        )}
       >
         <SheetHeader className="shrink-0 border-b border-border/60 px-4 pt-4 pb-3 text-left">
           <SheetTitle className="font-heading text-left">{t('label')}</SheetTitle>
           <SheetDescription className="text-left">{t('sheetDescription')}</SheetDescription>
         </SheetHeader>
 
-        <div className="shrink-0 px-4 py-3">
+        <div className="sticky top-0 z-[1] shrink-0 border-b border-border/40 bg-popover px-4 py-3">
           <div className="relative">
             <Search
               className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
@@ -125,7 +129,7 @@ export function CitySearchSheet({ open, onOpenChange, initialQuery = '', onSelec
           id={listboxId}
           role="listbox"
           aria-label={t('dropdownLabel')}
-          className="meridian-scrollbar min-h-0 flex-1 overflow-y-auto px-2 pb-[max(1rem,env(safe-area-inset-bottom))]"
+          className="meridian-scrollbar min-h-0 flex-1 overflow-y-auto px-2 pb-4"
         >
           {isLoading ? (
             <p className="px-3 py-2 text-sm text-muted-foreground">{t('searching')}</p>

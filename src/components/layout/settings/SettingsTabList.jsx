@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { TOUCH } from '@/constants/design-tokens';
 
-const SETTINGS_TAB_IDS = ['cookies', 'accessibility', 'adFree'];
+const SETTINGS_TAB_IDS = ['cookies', 'accessibility', 'app', 'adFree'];
 
 export function SettingsTabList({ value, onChange }) {
   const t = useTranslations('Settings.tabs');

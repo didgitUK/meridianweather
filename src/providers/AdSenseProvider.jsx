@@ -26,10 +26,7 @@ function findAdSenseScript() {
     return null;
   }
 
-  return (
-    document.getElementById(ADSENSE_SCRIPT_ID)
-    || document.querySelector('script[src*="pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"]')
-  );
+  return document.getElementById(ADSENSE_SCRIPT_ID);
 }
 
 function setAdRequestsPaused(paused) {
@@ -38,6 +35,13 @@ function setAdRequestsPaused(paused) {
   }
   window.adsbygoogle = window.adsbygoogle || [];
   window.adsbygoogle.pauseAdRequests = paused ? 1 : 0;
+}
+
+function removeAdSenseScript() {
+  const existing = findAdSenseScript();
+  if (existing) {
+    existing.remove();
+  }
 }
 
 export function AdSenseProvider({ children }) {
@@ -66,8 +70,6 @@ export function AdSenseProvider({ children }) {
     };
   }, []);
 
-  // Ad fills stay consent-gated and suppressed for ad-free licenses.
-  // The loader script itself is SSR'd in root layout for AdSense site verification.
   const shouldServeAds =
     !isAdFree
     && consent.advertising
@@ -75,32 +77,32 @@ export function AdSenseProvider({ children }) {
     && config?.clientId;
 
   useEffect(() => {
-    setAdRequestsPaused(isAdFree);
+    setAdRequestsPaused(isAdFree || !consent.advertising);
     if (typeof document !== 'undefined') {
       document.documentElement.dataset.adFree = isAdFree ? '1' : '0';
     }
-  }, [isAdFree]);
+  }, [isAdFree, consent.advertising]);
 
   useEffect(() => {
     if (!shouldServeAds || !config?.clientId) {
+      removeAdSenseScript();
       queueMicrotask(() => setScriptReady(false));
       return undefined;
     }
 
     const existing = findAdSenseScript();
     if (existing) {
-      if (
-        existing.getAttribute('data-loaded') === 'true'
-        || existing.getAttribute('data-nscript')
-        || existing.async
-      ) {
-        // Root-layout script is already in the document for verification.
+      if (existing.getAttribute('data-loaded') === 'true') {
         queueMicrotask(() => setScriptReady(true));
         return undefined;
       }
 
-      existing.addEventListener('load', () => setScriptReady(true), { once: true });
-      return undefined;
+      const onLoad = () => {
+        existing.setAttribute('data-loaded', 'true');
+        setScriptReady(true);
+      };
+      existing.addEventListener('load', onLoad, { once: true });
+      return () => existing.removeEventListener('load', onLoad);
     }
 
     const script = document.createElement('script');

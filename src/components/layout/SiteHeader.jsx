@@ -63,7 +63,7 @@ export function SiteHeader() {
       document.documentElement.style.removeProperty('--site-header-height');
       document.documentElement.style.removeProperty('--site-header-sticky-offset');
     };
-  }, [autoHide, isAdminPortal]);
+  }, [autoHide, isAdminPortal, showPublicChrome]);
 
   useEffect(() => {
     if (isAdminPortal || !autoHide) {
@@ -107,7 +107,8 @@ export function SiteHeader() {
 
         {showPublicChrome ? (
           <div className="ml-auto flex min-w-0 flex-1 items-center justify-end gap-2 sm:gap-3">
-            <div className="min-w-0 w-full max-w-[12rem] sm:max-w-xs md:max-w-sm lg:max-w-md">
+            {/* Desktop/tablet: search stays in the top bar */}
+            <div className="hidden min-w-0 w-full max-w-xs sm:block md:max-w-sm lg:max-w-md">
               <CitySearch
                 onSelect={handleCheckCity}
                 variant="header"
@@ -120,6 +121,26 @@ export function SiteHeader() {
           </div>
         ) : null}
       </div>
+
+      {/* Mobile: full-width search row under the brand bar */}
+      {showPublicChrome ? (
+        <div
+          className={cn(
+            'border-t border-white/10 pb-3 pt-2 sm:hidden',
+            SPACING.pageX,
+          )}
+        >
+          <div className="mx-auto w-full max-w-6xl">
+            <CitySearch
+              onSelect={handleCheckCity}
+              variant="header"
+              actionLabel={t('checkAction')}
+              inputId="header-city-search-mobile"
+              hideLocationHint
+            />
+          </div>
+        </div>
+      ) : null}
     </header>
   );
 

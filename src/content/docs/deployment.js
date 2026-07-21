@@ -31,7 +31,7 @@ export const deploymentDoc = {
       id: 'env-cron',
       title: 'Cron and admin',
       body:
-        'CRON_SECRET — Bearer for /api/cron/* (denied when unset in production). ADMIN_SECRET — signs the admin session cookie and encrypts connector secrets. ADMIN_PASSWORD — root login for ADMIN_EMAIL only. Dev bypass only when NODE_ENV=development, ALLOW_DEV_ADMIN_BYPASS=1, and ADMIN_SECRET unset. See docs/SECURITY.md. Schedule cron externally: weekly-digests (e.g. Monday morning), weather-alerts (e.g. every 15–30 minutes).',
+        'CRON_SECRET — Bearer for /api/cron/* (denied when unset in production). ADMIN_SECRET — signs the admin session cookie and encrypts connector secrets. ADMIN_PASSWORD — root login for ADMIN_EMAIL only. Dev bypass only when NODE_ENV=development, ALLOW_DEV_ADMIN_BYPASS=1, and ADMIN_SECRET unset. See docs/SECURITY.md. Schedule cron externally (see scripts/crontab.example): weekly-digests (e.g. Monday morning), weather-alerts (e.g. every 15–30 minutes), pwa-daily-refresh (e.g. once daily). Web Push needs NEXT_PUBLIC_VAPID_PUBLIC_KEY + VAPID_PRIVATE_KEY (npm run generate:vapid).',
     },
     {
       id: 'env-adsense',

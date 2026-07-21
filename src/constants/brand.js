@@ -3,7 +3,7 @@ export const BRAND = {
   domain: 'meridianweather.co.uk',
   tagline: 'Tracking The Weather Across Your World',
   description:
-    'Track current conditions and forecasts for the cities that matter to you — in your browser today, as an installable app tomorrow.',
+    'Track current conditions and forecasts for the cities that matter to you — in your browser, or as an installable progressive web app.',
 };
 
 /** UK legal identity for Website Servers Ltd trading as meridian. */

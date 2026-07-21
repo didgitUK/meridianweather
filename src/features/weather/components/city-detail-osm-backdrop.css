@@ -1,0 +1,43 @@
+.meridian-osm-backdrop--fade {
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+
+.meridian-osm-backdrop--fade.meridian-osm-backdrop--ready {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meridian-osm-backdrop--fade {
+    transition: none;
+  }
+
+  .meridian-osm-backdrop--fade.meridian-osm-backdrop--ready,
+  .meridian-osm-backdrop--fade {
+    opacity: 1;
+  }
+}
+
+/* NASA Black Marble — screen so black pixels stay transparent over satellite.
+ * Native GIBS max is z8; hero is often z9, so tiles upscale. Soft blur turns
+ * blocky upscale into a city-glow bloom (Google Earth–like) instead of pixels.
+ * Do not filter the pane itself — that isolates mix-blend and kills the glow. */
+.meridian-city-lights-tiles {
+  mix-blend-mode: screen;
+  image-rendering: auto;
+  /* Blur softens blocks; brightness recovers bloom after blur. */
+  filter: blur(2.25px) brightness(1.4) contrast(1.1) saturate(1.08);
+  /* Slight overscale hides soft tile-edge seams after blur. */
+  transform: translateZ(0) scale(1.035);
+  transform-origin: center center;
+}
+
+.meridian-night-dark-overlay {
+  will-change: opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meridian-night-dark-overlay {
+    transition: none !important;
+  }
+}

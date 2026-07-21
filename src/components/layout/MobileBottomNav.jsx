@@ -35,7 +35,7 @@ export function MobileBottomNav() {
     <nav
       aria-label={t('label')}
       className={cn(
-        'fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background/95 backdrop-blur-md md:hidden',
+        'fixed inset-x-0 bottom-0 z-[60] border-t border-border/80 bg-background/95 backdrop-blur-md md:hidden',
         SAFE_AREA.paddingBottom,
       )}
     >

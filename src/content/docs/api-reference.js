@@ -61,7 +61,7 @@ export const apiReferenceDoc = {
       id: 'cron',
       title: 'Cron routes',
       body:
-        'GET /api/cron/weekly-digests — send weekly digest emails grouped by subscriber email. GET /api/cron/weather-alerts — evaluate alertPrefs against OpenWeather, Open-Meteo, and NWS feeds and send alert emails. Both require Bearer CRON_SECRET.',
+        'GET /api/cron/weekly-digests — send weekly digest emails grouped by subscriber email. GET /api/cron/weather-alerts — evaluate alertPrefs against OpenWeather, Open-Meteo, and NWS feeds and send alert emails. GET /api/cron/pwa-daily-refresh — warm priority city snapshots and send Web Push for installed PWAs (respects notifyMode: daily / severe / both). All require Bearer CRON_SECRET.',
     },
     {
       id: 'admin',

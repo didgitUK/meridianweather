@@ -101,6 +101,19 @@ export const SAFE_AREA = {
   paddingBottom: 'pb-safe',
 };
 
+/** Mobile bottom nav height + safe area (CSS var --mobile-nav-offset). */
+export const MOBILE_NAV = {
+  /** Tailwind arbitrary bottom inset above the fixed nav. */
+  bottomInset: 'bottom-[var(--mobile-nav-offset,0px)]',
+  /** Full viewport height minus nav — for sheets. */
+  sheetHeight: 'h-[calc(100dvh-var(--mobile-nav-offset,0px))]',
+  /** max-height companion */
+  sheetMaxHeight: 'max-h-[calc(100dvh-var(--mobile-nav-offset,0px))]',
+  /** Padding / clearance utilities */
+  paddingBottom: 'pb-[var(--mobile-nav-offset,0px)]',
+  zIndex: 'z-[60]',
+};
+
 /**
  * Panel accordions — use `<Accordion variant="panel">` with `<AccordionItem variant="panel">`.
  * Background maps to `--color-section` (#f7f7f7 light; elevated surface in dark). Items are
