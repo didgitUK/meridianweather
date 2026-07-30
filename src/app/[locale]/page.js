@@ -11,7 +11,6 @@ import { resolveRegionHint } from '@/lib/geo/resolve-region-hint';
 import { getHeroImageForRegion } from '@/lib/hero-image/get-hero-image-for-region';
 import { buildPageMetadata } from '@/lib/seo';
 import { resolveRobots } from '@/lib/seo-indexability';
-import { buildLanguageAlternates, buildLocalizedPath, getOgLocale } from '@/i18n/seo';
 
 export async function generateMetadata({ params }) {
   const { locale } = await params;
