@@ -39,7 +39,7 @@ try {
   // ignore
 }
 
-process.env.PLACE_CONTENT_LLM_MODE = process.env.PLACE_CONTENT_LLM_MODE || 'stub';
+process.env.PLACE_CONTENT_LLM_MODE = process.env.PLACE_CONTENT_LLM_MODE || 'gemini';
 if (!process.env.DATABASE_PATH) {
   process.env.DATABASE_PATH = path.join(root, 'data', 'meridian.db');
 }

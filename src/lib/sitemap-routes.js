@@ -10,18 +10,28 @@ import {
 import { listPublishedPlaceArticlePaths } from '@/lib/places/place-articles-repo';
 import { UK_PLACES_PHASE_A_LIMIT, UK_PLACES_PHASE_B_LIMIT } from '@/constants/weather-places';
 import { getShowcaseCities } from '@/lib/resolve-city';
+import {
+  DOCS_NOINDEX_SLUGS,
+  SEARCH_INDEX_LOCALES,
+} from '@/lib/seo-indexability';
 import { routing } from '@/i18n/routing';
 
 const UK_PLACES_SEED_FLOOR = UK_PLACES_PHASE_A_LIMIT + Math.floor(UK_PLACES_PHASE_B_LIMIT * 0.5);
 
 function getStaticPaths() {
+  const indexableDocs = DOCS_PAGE_DEFAULTS.filter(
+    (page) => !DOCS_NOINDEX_SLUGS.includes(page.slug),
+  );
+
   return [
     '',
+    '/about',
+    '/faq',
     '/docs',
     '/journal',
     '/search',
     ...listBlogPostSlugs().map((slug) => `/journal/${slug}`),
-    ...DOCS_PAGE_DEFAULTS.map((page) => `/docs/${page.slug}`),
+    ...indexableDocs.map((page) => `/docs/${page.slug}`),
     ...LEGAL_POLICY_DEFAULTS.map((policy) => `/legal/${policy.slug}`),
   ];
 }
@@ -70,14 +80,17 @@ export function getLocalizedSitemapEntries() {
   const guidePaths = listPublishedPlaceArticlePaths();
   const staticPaths = getStaticPaths();
   const entries = [];
+  const sitemapLocales = routing.locales.filter((locale) =>
+    SEARCH_INDEX_LOCALES.includes(locale),
+  );
 
-  for (const locale of routing.locales) {
+  for (const locale of sitemapLocales) {
     const prefix = locale === routing.defaultLocale ? '' : `/${locale}`;
 
     for (const path of staticPaths) {
       const localizedPath = `${prefix}${path}`;
       const languages = Object.fromEntries(
-        routing.locales.map((entryLocale) => {
+        sitemapLocales.map((entryLocale) => {
           const entryPrefix = entryLocale === routing.defaultLocale ? '' : `/${entryLocale}`;
           return [entryLocale, `${entryPrefix}${path}`];
         }),
@@ -88,14 +101,14 @@ export function getLocalizedSitemapEntries() {
         languages,
         lastModified: new Date(),
         changeFrequency: path.startsWith('/docs') ? 'weekly' : 'monthly',
-        priority: path === '' ? 1 : 0.7,
+        priority: path === '' ? 1 : path === '/about' || path === '/faq' ? 0.8 : 0.7,
       });
     }
 
     for (const city of cityPaths) {
       const localizedPath = `${prefix}${city.path}`;
       const languages = Object.fromEntries(
-        routing.locales.map((entryLocale) => {
+        sitemapLocales.map((entryLocale) => {
           const entryPrefix = entryLocale === routing.defaultLocale ? '' : `/${entryLocale}`;
           return [entryLocale, `${entryPrefix}${city.path}`];
         }),
@@ -113,7 +126,7 @@ export function getLocalizedSitemapEntries() {
     for (const place of weatherPaths) {
       const localizedPath = `${prefix}${place.path}`;
       const languages = Object.fromEntries(
-        routing.locales.map((entryLocale) => {
+        sitemapLocales.map((entryLocale) => {
           const entryPrefix = entryLocale === routing.defaultLocale ? '' : `/${entryLocale}`;
           return [entryLocale, `${entryPrefix}${place.path}`];
         }),
@@ -131,7 +144,7 @@ export function getLocalizedSitemapEntries() {
     for (const guide of guidePaths) {
       const localizedPath = `${prefix}${guide.path}`;
       const languages = Object.fromEntries(
-        routing.locales.map((entryLocale) => {
+        sitemapLocales.map((entryLocale) => {
           const entryPrefix = entryLocale === routing.defaultLocale ? '' : `/${entryLocale}`;
           return [entryLocale, `${entryPrefix}${guide.path}`];
         }),

@@ -36,6 +36,11 @@ import {
   buildPageMetadata,
   buildPlaceSchema,
 } from '@/lib/seo';
+import {
+  resolveRobots,
+  shouldNoindexWeatherPlace,
+} from '@/lib/seo-indexability';
+import { getPlaceEditorialBlurb } from '@/constants/place-editorial-blurbs';
 import { buildLanguageAlternates, buildLocalizedPath, getOgLocale, getOpenWeatherLang } from '@/i18n/seo';
 import { routing } from '@/i18n/routing';
 
@@ -109,6 +114,10 @@ export async function generateMetadata({ params, searchParams }) {
     path: buildLocalizedPath(path, locale),
     locale: getOgLocale(locale),
     languages: buildLanguageAlternates(path),
+    robots: resolveRobots({
+      locale,
+      noindex: shouldNoindexWeatherPlace(city),
+    }),
   });
 }
 
@@ -215,7 +224,9 @@ export default async function WeatherPlacePage({ params, searchParams }) {
                 factLabel: t('weatherPlaceDidYouKnow'),
                 fact: seoFact,
                 lede: t('weatherPlaceLede', { city: city.name, region }),
-                bridge: t('weatherPlaceSeoBridge', { city: city.name }),
+                bridge:
+                  getPlaceEditorialBlurb(placeSlugResolved)
+                  || t('weatherPlaceBridge', { city: city.name, region }),
               }}
             />
           </Suspense>

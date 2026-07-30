@@ -43,6 +43,15 @@ function FooterLegalNav() {
 
   return (
     <nav aria-label={t('legalNavLabel')} className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
+      <Link href="/about" className={footerLinkClass}>
+        {t('about')}
+      </Link>
+      <Link href="/faq" className={footerLinkClass}>
+        {t('faq')}
+      </Link>
+      <Link href="/journal" className={footerLinkClass}>
+        {t('journal')}
+      </Link>
       {LEGAL_ROUTES.map((route) => (
         <Link key={route.slug} href={route.href} className={footerLinkClass}>
           {route.title}

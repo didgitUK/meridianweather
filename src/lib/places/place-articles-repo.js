@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { PLACE_ARTICLE_STATUS } from '@/constants/place-content';
 import { getDb } from '@/lib/db';
+import { looksLikeStubGuide } from '@/lib/places/validate-place-article';
 
 function parseSources(raw) {
   try {
@@ -334,4 +335,77 @@ export function getLatestPlaceArticle(placeSlug) {
     .get(placeSlug);
 
   return mapArticleRow(row);
+}
+
+/**
+ * Unpublish stub / repeated-filler guides so they leave the sitemap and public UI.
+ * Locked admin articles that match stub signatures are also unpublished (safety).
+ * @returns {{ scanned: number, unpublished: number, placeSlugs: string[] }}
+ */
+export function unpublishStubPlaceGuides() {
+  const db = getDb();
+  const rows = db
+    .prepare(
+      `SELECT place_slug, slug, body_html, status
+       FROM place_articles
+       WHERE status = ?`,
+    )
+    .all(PLACE_ARTICLE_STATUS.published);
+
+  const now = new Date().toISOString();
+  const update = db.prepare(
+    `UPDATE place_articles SET
+       status = ?,
+       published_at = NULL,
+       locked_by_admin = 0,
+       updated_at = ?
+     WHERE place_slug = ? AND slug = ?`,
+  );
+
+  const placeSlugs = [];
+  let unpublished = 0;
+
+  const run = db.transaction(() => {
+    for (const row of rows) {
+      if (!looksLikeStubGuide(row.body_html)) {
+        continue;
+      }
+      update.run(
+        PLACE_ARTICLE_STATUS.draft,
+        now,
+        row.place_slug,
+        row.slug,
+      );
+      unpublished += 1;
+      placeSlugs.push(row.place_slug);
+    }
+  });
+  run();
+
+  return {
+    scanned: rows.length,
+    unpublished,
+    placeSlugs: [...new Set(placeSlugs)],
+  };
+}
+
+/**
+ * Unpublish every published place guide (AdSense remediation / clean slate).
+ * @returns {{ unpublished: number }}
+ */
+export function unpublishAllPlaceGuides() {
+  const db = getDb();
+  const now = new Date().toISOString();
+  const result = db
+    .prepare(
+      `UPDATE place_articles SET
+         status = ?,
+         published_at = NULL,
+         locked_by_admin = 0,
+         updated_at = ?
+       WHERE status = ?`,
+    )
+    .run(PLACE_ARTICLE_STATUS.draft, now, PLACE_ARTICLE_STATUS.published);
+
+  return { unpublished: result.changes ?? 0 };
 }

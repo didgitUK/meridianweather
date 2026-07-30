@@ -274,9 +274,9 @@ export async function runPlaceContentPipeline(input) {
     wikipediaExtract: pack.wikipedia?.extract,
   });
 
-  const status = validation.ok
-    ? PLACE_ARTICLE_STATUS.published
-    : PLACE_ARTICLE_STATUS.draft;
+  // Never auto-publish. Stub / failed validation stays draft; valid LLM
+  // drafts also require admin publish (AdSense low-value / thin-content risk).
+  const status = PLACE_ARTICLE_STATUS.draft;
 
   const article = upsertPlaceArticle({
     placeSlug: place.slug,
@@ -304,14 +304,16 @@ export async function runPlaceContentPipeline(input) {
     promptVersion: draft.promptVersion,
     tokensIn: draft.usage?.tokensIn,
     tokensOut: draft.usage?.tokensOut,
-    errorSummary: validation.ok ? null : validation.errors.join(','),
-    meta: { mode: draft.mode, errors: validation.errors },
+    errorSummary: validation.ok
+      ? 'draft_awaiting_admin_publish'
+      : validation.errors.join(','),
+    meta: { mode: draft.mode, errors: validation.errors, autoPublish: false },
   });
 
   return {
     ok: validation.ok,
     skipped: false,
-    reason: validation.ok ? 'published' : 'draft_validation_failed',
+    reason: validation.ok ? 'draft_ok' : 'draft_validation_failed',
     validation,
     article,
     pois: poisResult,

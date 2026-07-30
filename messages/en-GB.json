@@ -327,7 +327,10 @@
     "installCta": "Install app",
     "appInstalled": "You’re using the installed meridian app.",
     "iosInstallHint": "On iPhone or iPad: Share → Add to Home Screen.",
-    "installUnavailable": "Use your browser menu → Install app / Add to Home Screen when available. Or open Settings → App."
+    "installUnavailable": "Use your browser menu → Install app / Add to Home Screen when available. Or open Settings → App.",
+    "about": "About",
+    "faq": "FAQ",
+    "journal": "Journal"
   },
   "Cookie": {
     "banner": {
@@ -576,14 +579,19 @@
     "weatherPlaceFactEquator": "{city} is roughly {km} km from the equator. That distance shapes how strong the sun feels at noon and how quickly evenings cool after sunset.",
     "weatherPlaceFactPrime": "{city} lies about {lon}° {side} of the prime meridian, so local clock time and solar noon often diverge from nearby longitudes in {region}.",
     "weatherPlaceFactRegion": "{city} in {region} has its own microclimate quirks — hills, coasts, and urban heat can nudge temperatures a few degrees from the regional average.",
-    "weatherPlaceSeoBridge": "Whether you searched Weather in {city}, {city} weather, or Weather {city}, this page keeps the long, medium, and short forms covered with live conditions below.",
+    "weatherPlaceSeoBridge": "Live conditions and the outlook for {city}, {region} are below. Refresh closer to your plans when timing matters.",
     "weatherPlaceFaqWhatLikeQ": "What is the weather like in {city}?",
     "weatherPlaceFaqWhatLikeA": "Right now in {city}, {country}: {summary}. Updated throughout the day on meridian.",
     "weatherPlaceFaqWhatLikeAFallback": "See live conditions and the forecast for {city}, {country} on this page.",
     "weatherPlaceFaqForecastQ": "What is the weather forecast for {city}?",
     "weatherPlaceFaqForecastA": "meridian shows hourly and 10-day forecasts for {city}, with temperature, rain, wind, and more.",
-    "weatherPlaceFaqShortQ": "Weather {city} — where can I check it?",
-    "weatherPlaceFaqShortA": "This page is the meridian weather page for {city}: short-form Weather {city} and long-form questions about conditions in {city}."
+    "weatherPlaceFaqShortQ": "Where can I check the weather for {city}?",
+    "weatherPlaceFaqShortA": "This meridian page shows live conditions and the forecast for {city}.",
+    "aboutTitle": "About",
+    "aboutDescription": "Who builds meridian, where forecasts come from, and how ads and consent work.",
+    "faqTitle": "FAQ",
+    "faqDescription": "Answers about meridian forecasts, OpenWeather data, UK coverage, ads, and alerts.",
+    "weatherPlaceBridge": "Live conditions and the outlook for {city}, {region} are below. Refresh closer to your plans when timing matters."
   },
   "Errors": {
     "notFoundHeading": "Page not found",
@@ -673,5 +681,85 @@
     "updateAvailable": "Update available",
     "updateDescription": "Reload to get the latest meridian app shell.",
     "reload": "Reload"
+  },
+  "HomeIntro": {
+    "support": "Learn more in",
+    "about": "About",
+    "faq": "FAQ",
+    "journal": "Journal"
+  },
+  "About": {
+    "title": "About meridian",
+    "lede": "meridian is a UK-built weather dashboard for the places you actually care about — honest forecasts, clear limits, and no account wall for the basics.",
+    "whatTitle": "What meridian is",
+    "whatBody1": "meridian helps you track live conditions, hourly detail, and a longer outlook for home, work, family, and travel. Pin a short list of places in your browser, open any city worldwide from search, and read forecasts without signing up for a weather social network.",
+    "whatBody2": "We also publish a journal of practical forecast guides, UK place pages with live conditions, and optional email digests or alerts when you want them. The product is built as a progressive web app so you can install it on your phone or desktop when that helps.",
+    "dataTitle": "Where the weather comes from",
+    "dataBody1": "Forecasts and observations are powered by OpenWeather. meridian caches responses carefully so a shared free-tier key lasts through a busy day, and we stay honest about what the free upstream window can and cannot provide — especially further out in a 10-day view.",
+    "dataBody2": "Place pages may also show OpenStreetMap “things to do” nearby and, where we have published them, original Meridian guides. We do not scrape news article bodies; optional local headlines are title-and-link only when a feed is configured.",
+    "whoTitle": "Who runs meridian",
+    "whoBody": "{trading} is a trading name of {company}, a company registered in England and Wales. We build and host meridianweather.co.uk for people who want a calm, multi-city weather tool with transparent monetisation.",
+    "whoBody2": "Questions about privacy, data, or the product: privacy@meridianweather.co.uk. Company details and policies live under Legal in the site footer.",
+    "adsTitle": "Ads, consent, and ad-free",
+    "adsBody": "Advertising only loads after you opt in to advertising cookies. You can also remove ads with a paid ad-free option when Stripe billing is configured. We do not sell personal weather lists; pins stay in your browser unless you choose email features.",
+    "faqLink": "Read the FAQ",
+    "journalLink": "Browse the journal",
+    "privacyLink": "Privacy policy"
+  },
+  "Faq": {
+    "title": "Frequently asked questions",
+    "description": "Straight answers about forecasts, data sources, ads, alerts, and how meridian works.",
+    "aboutLink": "About meridian",
+    "journalLink": "Journal",
+    "items": {
+      "whatIs": {
+        "q": "What is meridian?",
+        "a": "meridian is a multi-city weather dashboard and UK place-forecast site. Check live conditions, hourly and longer outlooks, pin places in your browser, and optionally subscribe to digests or alerts."
+      },
+      "accuracy": {
+        "q": "How accurate are the forecasts?",
+        "a": "No consumer forecast is perfect. Near-term hours are usually more reliable than day nine. meridian shows OpenWeather data with clear tabs so you can lean on hourly detail when plans are close, and treat the far end of a 10-day view as a direction of travel."
+      },
+      "dataSource": {
+        "q": "Where does the weather data come from?",
+        "a": "OpenWeather supplies the underlying observations and forecasts. meridian formats, caches, and presents that data. Icons are local Meridian/Meteocon assets mapped from OpenWeather condition codes."
+      },
+      "ukCoverage": {
+        "q": "Do you cover the whole UK?",
+        "a": "You can search worldwide. We also maintain a seeded set of UK /weather place pages for SEO and local context. Coverage quality depends on OpenWeather for that lat/lon — not on a separate Meridian climate model."
+      },
+      "ads": {
+        "q": "Why do I see ads?",
+        "a": "Ads help fund the free tier. The AdSense script loads only after you accept advertising consent. Without consent, you see branded placeholders or an ad-free layout depending on configuration."
+      },
+      "consent": {
+        "q": "What does the cookie banner control?",
+        "a": "Essential storage keeps your cities and preferences. Functional consent allows weather cache in localStorage. Analytics and advertising are optional and off until you opt in."
+      },
+      "alerts": {
+        "q": "How do email digests and alerts work?",
+        "a": "Digests are calm weekly summaries for places you follow. Alerts fire when thresholds you configure are crossed. Both are opt-in and include unsubscribe links. Availability depends on an email connector being configured on the host."
+      },
+      "account": {
+        "q": "Do I need an account?",
+        "a": "No account is required to search, pin places locally, or read forecasts. Admin login is for operators only. Email features use the address you provide for that mailing list."
+      },
+      "places": {
+        "q": "What are /weather place pages?",
+        "a": "They are location pages with live conditions for a named place, plus optional things-to-do from OpenStreetMap and any published Meridian guide. Thin auto-generated filler guides are not published for advertising review."
+      },
+      "adFree": {
+        "q": "Can I remove ads?",
+        "a": "Yes, when Stripe billing is configured: Settings → Remove ads. If billing is not available on the host, the UI says so rather than offering a broken checkout."
+      },
+      "languages": {
+        "q": "Why are there multiple languages?",
+        "a": "The interface chrome is translated for several locales. Editorial pages for AdSense review emphasise English (en / en-GB). Weather numbers still come from OpenWeather with a matching language where supported."
+      },
+      "contact": {
+        "q": "How do I contact you?",
+        "a": "Privacy and product questions: privacy@meridianweather.co.uk. Legal entity details are in the footer and on the About page."
+      }
+    }
   }
 }

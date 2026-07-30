@@ -5,6 +5,7 @@ import { PlacePoiDetailPage } from '@/features/weather/components/PlacePoiDetail
 import { getPlacePoi, listPlacePois } from '@/lib/places/place-pois-repo';
 import { resolveWeatherPlaceOrCreate } from '@/lib/places/resolve-weather-place-or-create';
 import { buildPageMetadata } from '@/lib/seo';
+import { resolveRobots } from '@/lib/seo-indexability';
 import { buildLanguageAlternates, buildLocalizedPath, getOgLocale } from '@/i18n/seo';
 import { routing } from '@/i18n/routing';
 
@@ -39,6 +40,8 @@ export async function generateMetadata({ params }) {
     path: buildLocalizedPath(path, locale),
     locale: getOgLocale(locale),
     languages: buildLanguageAlternates(path),
+    // OSM republish — keep UX, exclude from AdSense/Search thin-content crawl.
+    robots: resolveRobots({ locale, noindex: true }),
   });
 }
 

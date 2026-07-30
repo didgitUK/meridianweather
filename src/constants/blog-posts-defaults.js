@@ -118,4 +118,251 @@ export const HOME_BLOG_POSTS = Object.freeze([
       'The goal is glanceable weather in the same visual language across hero, grid, and city detail — not pixel-perfect clones of OpenWeather’s raster sprites.',
     ]),
   },
+  {
+    id: 'uk-atlantic-fronts',
+    title: 'Reading Atlantic fronts on a UK forecast',
+    excerpt:
+      'Most British wet spells arrive from the west. Here is how to spot fronts on meridian’s hourly and daily strips without over-reading a single icon.',
+    category: 'Guides',
+    dateLabel: '29 Jul 2026',
+    dateIso: '2026-07-29',
+    href: '/journal/uk-atlantic-fronts',
+    imageUrl:
+      'https://images.unsplash.com/photo-1499346030926-9a72daac6c63?auto=format&fit=crop&w=1200&h=675&q=80',
+    imageAlt: 'Clouds moving over green hills under a wide sky',
+    body: Object.freeze([
+      'In the UK, many “bad weather days” are simply Atlantic fronts sweeping east. Temperature may barely change while wind and rain chance jump — that is the signal, not a failed forecast.',
+      'On meridian, scan the hourly precipitation and gust columns first when a front is due. A dry morning with rising wind often precedes the rain band; the daily high alone will not tell you that story.',
+      'Coastal and western places usually see the wettest part sooner than eastern inland towns. If you are comparing two pinned cities, look at timing offsets rather than assuming the same hour looks identical.',
+      'After the front, clearer breaks are common. Refresh closer to your outdoor window instead of locking plans to yesterday’s day-nine outlook.',
+    ]),
+  },
+  {
+    id: 'sea-breezes-and-coasts',
+    title: 'Sea breezes, haar, and why coasts feel different',
+    excerpt:
+      'Coastal UK places often run cooler by day and milder by night than inland peers. Use that context when reading Meridian place pages.',
+    category: 'Guides',
+    dateLabel: '28 Jul 2026',
+    dateIso: '2026-07-28',
+    href: '/journal/sea-breezes-and-coasts',
+    imageUrl:
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&h=675&q=80',
+    imageAlt: 'Sandy beach with gentle waves under soft light',
+    body: Object.freeze([
+      'Sea breezes can drop afternoon temperatures along coasts even when inland cities stay warm. Meridian shows the lat/lon forecast OpenWeather returns — it will not invent a beach microclimate beyond that point.',
+      'Haar and low cloud along eastern and northern coasts can wipe sunshine without a dramatic rain spike. When the condition text says mist or fog, trust the sky icon over a mild temperature alone.',
+      'Gusts on promenades and bridges feel stronger than the same number in a sheltered street. If wind is your constraint, check gusts on the hourly strip before ferry decks or cliff walks.',
+      'Our hot UK place blurbs call out coastal quirks where they matter; the live numbers below them remain the decision tool.',
+    ]),
+  },
+  {
+    id: 'pennines-rain-shadow',
+    title: 'West vs east of the Pennines: rain shadows in practice',
+    excerpt:
+      'Manchester and Leeds can disagree on the same day. Here is how UK topography shows up in two pinned Meridian cities.',
+    category: 'Guides',
+    dateLabel: '27 Jul 2026',
+    dateIso: '2026-07-27',
+    href: '/journal/pennines-rain-shadow',
+    imageUrl:
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&h=675&q=80',
+    imageAlt: 'Mountain ridge under layered clouds',
+    body: Object.freeze([
+      'Western approaches to the Pennines often catch more rain; eastern lowlands can stay drier on the same Atlantic feed. That is geography, not a bug in the app.',
+      'Pin both a western and an eastern city when you travel across the hills. Compare hourly rain chance rather than daily totals if you need a dry driving window.',
+      'When fronts stall, the “dry side” can still see drizzle. Meridian will not smooth those differences away — refresh each place if the journey crosses the range.',
+      'Use place pages for context, then decide from the live hourly strip. Do not plan a Peak District walk from a single city card alone.',
+    ]),
+  },
+  {
+    id: 'summer-convective-showers',
+    title: 'Summer showers: probability vs a ruined picnic',
+    excerpt:
+      'A 40% chance of rain is not a coin flip for your afternoon. How to read convective risk on meridian without cancelling everything.',
+    category: 'Guides',
+    dateLabel: '26 Jul 2026',
+    dateIso: '2026-07-26',
+    href: '/journal/summer-convective-showers',
+    imageUrl:
+      'https://images.unsplash.com/photo-1605727216801-e27ce1d0cc28?auto=format&fit=crop&w=1200&h=675&q=80',
+    imageAlt: 'Sunlit clouds with a distant rain shaft',
+    body: Object.freeze([
+      'Convective showers are hit-and-miss: one suburb soaks while another stays dry. Probability describes ensemble likelihood, not a guarantee that rain falls on your postcode.',
+      'Pair probability with intensity and timing. Light showers at 20% rarely stop a park visit; heavy cells at 50% in your exact hour might.',
+      'On meridian, prefer the next four to six hours when deciding whether to leave now. The daily “chance of rain” alone is too coarse for a picnic window.',
+      'If plans are flexible, wait for a clearer slot after the peak convective period rather than abandoning the day at the first yellow icon.',
+    ]),
+  },
+  {
+    id: 'winter-clear-nights',
+    title: 'Clear winter nights, frost, and morning ice',
+    excerpt:
+      'When the sky clears after a cold front, overnight lows matter more than the afternoon high. A short Meridian checklist for UK winters.',
+    category: 'Guides',
+    dateLabel: '25 Jul 2026',
+    dateIso: '2026-07-25',
+    href: '/journal/winter-clear-nights',
+    imageUrl:
+      'https://images.unsplash.com/photo-1483664852095-d6cc6870702d?auto=format&fit=crop&w=1200&h=675&q=80',
+    imageAlt: 'Frosted landscape under a pale winter sky',
+    body: Object.freeze([
+      'Clear nights radiate heat quickly. A mild afternoon can still produce frost by morning if wind drops and skies open — common after cold fronts in the UK.',
+      'Check overnight lows and the early hourly columns before an early commute. Road surface ice is about the coldest hours, not yesterday’s high.',
+      'Urban heat islands keep city centres a little milder than surrounding villages. If you pin both, expect the rural overnight to run colder.',
+      'Meridian does not replace local travel advisories; it gives you the temperature trend so you know when to look for them.',
+    ]),
+  },
+  {
+    id: 'heat-and-urban-nights',
+    title: 'Warm spells and why cities cool slowly overnight',
+    excerpt:
+      'Urban heat keeps nights sticky after hot UK days. How to use Meridian’s overnight strip when planning sleep and travel.',
+    category: 'Guides',
+    dateLabel: '24 Jul 2026',
+    dateIso: '2026-07-24',
+    href: '/journal/heat-and-urban-nights',
+    imageUrl:
+      'https://images.unsplash.com/photo-1504370806028-c95aa8955adc?auto=format&fit=crop&w=1200&h=675&q=80',
+    imageAlt: 'City skyline in warm evening light',
+    body: Object.freeze([
+      'Concrete and traffic store heat. London and other large UK cities often stay warmer overnight than surrounding countryside during heatwaves.',
+      'On meridian, read the overnight hourly temperatures — not only the daytime max — if you care about sleep comfort or early starts.',
+      'UV and afternoon peaks still matter for outdoor work; pair them with wind, which can make heat feel less stagnant even when the thermometer stays high.',
+      'We stay within OpenWeather’s free-tier detail. For health warnings, follow Met Office and local authority guidance alongside any app.',
+    ]),
+  },
+  {
+    id: 'packing-for-uk-weekends',
+    title: 'Packing for a UK weekend with a 10-day ribbon',
+    excerpt:
+      'Use near-term hours for Saturday morning decisions and the longer ribbon only for packing bands — not for booking the exact hour of rain.',
+    category: 'Forecasts',
+    dateLabel: '23 Jul 2026',
+    dateIso: '2026-07-23',
+    href: '/journal/packing-for-uk-weekends',
+    imageUrl:
+      'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=1200&h=675&q=80',
+    imageAlt: 'Open travel bag with clothes on a wooden floor',
+    body: Object.freeze([
+      'Pack for temperature bands and rain likelihood, not for a single icon five days out. UK weekends often flip after a midweek model update.',
+      'On meridian, lock waterproof and layers from the daily ribbon; lock leave-time from the hourly strip within 24–48 hours of travel.',
+      'If two destinations disagree, pack for the wetter and windier of the pair. It is easier to shed a layer than to invent a coat.',
+      'Refresh the place page the evening before you go. Free-tier forecasts improve as the event approaches — that is expected, not a failure of earlier views.',
+    ]),
+  },
+  {
+    id: 'wind-gusts-bridges',
+    title: 'Gusts, bridges, and exposed walks',
+    excerpt:
+      'Sustained wind and gusts are different decisions. When Meridian’s gust column should override a mild temperature.',
+    category: 'Guides',
+    dateLabel: '22 Jul 2026',
+    dateIso: '2026-07-22',
+    href: '/journal/wind-gusts-bridges',
+    imageUrl:
+      'https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?auto=format&fit=crop&w=1200&h=675&q=80',
+    imageAlt: 'Windswept clouds over an open landscape',
+    body: Object.freeze([
+      'A light breeze with sharp gusts feels worse on bridges, piers, and ridges than the average wind speed suggests. Cyclists and pushchairs notice first.',
+      'Meridian surfaces gusts where the upstream feed provides them. If gusts spike in your hour window, treat that as a harder constraint than a friendly sky icon.',
+      'Coastal and estuary places amplify gusts. Compare your inland pin with the coastal pin before committing to an exposed path.',
+      'If gust data is missing for a scope, do not invent it — use the available wind field and local knowledge, or wait for a refresh.',
+    ]),
+  },
+  {
+    id: 'fog-and-visibility',
+    title: 'Fog, mist, and low visibility mornings',
+    excerpt:
+      'Mild temperatures can still mean poor visibility. How fog shows up in condition text and why travel timing matters.',
+    category: 'Guides',
+    dateLabel: '21 Jul 2026',
+    dateIso: '2026-07-21',
+    href: '/journal/fog-and-visibility',
+    imageUrl:
+      'https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?auto=format&fit=crop&w=1200&h=675&q=80',
+    imageAlt: 'Misty hills at dawn',
+    body: Object.freeze([
+      'Fog is a visibility problem more than a temperature problem. Drivers and runners should read condition wording and sky icons for mist or fog even when the thermometer looks fine.',
+      'Valley towns and coasts can hold fog after hills clear. If you pin both, expect timing differences on the same morning.',
+      'Meridian does not replace highway or aviation visibility products. Use it as a heads-up to check official travel advice before early starts.',
+      'As sun rises, fog often lifts — the hourly strip helps you see whether your departure sits inside or after that window.',
+    ]),
+  },
+  {
+    id: 'free-tier-honesty',
+    title: 'What “free tier” means for Meridian forecasts',
+    excerpt:
+      'We share an OpenWeather budget, cache aggressively, and refuse to pretend unpaid upstream feeds are premium model suites.',
+    category: 'Product',
+    dateLabel: '20 Jul 2026',
+    dateIso: '2026-07-20',
+    href: '/journal/free-tier-honesty',
+    imageUrl:
+      'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&h=675&q=80',
+    imageAlt: 'Abstract network globe visualization',
+    body: Object.freeze([
+      'Meridian’s public demo runs on OpenWeather’s free tier with server-side caching and daily call budgets. That keeps costs honest and protects the key from accidental abuse.',
+      'You may see soft-stale data when budgets are tight, or fewer high-resolution hours than a paid meteorology workstation would show. We surface that reality in product copy instead of hiding it.',
+      'SEO place pages share the same upstream discipline: hot places refresh more often; cold places wait for a hit. That is intentional quota design, documented in our ops notes.',
+      'If you self-host Meridian for heavier traffic, start with your own API key and stronger cache — not by removing rate-limit awareness from the code.',
+    ]),
+  },
+  {
+    id: 'consent-and-ads',
+    title: 'Consent, AdSense, and what loads in your browser',
+    excerpt:
+      'Advertising scripts stay off until you opt in. Here is how Meridian separates essential storage from optional ads and analytics.',
+    category: 'Product',
+    dateLabel: '19 Jul 2026',
+    dateIso: '2026-07-19',
+    href: '/journal/consent-and-ads',
+    imageUrl:
+      'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1200&h=675&q=80',
+    imageAlt: 'Laptop showing privacy-related settings UI',
+    body: Object.freeze([
+      'Essential browser storage keeps your pinned cities and preferences. Functional consent enables weather cache in localStorage so refreshes are cheaper.',
+      'Analytics and advertising are optional. Google AdSense runtime code loads only after advertising consent — verification meta tags are separate from ad serving.',
+      'You can reject advertising and still use forecasts. When Stripe billing is configured, Settings offers an ad-free path instead of forcing ads.',
+      'We would rather show empty or branded slots than load trackers without a clear yes. That is a product choice, not a temporary demo quirk.',
+    ]),
+  },
+  {
+    id: 'using-place-pages',
+    title: 'How to use a /weather place page well',
+    excerpt:
+      'Place pages combine live forecast chrome with local context. What to trust, what is optional, and what we refuse to auto-publish.',
+    category: 'Product',
+    dateLabel: '18 Jul 2026',
+    dateIso: '2026-07-18',
+    href: '/journal/using-place-pages',
+    imageUrl:
+      'https://images.unsplash.com/photo-1526779259212-939e64788e3c?auto=format&fit=crop&w=1200&h=675&q=80',
+    imageAlt: 'Map with location pins',
+    body: Object.freeze([
+      'The top of a place page is the forecast: conditions, hourly detail, and the longer outlook for that lat/lon. Start there for any go/no-go decision.',
+      'Below the fold you may see OpenStreetMap things to do and, when we have published one, an original Meridian guide. OSM names are third-party map data; guides are Meridian writing.',
+      'We do not publish stub filler articles that repeat the same paragraph to hit a word count. Draft generation may exist for operators; public publish requires human review.',
+      'If a place feels thin, use search to open the live city view and pin it — the dashboard remains the fastest path for places you check daily.',
+    ]),
+  },
+  {
+    id: 'install-pwa',
+    title: 'Installing Meridian as an app on your phone',
+    excerpt:
+      'Meridian is a progressive web app: install from the browser for a full-screen weather shell and offline backup of pinned places.',
+    category: 'Product',
+    dateLabel: '17 Jul 2026',
+    dateIso: '2026-07-17',
+    href: '/journal/install-pwa',
+    imageUrl:
+      'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1200&h=675&q=80',
+    imageAlt: 'Hand holding a smartphone showing an app home screen',
+    body: Object.freeze([
+      'On supported browsers, use Install app / Add to Home Screen. You get a standalone window without the browser chrome cluttering the forecast.',
+      'Pinned places stay in local storage on that device. Installing does not create a Meridian account; clearing site data still clears pins.',
+      'When Web Push is configured, a daily refresh can nudge the installed app — optional, and subject to browser permission.',
+      'Native App Store / Play Store listings are not required for the PWA path. Use the footer install hint if your browser hides the prompt.',
+    ]),
+  },
 ]);

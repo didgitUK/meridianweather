@@ -1,6 +1,9 @@
 import { getSiteUrl } from '@/lib/seo';
 import { getLocalizedSitemapEntries } from '@/lib/sitemap-routes';
 
+/** Always read live DB — published guides / places change without a rebuild. */
+export const dynamic = 'force-dynamic';
+
 export default function sitemap() {
   const siteUrl = getSiteUrl();
 

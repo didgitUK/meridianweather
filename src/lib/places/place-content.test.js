@@ -95,7 +95,7 @@ describe('place article validation', () => {
     );
   });
 
-  it('validates stub guide output as publishable', () => {
+  it('rejects stub guide output for publish', () => {
     const pack = {
       place: {
         slug: 'blackpool',
@@ -128,7 +128,8 @@ describe('place article validation', () => {
 
     expect(result.wordCount).toBeGreaterThanOrEqual(PLACE_GUIDE_MIN_WORDS);
     expect(PLACE_GUIDE_REQUIRED_H2.every((h) => result.h2s.includes(h))).toBe(true);
-    expect(result.ok).toBe(true);
+    expect(result.ok).toBe(false);
+    expect(result.errors).toContain('stub_or_repeated_filler');
   });
 });
 
