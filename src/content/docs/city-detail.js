@@ -19,7 +19,7 @@ export const cityDetailDoc = {
       id: 'header',
       title: 'Map or photo at the top',
       body:
-        'By default the header shows a satellite map of the area. Some hosts show location photos instead when available, otherwise a simple brand image. An optional Street View control may appear depending on host configuration.',
+        'By default the header shows a satellite map of the area, with cloud and rain overlays and a 24-hour scrub for daylight and condition intensity (play/pause along the bottom). Cloud and rain positions on the map are current; the scrub changes how strong they look and how light or dark the scene is through the day and night. Some hosts show location photos instead when available, otherwise a simple brand image. An optional Street View control may appear depending on host configuration.',
     },
     {
       id: 'today',

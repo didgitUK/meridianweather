@@ -111,30 +111,11 @@
   transition: opacity 0.55s ease;
 }
 
-/* NASA Black Marble soft glow — see city-detail-osm-backdrop.css for source of truth. */
-.meridian-city-lights-tiles {
-  mix-blend-mode: screen;
-  image-rendering: auto;
-  filter: blur(2.25px) brightness(1.4) contrast(1.1) saturate(1.08);
-  transform: translateZ(0) scale(1.035);
-  transform-origin: center center;
-}
-
-.meridian-night-dark-overlay {
-  will-change: opacity;
-}
-
-.meridian-night-dark-overlay {
-  will-change: opacity;
-}
+/* City lights / night wash styles live in city-detail-osm-backdrop.css (single source). */
 
 @media (prefers-reduced-motion: reduce) {
   .dashboard-hero__day-night-wash {
     transition: none;
-  }
-
-  .meridian-night-dark-overlay {
-    transition: none !important;
   }
 
   .dashboard-hero__timeline-playhead {

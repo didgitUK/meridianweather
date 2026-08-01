@@ -216,8 +216,8 @@ export function CityDetailPageHeader({
       className={cn(
         'dashboard-hero relative isolate z-40 w-screen max-w-[100vw] overflow-visible border-b border-border/60 bg-black',
         useOsm && 'dashboard-hero--weather-map',
-        // Modestly taller than the prior slim band so the map theater reads.
-        'ml-[calc(50%-50vw)] aspect-[21/9] min-h-[10rem] max-h-[min(19rem,38vw)]',
+        // Taller band so the satellite theater (timeline + layers) can breathe.
+        'ml-[calc(50%-50vw)] aspect-[16/7] min-h-[12rem] max-h-[min(24rem,46vw)]',
         showTheater && 'pb-14 sm:pb-16',
       )}
     >
@@ -229,12 +229,17 @@ export function CityDetailPageHeader({
             showScrim={false}
             showClouds
             showPrecipitation
+            showLiveRadar
             showCityLights
+            showDayGibs
             cloudOpacity={theater.frame.cloudOpacity}
             precipOpacity={theater.frame.precipOpacity}
             lightsOpacity={theater.frame.lights}
             nightDarkOpacity={theater.frame.wash}
-            zoom={9}
+            washColor={theater.frame.washColor}
+            satFilter={theater.frame.satFilter}
+            dayGibsOpacity={theater.frame.dayGibs}
+            zoom={8}
           />
           <div
             aria-hidden

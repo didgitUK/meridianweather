@@ -52,7 +52,7 @@ export const DOCS_PAGES_I18N = [
         id: 'layout',
         title: 'ホームページで見えるもの',
         body:
-          '上から順に：\n\n1. ヒーロー — 歓迎文、検索、現在地のクイック天気確認。\n2. あなたの場所 — ピン留めした場所の天気カード。\n3. 近くと人気 — 2列：「お近く」と「人気の検索」。\n4. 「あなたの場所」下のダッシュボード広告（プレースホルダーまたは AdSense）。\n5. Journal — 記事カルーセル。\n\nNEXT_PUBLIC_SHOW_HOME_STRETCH=0 で広告と Journal を非表示にできます。',
+          '上から順に：\n\n1. ヒーロー — 位置が解決したときの衛星地図と天気オーバーレイ、歓迎文、検索、クイック天気確認、昼夜とコンディション強度の24時間スクラブ。雲・雨の位置は現在のもので、スクラブは強度と昼夜を変えます。\n2. あなたの場所 — ピン留めした場所の天気カード。\n3. 近くと人気 — 2列：「お近く」と「人気の検索」。\n4. 「あなたの場所」下のダッシュボード広告（プレースホルダーまたは AdSense）。\n5. Journal — 記事カルーセル。\n\nNEXT_PUBLIC_SHOW_HOME_STRETCH=0 で広告と Journal を非表示にできます。',
       },
       {
         id: 'cards',
@@ -119,7 +119,7 @@ export const DOCS_PAGES_I18N = [
         id: 'header',
         title: '上部の地図または写真',
         body:
-          '既定ではヘッダーに衛星地図が表示されます。運営者は場所の写真に切り替え可能（利用可能な写真プロバイダー、なければシンプルなブランド画像）。地図背景がオフのとき、任意の Street View は運営者設定です。',
+          '既定ではヘッダーに衛星地図が表示され、雲・雨のオーバーレイと、昼夜の明るさおよびコンディション強度用の24時間スクラブ（下部の再生/一時停止）が付きます。雲と雨の位置は現在のものです。スクラブは強度と昼夜を変えます。運営者は場所の写真に切り替え可能（利用可能な写真プロバイダー、なければシンプルなブランド画像）。地図背景がオフのとき、任意の Street View は運営者設定です。',
       },
       {
         id: 'today',
@@ -535,7 +535,7 @@ export const DOCS_PAGES_I18N = [
         id: 'env-hero',
         title: 'ヒーロー画像環境',
         body:
-          'UNSPLASH_ACCESS_KEY — 任意；場所ヒーローの第一写真プロバイダー（サーバーのみ、hero_image_cache にキャッシュ）。PEXELS_API_KEY — Unsplash と Wikimedia Commons の後の第三プロバイダー。NEXT_PUBLIC_CITY_HERO_OSM — 0 で衛星地図ヘッダー無効（既定オン）。NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 — OSM オフ時の Google Street View オプトイン。NEXT_PUBLIC_GOOGLE_MAPS_API_KEY — Street View iframe 用任意 Maps Embed API キー。',
+          'ダッシュボード/都市ヒーロー：Esri World Imagery（Leaflet）ズーム8、NASA Black Marble ライト、任意の GIBS 昼間アクセント、OpenWeather 強度オーバーレイ下の RainViewer レーダー（プロキシ；OPENWEATHER_API_KEY 必須）。24時間スクラブは昼夜ウォッシュと強度を動かし、予報の形状は動かさない。NEXT_PUBLIC_CITY_HERO_OSM=0 で写真。UNSPLASH_ACCESS_KEY / PEXELS_API_KEY — 任意写真（サーバー、hero_image_cache；Wikimedia はキー不要）。NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 + NEXT_PUBLIC_GOOGLE_MAPS_API_KEY で Street View。/api/weather/map-tile と night-lights は IP レート制限。',
       },
       {
         id: 'env-email',

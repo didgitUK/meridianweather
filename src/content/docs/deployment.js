@@ -1,7 +1,7 @@
 export const deploymentDoc = {
   slug: 'deployment',
   title: 'Deployment & environment',
-  lastUpdated: '2026-07-15',
+  lastUpdated: '2026-08-01',
   sections: [
     {
       id: 'audience',
@@ -19,7 +19,7 @@ export const deploymentDoc = {
       id: 'env-hero',
       title: 'Hero image environment',
       body:
-        'Dashboard and city-detail heroes default to Esri World Imagery (Leaflet). Set NEXT_PUBLIC_CITY_HERO_OSM=0 to prefer photos. UNSPLASH_ACCESS_KEY / PEXELS_API_KEY — optional photo providers for journal, photo-mode heroes, and some placeholders (server-only, cached in hero_image_cache; Wikimedia is keyless). NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 — opt-in Google Street View when the map hero is off. NEXT_PUBLIC_GOOGLE_MAPS_API_KEY — optional Maps Embed API key for Street View iframes. Cloud/precip map overlays use the OpenWeather tile proxy and need OPENWEATHER_API_KEY.',
+        'Dashboard and city-detail heroes default to Esri World Imagery (Leaflet) at zoom 8 when city lights are on, so NASA Black Marble night lights stay georeferenced with the satellite basemap. Optional daytime GIBS true-color accent and RainViewer live radar sit under OpenWeather cloud/precip intensity overlays (proxied; OPENWEATHER_API_KEY required for OWM tiles). The 24h scrub drives daylight wash, lights, and overlay intensity — not moving forecast geometry. Set NEXT_PUBLIC_CITY_HERO_OSM=0 to prefer photos. UNSPLASH_ACCESS_KEY / PEXELS_API_KEY — optional photo providers for journal, photo-mode heroes, and some placeholders (server-only, cached in hero_image_cache; Wikimedia is keyless). NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 — opt-in Google Street View when the map hero is off. NEXT_PUBLIC_GOOGLE_MAPS_API_KEY — optional Maps Embed API key for Street View iframes. Tile proxies (/api/weather/map-tile, /api/weather/night-lights) are rate-limited per IP.',
     },
     {
       id: 'env-email',

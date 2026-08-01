@@ -1,9 +1,12 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import '@/features/weather/components/city-detail-osm-backdrop.css';
 import { cn } from '@/lib/utils';
+import { GIBS_BLACK_MARBLE_MAX_ZOOM } from '@/lib/weather/night-lights-tile';
+import { fetchLatestRadarFrame } from '@/lib/weather/rainviewer';
+import { diurnalWashStyle } from '@/features/weather/utils/hero-weather-timeline';
 
 export { isCityHeroOsmEnabled } from '@/lib/city-hero-flags';
 
@@ -11,14 +14,27 @@ export { isCityHeroOsmEnabled } from '@/lib/city-hero-flags';
  * Satellite map at lat/lon (Esri World Imagery via Leaflet).
  * Optional live cloud / precip layers via OpenWeather tile proxy (server key).
  * Optional NASA Black Marble city lights + night darken (under clouds).
+ * Optional RainViewer live radar under OWM precip intensity.
  * Set NEXT_PUBLIC_CITY_HERO_OSM=0 to disable (falls back to photos).
  */
 
 /** Wider context than street-level OSM. */
-const CITY_OVERVIEW_ZOOM = 10;
+export const CITY_OVERVIEW_ZOOM = 10;
 
-/** NASA GIBS Black Marble native max zoom. */
-const CITY_LIGHTS_MAX_NATIVE_ZOOM = 8;
+/** NASA GIBS Black Marble native max zoom — heroes with lights should match. */
+export const CITY_LIGHTS_MAX_NATIVE_ZOOM = GIBS_BLACK_MARBLE_MAX_ZOOM;
+
+/** Hero theater zoom when city lights are shown (native Black Marble). */
+export const HERO_LIGHTS_ZOOM = CITY_LIGHTS_MAX_NATIVE_ZOOM;
+
+/** Transparent 1×1 PNG for failed overlay tiles. */
+const EMPTY_TILE =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+
+const ESRI_ATTR = 'Esri World Imagery';
+const NASA_ATTR = 'NASA Black Marble';
+const OWM_ATTR = 'OpenWeather';
+const RAIN_ATTR = 'RainViewer';
 
 function prefersReducedMotion() {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
@@ -37,6 +53,23 @@ function centersDiffer(map, lat, lon, zoom) {
   );
 }
 
+function applyWashStyle(el, { wash, washColor }) {
+  if (!el) {
+    return;
+  }
+  if (washColor) {
+    el.style.background = washColor;
+  }
+  el.style.opacity = String(wash ?? 0);
+}
+
+function applySatFilter(pane, satFilter) {
+  if (!pane) {
+    return;
+  }
+  pane.style.filter = satFilter || 'none';
+}
+
 /**
  * @param {{
  *   lat: number,
@@ -44,11 +77,17 @@ function centersDiffer(map, lat, lon, zoom) {
  *   showScrim?: boolean,
  *   showClouds?: boolean,
  *   showPrecipitation?: boolean,
+ *   showLiveRadar?: boolean,
  *   showCityLights?: boolean,
+ *   showAttribution?: boolean,
  *   cloudOpacity?: number,
  *   precipOpacity?: number,
  *   lightsOpacity?: number,
  *   nightDarkOpacity?: number,
+ *   washColor?: string | null,
+ *   satFilter?: string | null,
+ *   dayGibsOpacity?: number,
+ *   showDayGibs?: boolean,
  *   zoom?: number,
  *   interactive?: boolean,
  *   minZoom?: number,
@@ -65,11 +104,17 @@ export function CityDetailOsmBackdrop({
   showScrim = true,
   showClouds = true,
   showPrecipitation = false,
+  showLiveRadar = null,
   showCityLights = false,
+  showAttribution = null,
   cloudOpacity = 0.62,
   precipOpacity = 0.38,
   lightsOpacity = 0,
   nightDarkOpacity = 0,
+  washColor = null,
+  satFilter = null,
+  dayGibsOpacity = 0,
+  showDayGibs = false,
   zoom = CITY_OVERVIEW_ZOOM,
   interactive = false,
   minZoom = null,
@@ -83,18 +128,27 @@ export function CityDetailOsmBackdrop({
   const mapRef = useRef(null);
   const cloudLayerRef = useRef(null);
   const precipLayerRef = useRef(null);
+  const radarLayerRef = useRef(null);
+  const dayGibsLayerRef = useRef(null);
   const lightsLayerRef = useRef(null);
   const nightDarkElRef = useRef(null);
+  const satellitePaneRef = useRef(null);
   const onMapReadyRef = useRef(onMapReady);
   const onMapDestroyRef = useRef(onMapDestroy);
+  const liveRadarEnabled = showLiveRadar ?? showPrecipitation;
+  const attributionEnabled = showAttribution ?? !showControls;
   const viewRef = useRef({ lat, lon, zoom });
   const opacityRef = useRef({
     cloudOpacity,
     precipOpacity,
     lightsOpacity,
     nightDarkOpacity,
+    washColor,
+    satFilter,
+    dayGibsOpacity,
   });
   const [mapReady, setMapReady] = useState(!fadeIn);
+  const [radarReady, setRadarReady] = useState(false);
   onMapReadyRef.current = onMapReady;
   onMapDestroyRef.current = onMapDestroy;
   viewRef.current = { lat, lon, zoom };
@@ -103,7 +157,27 @@ export function CityDetailOsmBackdrop({
     precipOpacity,
     lightsOpacity,
     nightDarkOpacity,
+    washColor,
+    satFilter,
+    dayGibsOpacity,
   };
+
+  const attributionText = useMemo(() => {
+    const parts = [ESRI_ATTR];
+    if (showDayGibs) {
+      parts.push('NASA GIBS');
+    }
+    if (showCityLights) {
+      parts.push(NASA_ATTR);
+    }
+    if (showClouds || showPrecipitation) {
+      parts.push(OWM_ATTR);
+    }
+    if (liveRadarEnabled && radarReady) {
+      parts.push(RAIN_ATTR);
+    }
+    return parts.join(' · ');
+  }, [showDayGibs, showCityLights, showClouds, showPrecipitation, liveRadarEnabled, radarReady]);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -114,6 +188,7 @@ export function CityDetailOsmBackdrop({
     let cancelled = false;
     let resizeObserver = null;
     let loadFallbackTimer = null;
+    let radarAbort = null;
 
     async function mountMap() {
       const leaflet = await import('leaflet');
@@ -143,15 +218,20 @@ export function CityDetailOsmBackdrop({
         touchZoom: interactive,
       });
 
-      // Pane stack: satellite → nightDark → cityLights → clouds → precip
+      // Pane stack: satellite → dayGibs → nightDark → cityLights → clouds → radar → precip
       const satellitePane = map.createPane('meridianSatellite');
       satellitePane.style.zIndex = 200;
+      satellitePane.classList.add('meridian-satellite-tiles');
+      satellitePaneRef.current = satellitePane;
+      applySatFilter(satellitePane, opacityRef.current.satFilter);
 
       const satellite = L.tileLayer(
         'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
         {
           maxZoom: 19,
           pane: 'meridianSatellite',
+          className: 'meridian-satellite-basemap',
+          errorTileUrl: EMPTY_TILE,
           attribution: showControls
             ? 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics'
             : undefined,
@@ -163,7 +243,6 @@ export function CityDetailOsmBackdrop({
           return;
         }
         setMapReady(true);
-        // Class updates on the fade wrapper can race layout; remeasure after paint.
         requestAnimationFrame(() => {
           mapRef.current?.invalidateSize?.({ animate: false });
         });
@@ -175,19 +254,44 @@ export function CityDetailOsmBackdrop({
         loadFallbackTimer = window.setTimeout(revealMap, 1800);
       }
 
+      if (showDayGibs) {
+        const dayPane = map.createPane('meridianDayGibs');
+        dayPane.style.zIndex = 220;
+        dayPane.style.pointerEvents = 'none';
+        // GIBS Web Mercator uses z/y/x (same as Esri). Soft day accent over Esri.
+        const dayGibs = L.tileLayer(
+          'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_CorrectedReflectance_TrueColor/default/default/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg',
+          {
+            maxZoom: 19,
+            maxNativeZoom: 9,
+            opacity: opacityRef.current.dayGibsOpacity,
+            pane: 'meridianDayGibs',
+            className: 'meridian-day-gibs-tiles',
+            errorTileUrl: EMPTY_TILE,
+          },
+        ).addTo(map);
+        dayGibsLayerRef.current = dayGibs;
+      }
+
       if (showCityLights) {
         const nightPane = map.createPane('meridianNightDark');
         nightPane.style.zIndex = 250;
         nightPane.style.pointerEvents = 'none';
 
+        const initialWash = opacityRef.current.washColor
+          ?? diurnalWashStyle(
+            opacityRef.current.nightDarkOpacity > 0
+              ? opacityRef.current.nightDarkOpacity / 0.92
+              : 0,
+          ).washColor;
+
         const darkEl = L.DomUtil.create('div', 'meridian-night-dark-overlay');
         darkEl.style.cssText = [
           'position:absolute',
           'inset:0',
-          'background:rgb(2 6 18)',
+          `background:${initialWash}`,
           `opacity:${opacityRef.current.nightDarkOpacity}`,
           'pointer-events:none',
-          'transition:opacity 0.35s ease',
         ].join(';');
         nightPane.appendChild(darkEl);
         nightDarkElRef.current = darkEl;
@@ -202,6 +306,7 @@ export function CityDetailOsmBackdrop({
           opacity: opacityRef.current.lightsOpacity,
           pane: 'meridianCityLights',
           className: 'meridian-city-lights-tiles',
+          errorTileUrl: EMPTY_TILE,
         }).addTo(map);
         lightsLayerRef.current = lights;
       }
@@ -215,8 +320,30 @@ export function CityDetailOsmBackdrop({
           opacity: opacityRef.current.cloudOpacity,
           pane: 'meridianClouds',
           className: 'meridian-cloud-tiles',
+          errorTileUrl: EMPTY_TILE,
         }).addTo(map);
         cloudLayerRef.current = clouds;
+      }
+
+      if (liveRadarEnabled) {
+        const radarPane = map.createPane('meridianRadar');
+        radarPane.style.zIndex = 440;
+        radarAbort = new AbortController();
+        fetchLatestRadarFrame({ signal: radarAbort.signal }).then((frame) => {
+          if (cancelled || !frame?.urlTemplate || !mapRef.current) {
+            return;
+          }
+          const radar = L.tileLayer(frame.urlTemplate, {
+            maxZoom: 19,
+            maxNativeZoom: 7,
+            opacity: Math.min(0.72, opacityRef.current.precipOpacity * 1.15),
+            pane: 'meridianRadar',
+            className: 'meridian-radar-tiles',
+            errorTileUrl: EMPTY_TILE,
+          }).addTo(mapRef.current);
+          radarLayerRef.current = radar;
+          setRadarReady(true);
+        });
       }
 
       if (showPrecipitation) {
@@ -225,9 +352,10 @@ export function CityDetailOsmBackdrop({
 
         const precip = L.tileLayer('/api/weather/map-tile/precipitation_new/{z}/{x}/{y}', {
           maxZoom: 19,
-          opacity: opacityRef.current.precipOpacity,
+          opacity: opacityRef.current.precipOpacity * (liveRadarEnabled ? 0.55 : 1),
           pane: 'meridianPrecip',
           className: 'meridian-precip-tiles',
+          errorTileUrl: EMPTY_TILE,
         }).addTo(map);
         precipLayerRef.current = precip;
       }
@@ -239,7 +367,6 @@ export function CityDetailOsmBackdrop({
       };
       requestAnimationFrame(() => {
         invalidate();
-        // Sync if Allow Location resolved while Leaflet was still loading.
         const next = viewRef.current;
         if (
           Number.isFinite(next.lat)
@@ -264,6 +391,7 @@ export function CityDetailOsmBackdrop({
 
     return () => {
       cancelled = true;
+      radarAbort?.abort();
       if (loadFallbackTimer != null) {
         window.clearTimeout(loadFallbackTimer);
       }
@@ -271,10 +399,14 @@ export function CityDetailOsmBackdrop({
       onMapDestroyRef.current?.();
       cloudLayerRef.current = null;
       precipLayerRef.current = null;
+      radarLayerRef.current = null;
+      dayGibsLayerRef.current = null;
       lightsLayerRef.current = null;
       nightDarkElRef.current = null;
+      satellitePaneRef.current = null;
       mapRef.current?.remove();
       mapRef.current = null;
+      setRadarReady(false);
       if (fadeIn) {
         setMapReady(false);
       }
@@ -283,6 +415,8 @@ export function CityDetailOsmBackdrop({
     showClouds,
     showPrecipitation,
     showCityLights,
+    showDayGibs,
+    liveRadarEnabled,
     interactive,
     showControls,
     minZoom,
@@ -295,18 +429,35 @@ export function CityDetailOsmBackdrop({
   }, [cloudOpacity]);
 
   useEffect(() => {
-    precipLayerRef.current?.setOpacity?.(precipOpacity);
-  }, [precipOpacity]);
+    dayGibsLayerRef.current?.setOpacity?.(dayGibsOpacity);
+  }, [dayGibsOpacity]);
+
+  useEffect(() => {
+    const owmFactor = liveRadarEnabled ? 0.55 : 1;
+    precipLayerRef.current?.setOpacity?.(precipOpacity * owmFactor);
+    if (radarLayerRef.current) {
+      radarLayerRef.current.setOpacity?.(Math.min(0.72, precipOpacity * 1.15));
+    }
+  }, [precipOpacity, liveRadarEnabled]);
 
   useEffect(() => {
     lightsLayerRef.current?.setOpacity?.(lightsOpacity);
   }, [lightsOpacity]);
 
   useEffect(() => {
-    if (nightDarkElRef.current) {
-      nightDarkElRef.current.style.opacity = String(nightDarkOpacity);
-    }
-  }, [nightDarkOpacity]);
+    applyWashStyle(nightDarkElRef.current, {
+      wash: nightDarkOpacity,
+      washColor: washColor
+        ?? diurnalWashStyle(nightDarkOpacity > 0 ? nightDarkOpacity / 0.92 : 0).washColor,
+    });
+  }, [nightDarkOpacity, washColor]);
+
+  useEffect(() => {
+    applySatFilter(
+      satellitePaneRef.current,
+      satFilter ?? diurnalWashStyle(nightDarkOpacity > 0 ? nightDarkOpacity / 0.92 : 0).satFilter,
+    );
+  }, [satFilter, nightDarkOpacity]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -363,6 +514,11 @@ export function CityDetailOsmBackdrop({
       </div>
       {showScrim ? (
         <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
+      ) : null}
+      {attributionEnabled ? (
+        <div className="meridian-map-attribution" aria-hidden>
+          {attributionText}
+        </div>
       ) : null}
     </div>
   );

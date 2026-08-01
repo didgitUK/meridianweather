@@ -7,7 +7,7 @@ export const dashboardDoc = {
       id: 'layout',
       title: 'What you see on the home page',
       body:
-        'Top to bottom:\n\n1. Hero — welcome text, search, and a quick location weather check.\n2. Your locations — weather cards for the places you pinned.\n3. Nearby & popular — two columns: Near you and Popular searches.\n4. A dashboard ad placeholder (or live AdSense when advertising is configured and consented).\n5. Journal — a short article carousel.',
+        'Top to bottom:\n\n1. Hero — satellite map (when your location resolves) with weather overlays, welcome text, search, a quick location weather check, and a 24-hour daylight & conditions scrub. Cloud and rain positions are current; the scrub changes intensity and day/night.\n2. Your locations — weather cards for the places you pinned.\n3. Nearby & popular — two columns: Near you and Popular searches.\n4. A dashboard ad placeholder (or live AdSense when advertising is configured and consented).\n5. Journal — a short article carousel.',
     },
     {
       id: 'cards',

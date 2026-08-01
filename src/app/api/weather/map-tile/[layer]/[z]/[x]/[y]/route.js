@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getApiKey } from '@/lib/api-client';
 import { apiErrorFromCaught } from '@/lib/server/api-response';
+import { enforceRateLimit } from '@/lib/server/rate-limit';
 
 /** OpenWeather Weather Maps 1.0 layers we proxy (key stays server-side). */
 const ALLOWED_LAYERS = new Set([
@@ -19,7 +20,16 @@ function parseTileCoord(value, name) {
   return n;
 }
 
-export async function GET(_request, { params }) {
+export async function GET(request, { params }) {
+  const limited = enforceRateLimit(request, {
+    bucket: 'map-tile',
+    limit: 300,
+    windowMs: 60_000,
+  });
+  if (limited) {
+    return limited;
+  }
+
   try {
     const { layer, z, x, y } = await params;
     const tileLayer = String(layer ?? '');

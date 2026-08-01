@@ -19,25 +19,58 @@
 }
 
 /* NASA Black Marble — screen so black pixels stay transparent over satellite.
- * Native GIBS max is z8; hero is often z9, so tiles upscale. Soft blur turns
- * blocky upscale into a city-glow bloom (Google Earth–like) instead of pixels.
- * Do not filter the pane itself — that isolates mix-blend and kills the glow. */
+ * Native GIBS max is z8; keep tile transforms at identity so lights stay
+ * georeferenced with Esri World Imagery (no CSS scale — that drifts coasts).
+ * Light blur softens native pixels without shifting geography. */
 .meridian-city-lights-tiles {
   mix-blend-mode: screen;
   image-rendering: auto;
-  /* Blur softens blocks; brightness recovers bloom after blur. */
-  filter: blur(2.25px) brightness(1.4) contrast(1.1) saturate(1.08);
-  /* Slight overscale hides soft tile-edge seams after blur. */
-  transform: translateZ(0) scale(1.035);
-  transform-origin: center center;
+  filter: blur(0.85px) brightness(1.28) contrast(1.06) saturate(1.05);
 }
 
 .meridian-night-dark-overlay {
-  will-change: opacity;
+  will-change: opacity, background-color;
+  transition:
+    opacity 0.4s ease,
+    background-color 0.55s ease;
+}
+
+.meridian-satellite-tiles {
+  will-change: filter;
+  transition: filter 0.55s ease;
+}
+
+/* Soft daytime GIBS true-color accent — multiply keeps Esri structure. */
+.meridian-day-gibs-tiles {
+  mix-blend-mode: soft-light;
+  image-rendering: auto;
+}
+
+.meridian-radar-tiles {
+  mix-blend-mode: screen;
+}
+
+.meridian-map-attribution {
+  pointer-events: none;
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.4rem;
+  z-index: 2;
+  max-width: min(18rem, 70%);
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.25rem;
+  background: rgb(0 0 0 / 0.42);
+  color: rgb(255 255 255 / 0.78);
+  font-size: 0.625rem;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  text-align: right;
+  backdrop-filter: blur(4px);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .meridian-night-dark-overlay {
+  .meridian-night-dark-overlay,
+  .meridian-satellite-tiles {
     transition: none !important;
   }
 }
