@@ -2,7 +2,7 @@
 
 ## Status
 
-Google AdSense rejected **meridianweather.co.uk** for **Low value content** (thin / auto-generated patterns). Do **not** click Request review until the checklist below is green on **live**.
+Google AdSense rejected **meridianweather.co.uk** for **Low value content** (thin / auto-generated patterns). Code + host remediation shipped **2026-07-30** (live on Gandi; GitHub PR #7). Submit Search Console sitemap `https://meridianweather.co.uk/sitemap.xml`, wait for crawl of `/about` + journal + cleaned place pages, **then** AdSense Request review.
 
 ## Root cause (confirmed)
 

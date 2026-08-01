@@ -74,20 +74,17 @@ See also [`docs/ADSENSE-CONTENT-REVIEW.md`](ADSENSE-CONTENT-REVIEW.md).
 3. Upload env via `scripts/gandi-upload-env.sh` (skips empty values)
 4. Verify: home load, `/api/platform/limits`, admin login, one cron dry-run
 
-## DNS — www must not stay on Gandi parking
+## DNS — www / Search Console
 
-Google “connection blocked” is **not** caused by `/robots.txt` or the sitemap. Apex (`meridianweather.co.uk`) is crawlable (`Allow: /`, meta `index,follow`).
+Apex (`meridianweather.co.uk`) is the canonical host. Search Console should use the **apex** property and sitemap:
 
-`www.meridianweather.co.uk` currently CNAMEs to `webredir.vip.gandi.net` (parking). HTTP shows a Gandi parking page; **HTTPS on :443 is connection refused**. Apex also used to send `Strict-Transport-Security: …; includeSubDomains`, which forces HTTPS on `www` and surfaces that refusal to Google.
+`https://meridianweather.co.uk/sitemap.xml`
 
-**Fix in Gandi (LiveDNS + Web Hosting):**
+**LiveDNS (2026-07-30):** parking `www` → `webredir.vip.gandi.net` was removed via API; `www` is set to `CNAME meridianweather.co.uk`. Some Gandi NS anycast nodes can lag.
 
-1. Remove the `www` CNAME to `webredir.vip.gandi.net`.
-2. Point `www` at the same A/AAAA as apex (`155.133.138.14` / `2001:4b98:dc5:253::14`), or attach `www` as a host alias on the Simple Hosting instance.
-3. Ensure the hosting SSL covers `www` (or HTTP→HTTPS redirect to apex).
-4. Prefer a 301 from `https://www…` → `https://meridianweather.co.uk`.
+**Hosting limit:** Simple Hosting **Starter** allows **one** vhost (apex only). Requests that hit the instance as `www` return Varnish `404 Vhost unknown` until the plan allows a second vhost + TLS, or a Gandi web-forward 301 to apex is configured in the UI.
 
-App HSTS is apex-only (`max-age=63072000`, no `includeSubDomains`) until `www` HTTPS works; re-enable `includeSubDomains` after that.
+App HSTS remains apex-only (`max-age=63072000`, no `includeSubDomains`) until `www` HTTPS is real.
 
 ## Privacy / consent
 

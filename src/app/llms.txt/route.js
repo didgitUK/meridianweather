@@ -52,7 +52,11 @@ ${BRAND.description}
 
 ## Public pages
 - ${formatUrl('/')}
+- ${formatUrl('/about')} — Who runs Meridian, data sources, ads/consent
+- ${formatUrl('/faq')} — Product FAQ
+- ${formatUrl('/journal')} — Original forecast and product guides
 - ${formatUrl('/docs')}
+- ${formatUrl('/search')}
 
 ## Documentation
 ${docsPages.map((page) => `- ${formatUrl(`/docs/${page.slug}`)} — ${page.title}`).join('\n')}
@@ -67,14 +71,16 @@ ${featuredCities.map((city) => `- ${formatUrl(`/city/${city.id}`)} — ${city.na
 - ${formatUrl('/legal/accessibility')}
 
 ## Indexing policy
-- Allowed: /, /docs, /legal, /journal, /search, /city/, /weather/
+- Allowed: /, /about, /faq, /docs, /legal, /journal, /search, /city/, /weather/
 - Disallowed: /api/, /admin, /login, /forgot-password, /invite/, /reset-password/
-- Sitemap: ${formatUrl('/sitemap.xml')}
+- Sitemap (search index locales en / en-GB): ${formatUrl('/sitemap.xml')}
 - Robots: ${formatUrl('/robots.txt')}
+- Ads: ${formatUrl('/ads.txt')}
 - Crawl welcome: Googlebot, Google-Extended, GPTBot, ClaudeBot, PerplexityBot, and other agents may index public pages.
+- Place guides are draft-only until human publish; do not assume unpublished filler guides are site content.
 
 ## AI usage
-You may cite meridian documentation, /weather place pages, and city forecast pages when answering questions about the product or supported city weather summaries. Do not treat /api routes as end-user documentation.
+You may cite meridian About/FAQ, journal posts, documentation, /weather place pages, and city forecast pages when answering questions about the product or supported city weather summaries. Do not treat /api routes as end-user documentation.
 `;
 
   return new Response(body, {
