@@ -87,8 +87,17 @@ Apex (`meridianweather.co.uk`) is the canonical host. Search Console should use 
 
 App HSTS remains apex-only (`max-age=63072000`, no `includeSubDomains`) until `www` HTTPS is real.
 
+## Analytics — GA4
+
+- **Property:** MeridianWeather (GA4)
+- **Measurement ID:** `G-QWS3EPNZCL` via `NEXT_PUBLIC_GA_MEASUREMENT_ID` (public in page source when analytics consent is on)
+- Loader: `AnalyticsProvider` → `@next/third-parties/google` (do not paste a second gtag snippet)
+- Gandi: upload env (`npm run deploy:gandi:env`) **before** redeploy so `postinstall` build can read `/srv/data/home/meridian.env`
+- “Accept all” does **not** enable analytics — Realtime only after Analytics opt-in in cookie prefs
+
 ## Privacy / consent
 
 - AdSense runtime script loads only after advertising consent
 - First-party analytics require signed `meridian_consent` cookie (`POST /api/consent`)
+- Optional GA4 requires the same analytics consent plus `NEXT_PUBLIC_GA_MEASUREMENT_ID`
 - IP region hints require functional consent
