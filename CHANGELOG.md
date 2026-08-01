@@ -5,7 +5,22 @@ Format: keep newest first. Dates are UTC calendar days of ship/merge.
 
 ## [Unreleased]
 
-_(nothing pending after the 2026-07-30 AdSense content ship)_
+## 2026-08-01 — GEO llms.txt surface + public docs alignment
+
+**Why:** Ship a proper Generative Engine Optimisation (GEO) corpus for AI discovery, matching the public Search Console surface — and stop public docs/llms from describing a different product (or leaking operator/admin detail).
+
+### GEO
+- Spec-shaped [`/llms.txt`](https://meridianweather.co.uk/llms.txt) index with absolute markdown links.
+- [`/llms-full.txt`](https://meridianweather.co.uk/llms-full.txt) concatenated public corpus.
+- Per-page microfiles under `/llms/` (`about`, `faq`, `docs/*`, `journal/*`, `legal/*`, `weather/*`).
+- `/ai.txt` pointer + `/.well-known/llms.txt` rewrite mirror.
+- `npm run reset:cms-public` to align CMS English docs/legal with file defaults (HTML ↔ GEO).
+- Operator docs, admin, login, and API secrets excluded. See [`docs/GEO.md`](docs/GEO.md).
+
+### Public copy alignment
+- About/FAQ/Privacy: search may use OpenStreetMap/Nominatim-derived results; alerts do not promise unavailable Open-Meteo warnings.
+- Terms: ad-free matches conditional Stripe wording (not “billing is not live”).
+- Indexable English product docs rewritten without “For site operators” env/API dumps; Forecasts page is visitor-facing.
 
 ## 2026-07-30 — AdSense low-value remediation + editorial core
 

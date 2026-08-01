@@ -1,7 +1,7 @@
 export const termsPolicy = {
   slug: 'terms',
   title: 'Terms of Use',
-  lastUpdated: '2026-07-14',
+  lastUpdated: '2026-08-01',
   sections: [
     {
       id: 'who-we-are',
@@ -19,13 +19,13 @@ export const termsPolicy = {
       id: 'browser-only',
       title: 'Accounts and browser storage',
       body:
-        'Public users do not need a meridian account. Saved cities, display preferences, accessibility settings, and similar choices are stored in your browser (localStorage and related client storage). They do not sync across browsers or devices unless you set them up again yourself.\n\nStaff and operators may use separate administrative accounts to operate the platform. Those accounts are governed by internal access controls and are not consumer user accounts.',
+        'Public users do not need a meridian account. Saved cities, display preferences, accessibility settings, and similar choices are stored in your browser (localStorage and related client storage). They do not sync across browsers or devices unless you set them up again yourself.'
     },
     {
       id: 'tiers',
       title: 'Free tier, ads, and Premium',
       body:
-        'The Service is offered on a free tier that may display advertising (including Google AdSense) when advertising is configured and you have consented where required. Premium features described in the product (for example ad-free browsing or additional forecast detail) may appear in the interface but paid billing (including Stripe) is not live. Until billing is enabled, any “Premium” or upgrade controls may be unavailable or disabled.\n\nWe may change feature availability, rate limits, caching, or advertising placements to protect upstream quotas and service stability.',
+        'The Service is offered on a free tier that may display advertising (including Google AdSense) when advertising is configured and you have consented where required. An optional paid ad-free option may be available when Stripe billing is configured on the host. When billing is not available, Settings → Remove ads shows an unavailable status rather than a broken checkout.\n\nWe may change feature availability, rate limits, caching, or advertising placements to protect upstream quotas and service stability.'
     },
     {
       id: 'email',

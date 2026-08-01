@@ -1,7 +1,7 @@
 export const privacyPolicy = {
   slug: 'privacy',
   title: 'Privacy Policy',
-  lastUpdated: '2026-07-15',
+  lastUpdated: '2026-08-01',
   sections: [
     {
       id: 'who-we-are',
@@ -37,7 +37,7 @@ export const privacyPolicy = {
       id: 'third-party',
       title: 'Who we share data with',
       body:
-        'Processors and providers that help us run meridian may receive limited data as needed: OpenWeather (coordinates, search queries, locale) for weather and geocoding; Open-Meteo and US National Weather Service for certain warnings; ipwho.is for IP-based region hints; email providers such as Resend or SendGrid (and others if activated) for transactional and subscription mail; Google (AdSense and, if configured, Google Analytics) when you consent; optional hero-image providers (for example Unsplash, Wikimedia, or Pexels) using region or landmark search terms; hosting and CDN providers that may see IP addresses and request metadata.\n\nWe do not sell personal data or licence identifiable browsing profiles to third parties for their own marketing.',
+        'Processors and providers that help us run meridian may receive limited data as needed: OpenWeather (coordinates, locale) for forecasts and observations; OpenWeather and OpenStreetMap/Nominatim-derived services for location search; US National Weather Service for certain US warning feeds when enabled; other warning feeds only when configured and available; ipwho.is for IP-based region hints; email providers such as Resend or SendGrid (and others if activated) for transactional and subscription mail; Google (AdSense and, if configured, Google Analytics) when you consent; optional hero-image providers (for example Unsplash, Wikimedia, or Pexels) using region or landmark search terms; hosting and CDN providers that may see IP addresses and request metadata.\n\nWe do not sell personal data or licence identifiable browsing profiles to third parties for their own marketing.'
     },
     {
       id: 'international',

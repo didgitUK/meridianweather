@@ -1,73 +1,31 @@
 export const forecastsDoc = {
   slug: 'forecasts',
-  title: 'Forecasts & cache',
-  lastUpdated: '2026-07-15',
+  title: 'Forecasts & refresh',
+  lastUpdated: '2026-08-01',
   sections: [
     {
-      id: 'audience',
-      title: 'Who this page is for',
+      id: 'overview',
+      title: 'How forecasts stay current',
       body:
-        'Everyday visitors can skip this page. It explains how the site stores and refreshes weather data for people who run or integrate meridian. In plain terms: your browser remembers a recent reading; the server also remembers shared readings so we do not call the weather provider on every click.',
+        'meridian shows live conditions, hourly detail, and a longer outlook powered by OpenWeather. To keep the free upstream quota healthy, the site remembers recent readings in your browser (when you allow Functional storage) and reuses shared server cache so every click does not force a brand-new provider call.',
     },
     {
-      id: 'scopes',
-      title: 'Weather scopes',
+      id: 'tabs',
+      title: 'What you can read',
       body:
-        'Client-requestable scopes: current (now), hourly (timeline), daily (timeline), minutely (precipitation — API only; city detail does not load minutely today). Server-only scopes: geocode (city search cache keyed geocode:{query}), alert (individual alert payloads). Each weather scope uses cache key {lat},{lon},{scope}; geocode keys by query string.',
+        'City and place pages organise the same feed into clear tabs:\n\n• Today — current conditions and quick facts\n• Hourly — the next hours (a densified short strip for planning)\n• 10-Day — the longer outlook, with confidence fading further out\n• History — past days when we have stored them\n\nUse hourly detail when plans are close; treat the far end of a 10-day view as a direction of travel.',
     },
     {
-      id: 'layers',
-      title: 'Cache layers',
+      id: 'refresh',
+      title: 'Refreshing a place',
       body:
-        'L0 — browser localStorage meridian:weather-cache, structure {cityId: {scope: {payload, fetchedAt}}} (writes need functional consent). L1 — in-memory Map on the server process. L2 — SQLite weather_snapshots with fetched_at, expires_at, stale_until. Client reads L0 then calls the API; the server reads L1 then L2 then upstream OpenWeather.',
+        'Pinned home cards prefer the last reading saved on this device. Use refresh on a card (or reopen a city page) when you want a fresher check. New places without a saved reading fetch automatically.',
     },
     {
-      id: 'freshness',
-      title: 'Freshness states',
+      id: 'honesty',
+      title: 'Limits and honesty',
       body:
-        'fresh — within expires_at. acceptable — past expires but within stale_until (may still serve). expired — beyond stale_until, triggers upstream if quota allows. emergency — quota blocked but expired/acceptable L2 snapshot served anyway so users still see data.',
-    },
-    {
-      id: 'ttl-table',
-      title: 'TTL defaults (SCOPE_TTL)',
-      body:
-        'current — fresh 1h, stale 2h (overridden by platform_settings.refresh_interval_ms and stale_cache_max_ms; admin can set 10m–2h). hourly — fresh 2h, stale 6h. daily — fresh 6h, stale 12h. minutely — fresh 15m, stale 30m. geocode — fresh 7d, stale 30d. alert — fresh 1h, stale 6h.',
-    },
-    {
-      id: 'upstream',
-      title: 'OpenWeather integration',
-      body:
-        'Primary: One Call API 4.0 (onecall/current, timeline/1h, timeline/1day, timeline/1min). Current scope falls back to API 2.5 /weather if One Call current fails. Geocode uses OpenWeather geocoding API (limit 5). Normalisation in src/lib/one-call.js produces consistent UI payloads.',
-    },
-    {
-      id: 'batch',
-      title: 'Batch fetching',
-      body:
-        'POST /api/weather/batch accepts { cities: [{ lat, lon, scopes?: string[], id?, lang?, maxAgeMs?, trigger? }], trigger?, lang? }. Scopes are per-city (city.scopes), not a top-level scopes array. Dashboard loads current + daily together in one batch (no requestIdleCallback). City detail batches current + hourly + daily only. The handler spaces cities ~100ms apart to avoid burst rate limits.',
-    },
-    {
-      id: 'headers',
-      title: 'Response metadata',
-      body:
-        'API responses include meta: cacheLayer (memory, database, upstream), freshness, fetchedAt, ageMs, upstreamCallAvoided, source. X-Cache header reflects hit/miss where applicable. “Updated X ago” in UI uses meta.fetchedAt.',
-    },
-    {
-      id: 'quota',
-      title: 'Quota interaction',
-      body:
-        'When daily or per-minute limits are exceeded, upstream calls stop and emergency stale L2 data is returned if available. Reopening a city within TTL costs zero upstream calls.',
-    },
-    {
-      id: 'logging',
-      title: 'Cache hit logging',
-      body:
-        'L2 database cache hits log to api_call_log with cache_hit=1 and do not increment the daily upstream counter. L1 memory hits are served but intentionally not persisted to SQLite — they fire on every SSR/client remount and would churn meridian.db under file watchers.',
-    },
-    {
-      id: 'payload-fields',
-      title: 'Current payload fields',
-      body:
-        'temperature, feelsLike, description, condition, icon (OpenWeather code), humidity, pressure, dewPoint, uvi, clouds, visibility, windSpeedKmh, windGustKmh, windDeg, sunrise, sunset, alertIds, city, country, timezone, updatedAt, source.',
+        'Consumer forecasts are imperfect. Near-term hours are usually more reliable than day nine. meridian stays honest about free-tier upstream windows and does not invent a separate climate model. For safety-critical decisions, follow official meteorological and emergency services guidance.',
     },
   ],
 };

@@ -44,6 +44,7 @@ See also [`docs/ERASURE-RUNBOOK.md`](ERASURE-RUNBOOK.md).
 ```bash
 npm run seed:uk-places
 npm run unpublish:stub-guides   # or unpublish:all-guides — remove stub filler from sitemap
+npm run reset:cms-public        # after docs/legal file updates — HTML ↔ GEO alignment
 # Only after Gemini key + human QA: npm run populate:place-content
 # Then publish selected guides from admin → Place guides (never leave stub mode published)
 ```

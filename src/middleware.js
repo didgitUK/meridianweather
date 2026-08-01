@@ -16,13 +16,22 @@ export default function middleware(request) {
     }
   }
 
+  if (pathname === '/.well-known/llms.txt') {
+    const url = request.nextUrl.clone();
+    url.pathname = '/llms.txt';
+    return NextResponse.rewrite(url);
+  }
+
   if (
     pathname.startsWith('/api/')
     || pathname.startsWith('/weather-icons/')
     || pathname.startsWith('/hero/')
     || pathname.startsWith('/ads/')
     || pathname === '/ads.txt'
+    || pathname === '/ai.txt'
     || pathname === '/llms.txt'
+    || pathname === '/llms-full.txt'
+    || pathname.startsWith('/llms/')
     || pathname === '/robots.txt'
     || pathname === '/sitemap.xml'
   ) {

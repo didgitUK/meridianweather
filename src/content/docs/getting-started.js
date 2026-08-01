@@ -1,7 +1,7 @@
 export const gettingStartedDoc = {
   slug: 'getting-started',
   title: 'Getting started',
-  lastUpdated: '2026-07-15',
+  lastUpdated: '2026-08-01',
   sections: [
     {
       id: 'overview',
@@ -13,7 +13,7 @@ export const gettingStartedDoc = {
       id: 'add-city',
       title: 'How to pin a city',
       body:
-        '1. Type at least two characters in the search field on the home page or in the header. Results appear after a short pause.\n2. Choose a place from the list — that opens the city page.\n3. Tap Pin to your locations to save it. You can unpin later from the same menu or remove the city from the home grid.\n\nPinned places appear under Your locations on the home page. You can pin up to ten. City page addresses look like /city/london-GB-51.5073.',
+        '1. Type at least two characters in the search field on the home page or in the header. Results appear after a short pause.\n2. Choose a place from the list — that opens the city or place page.\n3. Tap Pin to your locations to save it. You can unpin later from the same menu or remove the city from the home grid.\n\nPinned places appear under Your locations on the home page. You can pin up to ten. UK places often use `/weather/{slug}` addresses; other cities use `/city/...` paths.',
     },
     {
       id: 'city-limit',
@@ -31,13 +31,7 @@ export const gettingStartedDoc = {
       id: 'navigation',
       title: 'Where to go next',
       body:
-        'Dashboard explains the home page. City detail covers forecast tabs. Subscriptions covers email digests and alerts. Monetization & consent explains ads and privacy choices. Later pages (Forecasts & cache, API reference, Deployment) are mainly for people who run the site.',
-    },
-    {
-      id: 'operators',
-      title: 'For site operators',
-      body:
-        'Live weather needs OPENWEATHER_API_KEY on the server. Email, cron jobs, and AdSense are optional. SQLite (better-sqlite3) stores shared cache and usage limits. Run npm run verify to lint, test, and build. Admin: sign in at /login then open /admin. Dev bypass only when NODE_ENV=development, ALLOW_DEV_ADMIN_BYPASS=1, and ADMIN_SECRET is unset. CMS-edited docs may differ until reset to file defaults. Local docs subdomain: docs.localhost:3000.',
+        'Dashboard explains the home page. City detail covers forecast tabs. Nearby & popular covers the home discovery columns. Subscriptions covers optional email digests and alerts. Forecasts & refresh explains how readings stay current. Weather icons covers the icon set. About and FAQ answer product and privacy questions.',
     },
   ],
 };
