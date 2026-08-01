@@ -1,7 +1,7 @@
 import { findLlmsPageByPath, llmsTextResponse, renderLlmsPageBody } from '@/lib/llms';
 
 /**
- * Per-page GEO microfiles under `/llms/**/*.txt`.
+ * Per-page GEO microfiles under /llms/... path segments ending in .txt
  * @param {{ params: Promise<{ path: string[] }> }} context
  */
 export async function GET(_request, context) {

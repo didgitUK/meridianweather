@@ -47,6 +47,17 @@ echo "Pushing ${LOCAL_REF} → gandi/${BRANCH}…"
 GIT_SSH_COMMAND="${SSH_CMD[*]}" git push gandi "${LOCAL_REF}:refs/heads/${BRANCH}"
 
 echo "Running remote deploy (branch=${BRANCH})…"
-"${SSH_CMD[@]}" "${GANDI_USER}@${GANDI_GIT_HOST}" "deploy default.git ${BRANCH}"
+DEPLOY_LOG="$(mktemp)"
+set +e
+"${SSH_CMD[@]}" "${GANDI_USER}@${GANDI_GIT_HOST}" "deploy default.git ${BRANCH}" | tee "$DEPLOY_LOG"
+DEPLOY_STATUS=${PIPESTATUS[0]}
+set -e
+
+if [[ "$DEPLOY_STATUS" -ne 0 ]] || rg -q 'Building new application failed|Aborting deployment' "$DEPLOY_LOG"; then
+  echo "Gandi deploy failed — see log above." >&2
+  rm -f "$DEPLOY_LOG"
+  exit 1
+fi
+rm -f "$DEPLOY_LOG"
 
 echo "Done. Check https://${GANDI_DOMAIN:-meridianweather.co.uk} and /srv/data/var/log/www/nodejs.log if needed."
