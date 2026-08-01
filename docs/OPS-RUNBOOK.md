@@ -22,7 +22,7 @@ Checklist for [meridianweather.co.uk](https://meridianweather.co.uk) on Gandi Si
 | `GOOGLE_ADSENSE_CLIENT_ID` | Advertising (script loads only after advertising consent) |
 | `NEXT_PUBLIC_SHOW_DEMO_POPULAR_SEARCHES=0` | Honest popular-searches strip |
 | Stripe + `ADFEEE_LICENSE_SECRET` | Ad-free checkout (or leave unset — UI shows unavailable) |
-| `PLACE_CONTENT_LLM_MODE` + `GEMINI_API_KEY` / OpenAI | Real place guides (`stub` until keys set) |
+| `PLACE_CONTENT_LLM_MODE` + `GEMINI_API_KEY` / OpenAI | Place guide drafts only (`stub` fails publish validation; admin must publish) |
 
 ## Cron (external scheduler)
 
@@ -43,10 +43,29 @@ See also [`docs/ERASURE-RUNBOOK.md`](ERASURE-RUNBOOK.md).
 
 ```bash
 npm run seed:uk-places
-npm run populate:place-content   # stub OK; set PLACE_CONTENT_LLM_MODE=gemini when GEMINI_API_KEY is live
+npm run unpublish:stub-guides   # or unpublish:all-guides — remove stub filler from sitemap
+# Only after Gemini key + human QA: npm run populate:place-content
+# Then publish selected guides from admin → Place guides (never leave stub mode published)
 ```
 
-Confirm admin → Observability shows cron runs green after first schedule. After place-content populate, spot-check `/weather/manchester` (Things to do + guides) and admin Place guides.
+Confirm admin → Observability shows cron runs green after first schedule. After place-content populate, spot-check `/weather/manchester` (Things to do) and keep guides **draft** until QA. Do not mass-publish for AdSense review.
+
+## AdSense low-value remediation
+
+Rejection reason was **Low value content** (thin / auto-generated / doorway patterns).
+
+**Already fixed in app code (deploy first):** stub guides fail validation and never auto-publish; POI + cold (tier≥3) places `noindex`; sitemap limited to `en`/`en-GB`; About + FAQ + expanded Journal; keyword SEO-bridge removed; hot-place editorial blurbs.
+
+**On the host after deploy:**
+
+1. `npm run unpublish:all-guides` (or `unpublish:stub-guides`) against production `DATABASE_PATH`
+2. Set `PLACE_CONTENT_LLM_MODE=gemini` + `GEMINI_API_KEY` (or leave guides unpublished)
+3. Curl checks: stub phrase `rewards a paced visit` must be absent; `/sitemap.xml` guide URL count near 0; `/about` and `/faq` return 200
+4. Search Console → URL Inspection on `/about`, 2 journal posts, `/weather/london` → Request indexing
+5. Wait for stub guide URLs to drop from the index (days)
+6. AdSense → Sites → confirm fixes → **Request review** (do not resubmit while pending)
+
+See also [`docs/ADSENSE-CONTENT-REVIEW.md`](ADSENSE-CONTENT-REVIEW.md).
 
 ## Deploy
 
@@ -55,20 +74,17 @@ Confirm admin → Observability shows cron runs green after first schedule. Afte
 3. Upload env via `scripts/gandi-upload-env.sh` (skips empty values)
 4. Verify: home load, `/api/platform/limits`, admin login, one cron dry-run
 
-## DNS — www must not stay on Gandi parking
+## DNS — www / Search Console
 
-Google “connection blocked” is **not** caused by `/robots.txt` or the sitemap. Apex (`meridianweather.co.uk`) is crawlable (`Allow: /`, meta `index,follow`).
+Apex (`meridianweather.co.uk`) is the canonical host. Search Console should use the **apex** property and sitemap:
 
-`www.meridianweather.co.uk` currently CNAMEs to `webredir.vip.gandi.net` (parking). HTTP shows a Gandi parking page; **HTTPS on :443 is connection refused**. Apex also used to send `Strict-Transport-Security: …; includeSubDomains`, which forces HTTPS on `www` and surfaces that refusal to Google.
+`https://meridianweather.co.uk/sitemap.xml`
 
-**Fix in Gandi (LiveDNS + Web Hosting):**
+**LiveDNS (2026-07-30):** parking `www` → `webredir.vip.gandi.net` was removed via API; `www` is set to `CNAME meridianweather.co.uk`. Some Gandi NS anycast nodes can lag.
 
-1. Remove the `www` CNAME to `webredir.vip.gandi.net`.
-2. Point `www` at the same A/AAAA as apex (`155.133.138.14` / `2001:4b98:dc5:253::14`), or attach `www` as a host alias on the Simple Hosting instance.
-3. Ensure the hosting SSL covers `www` (or HTTP→HTTPS redirect to apex).
-4. Prefer a 301 from `https://www…` → `https://meridianweather.co.uk`.
+**Hosting limit:** Simple Hosting **Starter** allows **one** vhost (apex only). Requests that hit the instance as `www` return Varnish `404 Vhost unknown` until the plan allows a second vhost + TLS, or a Gandi web-forward 301 to apex is configured in the UI.
 
-App HSTS is apex-only (`max-age=63072000`, no `includeSubDomains`) until `www` HTTPS works; re-enable `includeSubDomains` after that.
+App HSTS remains apex-only (`max-age=63072000`, no `includeSubDomains`) until `www` HTTPS is real.
 
 ## Privacy / consent
 

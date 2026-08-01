@@ -81,6 +81,14 @@ export const PLACE_ARTICLE_STATUS = Object.freeze({
   failed: 'failed',
 });
 
+/** Phrases unique to stub-place-guide filler — reject for publish. */
+export const PLACE_GUIDE_STUB_SIGNATURES = Object.freeze([
+  'rewards a paced visit',
+  'Extra local planning detail',
+  'Pack layers, confirm opening times on venue sites',
+  'treat Wikipedia background as orientation rather than a timetable',
+]);
+
 /** Phase 1 guide type. */
 export const PLACE_GUIDE_CATEGORY = 'Weather planner';
 

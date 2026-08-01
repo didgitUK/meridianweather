@@ -2,7 +2,46 @@ import {
   PLACE_GUIDE_MIN_SOURCES,
   PLACE_GUIDE_MIN_WORDS,
   PLACE_GUIDE_REQUIRED_H2,
+  PLACE_GUIDE_STUB_SIGNATURES,
 } from '@/constants/place-content';
+
+/**
+ * Stub / repeated-filler guides must never pass publish validation.
+ * @param {string} html
+ */
+export function looksLikeStubGuide(html) {
+  const text = String(html ?? '');
+  if (!text.trim()) {
+    return false;
+  }
+
+  for (const signature of PLACE_GUIDE_STUB_SIGNATURES) {
+    if (text.includes(signature)) {
+      return true;
+    }
+  }
+
+  // Same long sentence repeated = filler loop (stub builder pattern).
+  const plain = text
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+  const sentences = plain.split(/(?<=[.!?])\s+/).filter((s) => s.length > 80);
+  if (sentences.length >= 4) {
+    const counts = new Map();
+    for (const sentence of sentences) {
+      counts.set(sentence, (counts.get(sentence) || 0) + 1);
+    }
+    for (const count of counts.values()) {
+      if (count >= 3) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
 
 /**
  * @param {string} html
@@ -112,6 +151,10 @@ export function validatePlaceArticle(article) {
 
   if (looksLikeSourcePaste(bodyHtml, article.wikipediaExtract)) {
     errors.push('possible_source_paste');
+  }
+
+  if (looksLikeStubGuide(bodyHtml)) {
+    errors.push('stub_or_repeated_filler');
   }
 
   return {

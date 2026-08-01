@@ -152,9 +152,9 @@
 
 **Context:** Weather place pages need location-relevant content beyond forecasts without manually authoring thousands of pages or scraping news bodies.
 
-**Decision:** Phase 1 hybrid pipeline — Overpass/OSM POIs for “Things to do”, original Meridian guides via Gemini/OpenAI (or stub) with validation (≥1500 words, H2s, sources, image credits), plus optional outbound local-coverage links. Persist in `place_*` tables; admin publish/lock; cron + `populate:place-content` for hot UK places first. Weather remains primary above the fold.
+**Decision:** Phase 1 hybrid pipeline — Overpass/OSM POIs for “Things to do”, original Meridian guides via Gemini/OpenAI (or stub) with validation (≥1500 words, H2s, sources, image credits, **stub/filler reject**), plus optional outbound local-coverage links. Persist in `place_*` tables; admin publish/lock; cron + `populate:place-content` for hot UK places first. Weather remains primary above the fold. **Pipeline always writes `draft` — never auto-publish** (AdSense low-value risk). Stub mode is dev-only and fails publish validation.
 
-**Trade-off:** Stub mode ships readable placeholders until `PLACE_CONTENT_LLM_MODE=gemini|openai` + keys; Overpass is rate-limited and needs a polite User-Agent; Phase 2 global inventory stays deferred.
+**Trade-off:** Guides stay unpublished until human QA; Phase 2 global inventory stays deferred.
 
 ## ADR-019: Hero weather theater on satellite map
 

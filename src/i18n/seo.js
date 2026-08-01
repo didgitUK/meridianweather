@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import { ogLocaleByLocale, resolveOpenWeatherLang } from '@/i18n/locales';
 import { routing } from '@/i18n/routing';
 import { absoluteUrl } from '@/lib/seo';
+import { SEARCH_INDEX_LOCALES } from '@/lib/seo-indexability';
 
 export function getOpenWeatherLang(locale) {
   return resolveOpenWeatherLang(locale);
@@ -21,8 +22,12 @@ export function buildLocalizedPath(path, locale) {
 }
 
 export function buildLanguageAlternates(path) {
+  const locales = routing.locales.filter((locale) =>
+    SEARCH_INDEX_LOCALES.includes(locale),
+  );
+
   return Object.fromEntries(
-    routing.locales.map((locale) => [locale, absoluteUrl(buildLocalizedPath(path, locale))]),
+    locales.map((locale) => [locale, absoluteUrl(buildLocalizedPath(path, locale))]),
   );
 }
 
