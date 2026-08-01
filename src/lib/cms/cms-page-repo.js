@@ -199,3 +199,24 @@ export function resetCmsPage(collection, slug) {
     sections: fallback.sections,
   });
 }
+
+/**
+ * Force every slug in a CMS collection back to file defaults (HTML ↔ GEO alignment).
+ * @param {string} collection
+ * @returns {{ collection: string, reset: number, slugs: string[] }}
+ */
+export function resetCmsCollection(collection) {
+  const defaults = getFileDefaults(collection);
+  const slugs = [];
+
+  for (const page of defaults) {
+    resetCmsPage(collection, page.slug);
+    slugs.push(page.slug);
+  }
+
+  return {
+    collection,
+    reset: slugs.length,
+    slugs,
+  };
+}

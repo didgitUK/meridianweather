@@ -61,7 +61,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - **Email updates** — weekly digest + alerts; **22** optional alert types (needs an email connector to actually send).
 - **Cookies + accessibility** — Settings sheet.
 - **About, FAQ, Legal, Journal** — trust + editorial depth for publishers/AdSense; journal posts are original product/weather guides.
-- **Discovery** — `/robots.txt`, `/sitemap.xml` (dynamic), `/llms.txt`, `/ads.txt`. Set `NEXT_PUBLIC_APP_URL` in production.
+- **Discovery** — `/robots.txt`, `/sitemap.xml` (dynamic), `/llms.txt`, `/llms-full.txt`, `/llms/*.txt`, `/ai.txt`, `/.well-known/llms.txt`, `/ads.txt`. Set `NEXT_PUBLIC_APP_URL` in production. See [`docs/GEO.md`](docs/GEO.md).
 
 ## Branding
 
@@ -151,7 +151,7 @@ City pages are useful but thin. Journal posts add archive depth, images, and int
 
 ![Journal post with schema sidebar](docs/screenshots/15-journal-post.png)
 
-Crawl discovery: [`src/app/robots.js`](src/app/robots.js) → `/robots.txt`, [`src/app/sitemap.js`](src/app/sitemap.js) → `/sitemap.xml` (dynamic; `en`/`en-GB`, about, FAQ, journal, product docs, legal, weather places — **no** stub guides), [`src/app/llms.txt/route.js`](src/app/llms.txt/route.js) → `/llms.txt`, [`src/app/ads.txt/route.js`](src/app/ads.txt/route.js) → `/ads.txt`.
+Crawl discovery: [`src/app/robots.js`](src/app/robots.js) → `/robots.txt`, [`src/app/sitemap.js`](src/app/sitemap.js) → `/sitemap.xml` (dynamic; `en`/`en-GB`, about, FAQ, journal, product docs, legal, weather places — **no** stub guides), [`src/lib/llms/`](src/lib/llms/) → `/llms.txt`, `/llms-full.txt`, `/llms/**/*.txt` (public GEO only — no admin), [`src/app/ads.txt/route.js`](src/app/ads.txt/route.js) → `/ads.txt`.
 
 ## Devices vs apps
 

@@ -23,6 +23,7 @@
     "populate:place-content": "PLACE_CONTENT_LLM_MODE=${PLACE_CONTENT_LLM_MODE:-gemini} node --import ./scripts/alias-loader.mjs scripts/populate-place-content.mjs",
     "unpublish:stub-guides": "node --import ./scripts/alias-loader.mjs scripts/unpublish-stub-place-guides.mjs",
     "unpublish:all-guides": "node --import ./scripts/alias-loader.mjs scripts/unpublish-stub-place-guides.mjs --all",
+    "reset:cms-public": "node --import ./scripts/alias-loader.mjs scripts/reset-cms-public-content.mjs",
     "generate:vapid": "node scripts/generate-vapid-keys.mjs",
     "prefetch:place-heroes": "node scripts/prefetch-place-heroes.mjs",
     "backfill:city-slugs": "node scripts/backfill-city-slugs.mjs",

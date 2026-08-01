@@ -1,7 +1,7 @@
 export const cookiesPolicy = {
   slug: 'cookies',
   title: 'Cookie Policy',
-  lastUpdated: '2026-07-15',
+  lastUpdated: '2026-08-01',
   sections: [
     {
       id: 'overview',
@@ -19,7 +19,7 @@ export const cookiesPolicy = {
       id: 'local-storage',
       title: 'Names stored on this device',
       body:
-        'On this device we may store keys such as:\n\nmeridian:client-id — anonymous ID linking optional email subscriptions to this browser.\n\nmeridian:saved-cities — cities you pin (up to ten).\n\nmeridian:checked-cities — recent city lookups.\n\nmeridian:user-location — home / region profile and related history.\n\nmeridian:weather-cache — cached weather (only written when Functional is on).\n\nmeridian:pwa-install-nudge-dismissed — whether you dismissed the install tip.\n\nmeridian:pwa-notify-mode — daily / severe / both notification preference for the installed app.\n\nService worker Cache API entries (meridian-meta / meridian-weather / shell) — offline app shell and a copy of priority places for background refresh when the installed app is closed.\n\nmeridian:theme, meridian:temperature-unit, meridian:preferred-locale, meridian:accessibility, meridian:weather-refresh-mode, meridian:city-detail-accordion — display preferences.\n\nmeridian:consent — your category choices.\n\nmeridian:cookie-consent — older banner acknowledgement flag.\n\nmeridian:subscriptions — local mirror of email preferences.\n\nmeridian:tier — reserved (the product is free today).\n\nsessionStorage meridian_analytics_sid — session ID used only when Analytics is on.\n\nDemo journal posts may keep comments only on your device.\n\nStaff only: an HttpOnly meridian_admin_session cookie for the admin console.',
+        'On this device we may store keys such as:\n\nmeridian:client-id — anonymous ID linking optional email subscriptions to this browser.\n\nmeridian:saved-cities — cities you pin (up to ten).\n\nmeridian:checked-cities — recent city lookups.\n\nmeridian:user-location — home / region profile and related history.\n\nmeridian:weather-cache — cached weather (only written when Functional is on).\n\nmeridian:pwa-install-nudge-dismissed — whether you dismissed the install tip.\n\nmeridian:pwa-notify-mode — daily / severe / both notification preference for the installed app.\n\nService worker Cache API entries (meridian-meta / meridian-weather / shell) — offline app shell and a copy of priority places for background refresh when the installed app is closed.\n\nmeridian:theme, meridian:temperature-unit, meridian:preferred-locale, meridian:accessibility, meridian:weather-refresh-mode, meridian:city-detail-accordion — display preferences.\n\nmeridian:consent — your category choices.\n\nmeridian:cookie-consent — older banner acknowledgement flag.\n\nmeridian:subscriptions — local mirror of email preferences.\n\nmeridian:tier — reserved (the product is free today).\n\nsessionStorage meridian_analytics_sid — session ID used only when Analytics is on.\n\nDemo journal posts may keep comments only on your device.',
     },
     {
       id: 'consent-categories',

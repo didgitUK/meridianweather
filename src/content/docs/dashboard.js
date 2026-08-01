@@ -1,13 +1,13 @@
 export const dashboardDoc = {
   slug: 'dashboard',
   title: 'Dashboard',
-  lastUpdated: '2026-07-15',
+  lastUpdated: '2026-08-01',
   sections: [
     {
       id: 'layout',
       title: 'What you see on the home page',
       body:
-        'Top to bottom:\n\n1. Hero — welcome text, search, and a quick location weather check.\n2. Your locations — weather cards for the places you pinned.\n3. Nearby & popular — two columns: Near you and Popular searches.\n4. A dashboard ad placeholder (or live AdSense when configured).\n5. Journal — a short article carousel.\n\nOperators can hide the ad and Journal with NEXT_PUBLIC_SHOW_HOME_STRETCH=0 for a leaner home page.',
+        'Top to bottom:\n\n1. Hero — welcome text, search, and a quick location weather check.\n2. Your locations — weather cards for the places you pinned.\n3. Nearby & popular — two columns: Near you and Popular searches.\n4. A dashboard ad placeholder (or live AdSense when advertising is configured and consented).\n5. Journal — a short article carousel.',
     },
     {
       id: 'cards',
@@ -37,19 +37,13 @@ export const dashboardDoc = {
       id: 'refresh',
       title: 'When readings update',
       body:
-        'By default Your locations prefer the last reading saved on this device. Tap refresh on a card for a fresh check (new cities without a saved reading also fetch automatically). There is no Settings → Weather switch in the current UI.',
+        'By default Your locations prefer the last reading saved on this device. Tap refresh on a card for a fresh check (new cities without a saved reading also fetch automatically).',
     },
     {
       id: 'recent-checks',
       title: 'Near you and Popular searches',
       body:
         'Near you — places around your home or region, with current conditions. These are not “your past searches.”\n\nPopular searches — places many people on this site have searched, up to five cards. On a quiet or brand-new install you may see a few demo cities until real search activity builds up.\n\nCards link to the city page when we have coordinates. See Nearby & popular for more detail.',
-    },
-    {
-      id: 'operators',
-      title: 'For site operators',
-      body:
-        'Home stretch (dashboard AdSlot + Journal): on by default; set NEXT_PUBLIC_SHOW_HOME_STRETCH=0 to hide. Demo popular cities when the API has no rows: SHOW_DEMO_POPULAR_SEARCHES (default on; set NEXT_PUBLIC_SHOW_DEMO_POPULAR_SEARCHES=0 to disable). Popular searches API: GET /api/recent-checks (limit 20, source popular|empty). Near you does not use that API. Seed script npm run seed:checks fills weather_snapshots only — it does not fill Popular searches.',
     },
   ],
 };

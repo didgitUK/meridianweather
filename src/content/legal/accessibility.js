@@ -1,7 +1,7 @@
 export const accessibilityPolicy = {
   slug: 'accessibility',
   title: 'Accessibility Statement',
-  lastUpdated: '2026-07-21',
+  lastUpdated: '2026-08-01',
   sections: [
     {
       id: 'commitment',
@@ -25,7 +25,7 @@ export const accessibilityPolicy = {
       id: 'gaps',
       title: 'Non-accessible content',
       body:
-        'Some daily forecast rows still pair an icon with a date without a separate visible condition sentence.\n\nWhen Stripe billing is not configured, Settings → Remove ads shows an unavailable status instead of a checkout path.\n\nThird-party Google AdSense units, when consented and loaded, are outside our full editorial control; their accessibility may vary.\n\nThe admin console is operator-facing and is not covered by this public statement.\n\nThe static offline fallback page is English-first (browser language negotiation is best-effort).',
+        'Some daily forecast rows still pair an icon with a date without a separate visible condition sentence.\n\nWhen Stripe billing is not configured, Settings → Remove ads shows an unavailable status instead of a checkout path.\n\nThird-party Google AdSense units, when consented and loaded, are outside our full editorial control; their accessibility may vary.\n\nOperator-only tools are not covered by this public statement.\n\nThe static offline fallback page is English-first (browser language negotiation is best-effort).'
     },
     {
       id: 'feedback',

@@ -696,7 +696,7 @@
     "whatBody2": "We also publish a journal of practical forecast guides, UK place pages with live conditions, and optional email digests or alerts when you want them. The product is built as a progressive web app so you can install it on your phone or desktop when that helps.",
     "dataTitle": "Where the weather comes from",
     "dataBody1": "Forecasts and observations are powered by OpenWeather. meridian caches responses carefully so a shared free-tier key lasts through a busy day, and we stay honest about what the free upstream window can and cannot provide — especially further out in a 10-day view.",
-    "dataBody2": "Place pages may also show OpenStreetMap “things to do” nearby and, where we have published them, original Meridian guides. We do not scrape news article bodies; optional local headlines are title-and-link only when a feed is configured.",
+    "dataBody2": "Location search may also use OpenStreetMap/Nominatim-derived results alongside OpenWeather geocoding. Place pages may show OpenStreetMap “things to do” nearby and, where we have published them, original Meridian guides. We do not scrape news article bodies; optional local headlines are title-and-link only when a feed is configured.",
     "whoTitle": "Who runs meridian",
     "whoBody": "{trading} is a trading name of {company}, a company registered in England and Wales. We build and host meridianweather.co.uk for people who want a calm, multi-city weather tool with transparent monetisation.",
     "whoBody2": "Questions about privacy, data, or the product: privacy@meridianweather.co.uk. Company details and policies live under Legal in the site footer.",
@@ -722,7 +722,7 @@
       },
       "dataSource": {
         "q": "Where does the weather data come from?",
-        "a": "OpenWeather supplies the underlying observations and forecasts. meridian formats, caches, and presents that data. Icons are local Meridian/Meteocon assets mapped from OpenWeather condition codes."
+        "a": "OpenWeather supplies the underlying observations and forecasts. meridian formats, caches, and presents that data. Location search may also use OpenStreetMap/Nominatim-derived results. Icons are local Meridian/Meteocon assets mapped from OpenWeather condition codes."
       },
       "ukCoverage": {
         "q": "Do you cover the whole UK?",
@@ -738,11 +738,11 @@
       },
       "alerts": {
         "q": "How do email digests and alerts work?",
-        "a": "Digests are calm weekly summaries for places you follow. Alerts fire when thresholds you configure are crossed. Both are opt-in and include unsubscribe links. Availability depends on an email connector being configured on the host."
+        "a": "Digests are calm weekly summaries for places you follow. Alerts fire when thresholds you configure are crossed; official warning feeds may be used when available for a region. Both are opt-in and include unsubscribe links. Availability depends on an email connector being configured on the host."
       },
       "account": {
         "q": "Do I need an account?",
-        "a": "No account is required to search, pin places locally, or read forecasts. Admin login is for operators only. Email features use the address you provide for that mailing list."
+        "a": "No account is required to search, pin places locally, or read forecasts. Email features use only the address you provide for that mailing list."
       },
       "places": {
         "q": "What are /weather place pages?",
