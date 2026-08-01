@@ -20,7 +20,7 @@ Checklist for [meridianweather.co.uk](https://meridianweather.co.uk) on Gandi Si
 | Email connector (`SMTP_*` / Resend / SendGrid / SES) | Digests, alerts, billing restore |
 | `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` / `VAPID_SUBJECT` | Web Push + PWA daily refresh |
 | `GOOGLE_ADSENSE_CLIENT_ID` | Advertising (script loads only after advertising consent) |
-| `NEXT_PUBLIC_SHOW_DEMO_POPULAR_SEARCHES=0` | Honest popular-searches strip |
+| Demo popular / home stretch / hero flags | Prefer **admin → Site settings** (runtime DB); env remains emergency fallback |
 | Stripe + `ADFEEE_LICENSE_SECRET` | Ad-free checkout (or leave unset — UI shows unavailable) |
 | `PLACE_CONTENT_LLM_MODE` + `GEMINI_API_KEY` / OpenAI | Place guide drafts only (`stub` fails publish validation; admin must publish) |
 
@@ -47,7 +47,13 @@ npm run unpublish:stub-guides   # or unpublish:all-guides — remove stub filler
 npm run reset:cms-public        # after docs/legal file updates — HTML ↔ GEO alignment
 # Only after Gemini key + human QA: npm run populate:place-content
 # Then publish selected guides from admin → Place guides (never leave stub mode published)
+
+# Purge test/seed residue (dry-run; add --apply to write). Safe for local + live SQLite.
+npm run purge:admin-residue
+npm run purge:admin-residue -- --apply
 ```
+
+Product honesty toggles (demo popular searches, home stretch, AdSense slots, retention windows) are managed in **admin → Site settings / Platform** when deployed with the ops-excellence build. Env vars remain emergency fallbacks.
 
 Confirm admin → Observability shows cron runs green after first schedule. After place-content populate, spot-check `/weather/manchester` (Things to do) and keep guides **draft** until QA. Do not mass-publish for AdSense review.
 
@@ -92,7 +98,7 @@ App HSTS remains apex-only (`max-age=63072000`, no `includeSubDomains`) until `w
 - **Property:** MeridianWeather (GA4)
 - **Measurement ID:** `G-QWS3EPNZCL` via `NEXT_PUBLIC_GA_MEASUREMENT_ID` (public in page source when analytics consent is on)
 - Loader: `AnalyticsProvider` → `@next/third-parties/google` (do not paste a second gtag snippet)
-- Gandi: upload env (`npm run deploy:gandi:env`) **before** redeploy so `postinstall` build can read `/srv/data/home/meridian.env`
+- Gandi: upload env (`npm run deploy:gandi:env`) **before** redeploy so `postinstall` build can read `/srv/data/home/meridian.env` via `scripts/gandi-next.cjs`
 - “Accept all” does **not** enable analytics — Realtime only after Analytics opt-in in cookie prefs
 
 ## Privacy / consent
