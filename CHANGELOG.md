@@ -5,6 +5,19 @@ Format: keep newest first. Dates are UTC calendar days of ship/merge.
 
 ## [Unreleased]
 
+## 2026-08-03 — GA4 client build fix
+
+**Why:** GA4 property MeridianWeather (`G-QWS3EPNZCL`) was set in host `meridian.env`, but live client bundles had **no** Measurement ID — `NEXT_PUBLIC_*` is baked at build time, and Gandi’s build VM often cannot read `/srv/data/home/meridian.env`. Result: gtag never loaded; GA Realtime stayed empty.
+
+### Fix
+- Commit [`.env.production`](.env.production) with public `NEXT_PUBLIC_GA_MEASUREMENT_ID` (allowed via `.gitignore` exception).
+- OPS-RUNBOOK: build-time bake + reminder that **Accept all ≠ Analytics** (Analytics still requires an explicit cookie-pref opt-in).
+- **PR:** https://github.com/didgitUK/meridianweather/pull/13
+
+### Still required for hits
+- Visitor (or tester) must enable **Analytics** under Settings → Cookie preferences (not covered by Accept all).
+- Then confirm GA4 Realtime / network `gtag/js?id=G-QWS3EPNZCL`.
+
 ## 2026-08-01 — GEO llms.txt surface + public docs alignment
 
 **Why:** Ship a proper Generative Engine Optimisation (GEO) corpus for AI discovery, matching the public Search Console surface — and stop public docs/llms from describing a different product (or leaking operator/admin detail).

@@ -70,8 +70,8 @@ export function CookiePreferencesPanel({ draft, onDraftChange }) {
         <Link href="/legal/privacy" className="underline">
           {t('privacyPolicy')}
         </Link>
-        . Current saved consent: functional {consent.functional ? 'on' : 'off'}, advertising{' '}
-        {consent.advertising ? 'on' : 'off'}.
+        . Current saved consent: functional {consent.functional ? 'on' : 'off'}, analytics{' '}
+        {consent.analytics ? 'on' : 'off'}, advertising {consent.advertising ? 'on' : 'off'}.
       </p>
     </div>
   );
