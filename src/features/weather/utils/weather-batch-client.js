@@ -57,6 +57,37 @@ export function persistBatchScopes(entry, scopes, writeCache) {
   }
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+async function postWeatherBatch(body, { retryOnRateLimit = true } = {}) {
+  try {
+    return await fetchJson('/api/weather/batch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  } catch (error) {
+    if (!retryOnRateLimit || error?.status !== 429) {
+      throw error;
+    }
+
+    const waitMs = Math.min(
+      Math.max(Number(error.retryAfterSeconds) || 2, 1) * 1000,
+      8_000,
+    );
+    await sleep(waitMs);
+    return fetchJson('/api/weather/batch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  }
+}
+
 /**
  * POST /api/weather/batch for one or more cities.
  * Returns `{ cities }` from the API.
@@ -66,17 +97,14 @@ export async function loadWeatherBatch(cities, { trigger, lang } = {}) {
     return { cities: [] };
   }
 
+  const body = {
+    cities,
+    ...(trigger ? { trigger } : {}),
+    ...(lang ? { lang } : {}),
+  };
 
   return singleFlight(batchFlightKey(cities, { trigger, lang }), () =>
-    fetchJson('/api/weather/batch', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        cities,
-        ...(trigger ? { trigger } : {}),
-        ...(lang ? { lang } : {}),
-      }),
-    }),
+    postWeatherBatch(body),
   );
 }
 

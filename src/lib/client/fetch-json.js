@@ -51,6 +51,13 @@ export async function fetchJson(url, options = {}) {
       error.status = response.status;
       error.code = payload?.error ?? 'request_failed';
       error.payload = payload;
+      const retryAfterHeader = response.headers.get('Retry-After');
+      if (retryAfterHeader) {
+        const retryAfterSeconds = Number(retryAfterHeader);
+        if (Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0) {
+          error.retryAfterSeconds = retryAfterSeconds;
+        }
+      }
       throw error;
     }
 

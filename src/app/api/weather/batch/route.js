@@ -9,8 +9,15 @@ import { apiError, apiErrorFromCaught } from '@/lib/server/api-response';
 import { enforceRateLimit } from '@/lib/server/rate-limit';
 import { MAX_WEATHER_BATCH_CITIES, parseLatLon, parseScope } from '@/lib/validators';
 
+/** Per-IP batch POSTs / minute. City + place pages fire several batches (detail, nearby, prefetch). */
+export const WEATHER_BATCH_RATE_LIMIT = 90;
+
 export async function POST(request) {
-  const limited = enforceRateLimit(request, { bucket: 'weather-batch', limit: 20, windowMs: 60_000 });
+  const limited = enforceRateLimit(request, {
+    bucket: 'weather-batch',
+    limit: WEATHER_BATCH_RATE_LIMIT,
+    windowMs: 60_000,
+  });
   if (limited) {
     return limited;
   }

@@ -29,7 +29,7 @@ Keep real values in `.env.local` only. See `.env.example`.
 
 - **Auth:** scrypt passwords, timing-safe compares, root env unlock limited to `ADMIN_EMAIL`, invite/reset tokens (32-byte, hashed at rest, TTL, single-use)
 - **Sessions:** signed cookie; `session_version` invalidates tokens after password change/reset; legacy `sub: null` sessions rejected
-- **Abuse:** in-memory IP rate limits on login, forgot/reset, invite accept, subscriptions, analytics, consent sync, weather batch, geocode, push subscribe/unsubscribe; rate-limit keys prefer CDN/`X-Real-IP` then rightmost `X-Forwarded-For` hop
+- **Abuse:** in-memory IP rate limits on login, forgot/reset, invite accept, subscriptions, analytics, consent sync, weather batch (90/min), geocode, push subscribe/unsubscribe; rate-limit keys prefer CDN/`X-Real-IP` then rightmost `X-Forwarded-For` hop; batch client retries once on 429 using `Retry-After`
 - **Input:** batch city cap + lat/lon/scope validation; subscription email/type/coords; alert id allowlist; admin compose uses `parseEmail()`
 - **Headers:** CSP, HSTS apex-only in production (`max-age` without `includeSubDomains` until `www` HTTPS is live), `X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`
 - **Privacy:** first-party analytics / ad-view events require a signed `meridian_consent` HttpOnly cookie (body consent flags ignored); AdSense script and GA4 load only after advertising/analytics consent; IP region hint gated on functional consent; SSR consent snapshot is pre-choice (all optional categories off)
