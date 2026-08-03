@@ -52,7 +52,7 @@ export const DOCS_PAGES_I18N = [
         id: 'layout',
         title: 'Ce que vous voyez sur l’accueil',
         body:
-          'De haut en bas :\n\n1. Hero — texte de bienvenue, recherche et vérification météo rapide de votre position.\n2. Vos lieux — cartes météo pour les endroits épinglés.\n3. À proximité et populaire — deux colonnes : Près de vous et Recherches populaires.\n4. Une publicité sous Vos lieux (placeholder ou AdSense).\n5. Journal — carrousel d’articles.\n\nMasquer l’annonce et le Journal avec NEXT_PUBLIC_SHOW_HOME_STRETCH=0.',
+          'De haut en bas :\n\n1. Hero — carte satellite (quand la position est résolue) avec calques météo, texte de bienvenue, recherche, vérification rapide, et curseur 24 h lumière du jour & conditions. Positions nuages/pluie actuelles ; le curseur change l’intensité et le jour/nuit.\n2. Vos lieux — cartes météo pour les endroits épinglés.\n3. À proximité et populaire — deux colonnes : Près de vous et Recherches populaires.\n4. Une publicité sous Vos lieux (placeholder ou AdSense).\n5. Journal — carrousel d’articles.\n\nMasquer l’annonce et le Journal avec NEXT_PUBLIC_SHOW_HOME_STRETCH=0.',
       },
       {
         id: 'cards',
@@ -119,7 +119,7 @@ export const DOCS_PAGES_I18N = [
         id: 'header',
         title: 'Carte ou photo en haut',
         body:
-          'Par défaut, l’en-tête affiche une carte satellite de la zone. Les opérateurs peuvent passer aux photos de lieu (fournisseurs photo quand disponibles, sinon une image de marque simple). Street View optionnel est un réglage opérateur quand la carte de fond est désactivée.',
+          'Par défaut, l’en-tête affiche une carte satellite de la zone, avec des calques nuages/pluie et un curseur 24 h pour la lumière du jour et l’intensité des conditions (lecture/pause en bas). Les positions des nuages et de la pluie sont actuelles ; le curseur change leur intensité et l’éclairage jour/nuit. Les opérateurs peuvent passer aux photos de lieu (fournisseurs photo quand disponibles, sinon une image de marque simple). Street View optionnel est un réglage opérateur quand la carte de fond est désactivée.',
       },
       {
         id: 'today',
@@ -535,7 +535,7 @@ export const DOCS_PAGES_I18N = [
         id: 'env-hero',
         title: 'Environnement image hero',
         body:
-          'UNSPLASH_ACCESS_KEY — optionnel ; premier fournisseur photo pour heroes de lieu (serveur uniquement, cache dans hero_image_cache). PEXELS_API_KEY — troisième fournisseur optionnel après Unsplash et Wikimedia Commons. NEXT_PUBLIC_CITY_HERO_OSM — mettre à 0 pour désactiver l’en-tête carte satellite (activé par défaut). NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 — opt-in Google Street View quand OSM est off. NEXT_PUBLIC_GOOGLE_MAPS_API_KEY — clé Maps Embed API optionnelle pour iframes Street View.',
+          'Heroes tableau de bord / ville : Esri World Imagery (Leaflet) au zoom 8 avec lumières NASA Black Marble, accent GIBS diurne optionnel, radar RainViewer sous les calques d’intensité OpenWeather (proxy ; OPENWEATHER_API_KEY requis). Le curseur 24 h pilote lavage jour/nuit et intensité — pas la géométrie de prévision. NEXT_PUBLIC_CITY_HERO_OSM=0 pour photos. UNSPLASH_ACCESS_KEY / PEXELS_API_KEY — photos optionnelles (serveur, hero_image_cache ; Wikimedia sans clé). NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 + NEXT_PUBLIC_GOOGLE_MAPS_API_KEY pour Street View. Proxies /api/weather/map-tile et night-lights limités par IP.',
       },
       {
         id: 'env-email',

@@ -52,7 +52,7 @@ export const DOCS_PAGES_I18N = [
         id: 'layout',
         title: 'ما تراه في الصفحة الرئيسية',
         body:
-          'من الأعلى إلى الأسفل:\n\n1. البطل — نص ترحيب، بحث، وفحص سريع لطقس موقعك.\n2. مواقعك — بطاقات طقس للأماكن المثبتة.\n3. القريب والشائع — عمودان: بالقرب منك والبحث الشائع.\n4. إعلان تحت مواقعك (عنصر نائب أو AdSense).\n5. Journal — دوّار مقالات.\n\nأخفِ الإعلان وJournal باستخدام NEXT_PUBLIC_SHOW_HOME_STRETCH=0.',
+          'من الأعلى إلى الأسفل:\n\n1. البطل — خريطة أقمار صناعية (عند حل موقعك) مع طبقات الطقس ونص ترحيب وبحث وفحص سريع وشريط 24 ساعة لضوء النهار والظروف. مواضع السحب/المطر حالية؛ الشريط يغيّر الشدة والنهار/الليل.\n2. مواقعك — بطاقات طقس للأماكن المثبتة.\n3. القريب والشائع — عمودان: بالقرب منك والبحث الشائع.\n4. إعلان تحت مواقعك (عنصر نائب أو AdSense).\n5. Journal — دوّار مقالات.\n\nأخفِ الإعلان وJournal باستخدام NEXT_PUBLIC_SHOW_HOME_STRETCH=0.',
       },
       {
         id: 'cards',
@@ -119,7 +119,7 @@ export const DOCS_PAGES_I18N = [
         id: 'header',
         title: 'خريطة أو صورة في الأعلى',
         body:
-          'افتراضيًا، الترويسة تعرض خريطة أقمار صناعية للمنطقة. يمكن للمشغّلين التبديل لصور الموقع (من مزودي صور عند التوفر، وإلا صورة علامة بسيطة). Street View الاختياري إعداد للمشغّل عند إيقاف خلفية الخريطة.',
+          'افتراضيًا، الترويسة تعرض خريطة أقمار صناعية للمنطقة مع طبقات السحب والمطر وشريط 24 ساعة لضوء النهار وشدة الظروف (تشغيل/إيقاف في الأسفل). مواضع السحب والمطر حالية؛ الشريط يغيّر شدّتها والنهار/الليل. يمكن للمشغّلين التبديل لصور الموقع (من مزودي صور عند التوفر، وإلا صورة علامة بسيطة). Street View الاختياري إعداد للمشغّل عند إيقاف خلفية الخريطة.',
       },
       {
         id: 'today',
@@ -535,7 +535,7 @@ export const DOCS_PAGES_I18N = [
         id: 'env-hero',
         title: 'بيئة صورة البطل',
         body:
-          'UNSPLASH_ACCESS_KEY — اختياري؛ أول مزود صور لأبطال المواقع (خادم فقط، مخزّن في hero_image_cache). PEXELS_API_KEY — مزود ثالث اختياري بعد Unsplash وWikimedia Commons. NEXT_PUBLIC_CITY_HERO_OSM — اضبطه 0 لتعطيل ترويسة الخريطة الفضائية (مفعّل افتراضيًا). NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 — opt-in Google Street View عند إيقاف OSM. NEXT_PUBLIC_GOOGLE_MAPS_API_KEY — مفتاح Maps Embed API اختياري لإطارات Street View.',
+          'أبطال اللوحة/المدينة: Esri World Imagery (Leaflet) عند التكبير 8 مع أضواء NASA Black Marble وتمييز نهاري GIBS اختياري ورادار RainViewer تحت طبقات شدة OpenWeather (بروكسي؛ يلزم OPENWEATHER_API_KEY). شريط 24 ساعة يحرّك غسيل النهار/الليل والشدة — لا هندسة التوقّع. NEXT_PUBLIC_CITY_HERO_OSM=0 للصور. UNSPLASH_ACCESS_KEY / PEXELS_API_KEY — صور اختيارية (خادم، hero_image_cache؛ Wikimedia بلا مفتاح). NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 + NEXT_PUBLIC_GOOGLE_MAPS_API_KEY لـ Street View. بروكسيات /api/weather/map-tile وnight-lights محدودة لكل IP.',
       },
       {
         id: 'env-email',

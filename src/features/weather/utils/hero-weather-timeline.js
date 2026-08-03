@@ -9,8 +9,10 @@ export const HERO_PRECIP_BASE_OPACITY = 0.45;
 
 /** Full-night darken opacity (under city lights in Leaflet). */
 export const HERO_NIGHT_WASH_MAX = 0.92;
-/** Peak city-lights opacity on a clear night. */
-export const HERO_LIGHTS_MAX = 0.95;
+/** Peak city-lights opacity on a clear night (kept under 1 to soften coastal VIIRS bloom). */
+export const HERO_LIGHTS_MAX = 0.88;
+/** Peak daytime GIBS true-color accent over Esri (0 = off). */
+export const HERO_DAY_GIBS_MAX = 0.38;
 /** How much cloud cover dims lights (0–1). */
 export const HERO_LIGHTS_CLOUD_ATTENUATION = 0.75;
 /** Civil-style twilight window around sunrise/sunset (seconds). */
@@ -219,6 +221,66 @@ export function nightStrength(point, solar = null) {
 }
 
 /**
+ * Mix two sRGB channels.
+ * @param {number} a
+ * @param {number} b
+ * @param {number} t
+ */
+function mixChannel(a, b, t) {
+  return Math.round(a + (b - a) * t);
+}
+
+/**
+ * Twilight wash palette from raw night factor 0 (day) → 1 (deep night).
+ * Returns CSS rgb() + opacity + satellite CSS filter for the basemap grade.
+ * @param {number} night
+ */
+export function diurnalWashStyle(night) {
+  const n = Math.min(1, Math.max(0, Number.isFinite(night) ? night : 0));
+
+  // Day clear → amber dusk → blue hour → deep night
+  const day = { r: 8, g: 18, b: 36 };
+  const amber = { r: 42, g: 22, b: 12 };
+  const blueHour = { r: 10, g: 22, b: 48 };
+  const deep = { r: 2, g: 6, b: 18 };
+
+  let color = day;
+  if (n < 0.28) {
+    const t = n / 0.28;
+    color = {
+      r: mixChannel(day.r, amber.r, t),
+      g: mixChannel(day.g, amber.g, t),
+      b: mixChannel(day.b, amber.b, t),
+    };
+  } else if (n < 0.62) {
+    const t = (n - 0.28) / 0.34;
+    color = {
+      r: mixChannel(amber.r, blueHour.r, t),
+      g: mixChannel(amber.g, blueHour.g, t),
+      b: mixChannel(amber.b, blueHour.b, t),
+    };
+  } else {
+    const t = (n - 0.62) / 0.38;
+    color = {
+      r: mixChannel(blueHour.r, deep.r, t),
+      g: mixChannel(blueHour.g, deep.g, t),
+      b: mixChannel(blueHour.b, deep.b, t),
+    };
+  }
+
+  const wash = Number((n * HERO_NIGHT_WASH_MAX).toFixed(3));
+  const brightness = Number((1 - n * 0.28).toFixed(3));
+  const saturate = Number((1 - n * 0.18).toFixed(3));
+  const contrast = Number((1 + n * 0.06).toFixed(3));
+
+  return {
+    washColor: `rgb(${color.r} ${color.g} ${color.b})`,
+    wash,
+    satFilter: `brightness(${brightness}) saturate(${saturate}) contrast(${contrast})`,
+  };
+}
+
+/**
  * Diurnal frame: darken (wash) + city lights (attenuated by clouds).
  * @param {object | null | undefined} point
  * @param {{ sunrise?: number | null, sunset?: number | null } | null} [solar]
@@ -236,10 +298,15 @@ export function frameDiurnalState(point, solar = null, {
     : 0.4;
   const lightsClear = night * lightsMax;
   const lights = lightsClear * (1 - cloudFactor * cloudAttenuation);
+  const washStyle = diurnalWashStyle(night);
+  const dayGibs = Number(((1 - night) * HERO_DAY_GIBS_MAX).toFixed(3));
 
   return {
     night,
     wash: Number((night * washMax).toFixed(3)),
+    washColor: washStyle.washColor,
+    satFilter: washStyle.satFilter,
+    dayGibs,
     lights: Number(Math.min(1, Math.max(0, lights)).toFixed(3)),
     cloudFactor,
   };
@@ -318,7 +385,11 @@ export function theaterFrameForPoint(point, solar = null) {
     cloudOpacity: opacities.cloudOpacity,
     precipOpacity: opacities.precipOpacity,
     wash: diurnal.wash,
+    washColor: diurnal.washColor,
+    satFilter: diurnal.satFilter,
+    dayGibs: diurnal.dayGibs,
     lights: diurnal.lights,
+    night: diurnal.night,
   };
 }
 
@@ -341,11 +412,18 @@ export function lerpTheaterFrame(a, b, t, solar = null) {
   const fa = theaterFrameForPoint(a, solar);
   const fb = theaterFrameForPoint(b, solar);
 
+  const night = lerp(fa.night ?? 0, fb.night ?? 0, ta);
+  const washStyle = diurnalWashStyle(night);
+
   return {
     cloudOpacity: Number(lerp(fa.cloudOpacity, fb.cloudOpacity, ta).toFixed(3)),
     precipOpacity: Number(lerp(fa.precipOpacity, fb.precipOpacity, ta).toFixed(3)),
     wash: Number(lerp(fa.wash, fb.wash, ta).toFixed(3)),
+    washColor: washStyle.washColor,
+    satFilter: washStyle.satFilter,
+    dayGibs: Number(lerp(fa.dayGibs ?? 0, fb.dayGibs ?? 0, ta).toFixed(3)),
     lights: Number(lerp(fa.lights, fb.lights, ta).toFixed(3)),
+    night: Number(night.toFixed(3)),
   };
 }
 
@@ -494,10 +572,15 @@ export function buildHeroSolarMarkers(hours, solar, { formatHour = null } = {}) 
  * Static frame when theater is disabled (photo hero).
  */
 export function disabledTheaterFrame() {
+  const washStyle = diurnalWashStyle(0.22);
   return {
     cloudOpacity: HERO_CLOUD_BASE_OPACITY,
     precipOpacity: HERO_PRECIP_BASE_OPACITY,
-    wash: 0.2,
+    wash: washStyle.wash,
+    washColor: washStyle.washColor,
+    satFilter: washStyle.satFilter,
+    dayGibs: Number(((1 - 0.22) * HERO_DAY_GIBS_MAX).toFixed(3)),
     lights: 0,
+    night: 0.22,
   };
 }

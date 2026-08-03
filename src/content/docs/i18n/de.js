@@ -52,7 +52,7 @@ export const DOCS_PAGES_I18N = [
         id: 'layout',
         title: 'Was Sie auf der Startseite sehen',
         body:
-          'Von oben nach unten:\n\n1. Hero — Willkommenstext, Suche und eine schnelle Wetterprüfung für Ihren Standort.\n2. Ihre Orte — Wetterkarten für die angehefteten Orte.\n3. In der Nähe & beliebt — zwei Spalten: In Ihrer Nähe und Beliebte Suchen.\n4. Eine Dashboard-Anzeige unter Ihre Orte (Platzhalter oder AdSense).\n5. Journal — Artikelkarussell.\n\nMit NEXT_PUBLIC_SHOW_HOME_STRETCH=0 lassen sich Anzeige und Journal ausblenden.',
+          'Von oben nach unten:\n\n1. Hero — Satellitenkarte (wenn der Standort aufgelöst ist) mit Wetter-Overlays, Willkommenstext, Suche, schneller Wetterprüfung und 24-Stunden-Regler für Tageslicht & Bedingungen. Wolken-/Regenpositionen sind aktuell; der Regler ändert Intensität und Tag/Nacht.\n2. Ihre Orte — Wetterkarten für die angehefteten Orte.\n3. In der Nähe & beliebt — zwei Spalten: In Ihrer Nähe und Beliebte Suchen.\n4. Eine Dashboard-Anzeige unter Ihre Orte (Platzhalter oder AdSense).\n5. Journal — Artikelkarussell.\n\nMit NEXT_PUBLIC_SHOW_HOME_STRETCH=0 lassen sich Anzeige und Journal ausblenden.',
       },
       {
         id: 'cards',
@@ -119,7 +119,7 @@ export const DOCS_PAGES_I18N = [
         id: 'header',
         title: 'Karte oder Foto oben',
         body:
-          'Standardmäßig zeigt der Kopfbereich eine Satellitenkarte der Gegend. Betreiber können auf Standortfotos umschalten (von Fotoanbietern, wenn verfügbar, sonst ein einfaches Markenbild). Optionales Street View ist eine Betreibereinstellung, wenn die Kartenkulisse aus ist.',
+          'Standardmäßig zeigt der Kopfbereich eine Satellitenkarte der Gegend mit Wolken- und Regen-Overlays sowie einem 24-Stunden-Regler für Tageslicht und Bedingungsintensität (Play/Pause unten). Wolken- und Regenpositionen sind aktuell; der Regler ändert Intensität und Tag/Nacht. Betreiber können auf Standortfotos umschalten (von Fotoanbietern, wenn verfügbar, sonst ein einfaches Markenbild). Optionales Street View ist eine Betreibereinstellung, wenn die Kartenkulisse aus ist.',
       },
       {
         id: 'today',
@@ -535,7 +535,7 @@ export const DOCS_PAGES_I18N = [
         id: 'env-hero',
         title: 'Hero-Bild-Umgebung',
         body:
-          'UNSPLASH_ACCESS_KEY — optional; erster Fotoanbieter für Standort-Heroes (nur Server, gecacht in hero_image_cache). PEXELS_API_KEY — optional dritter Anbieter nach Unsplash und Wikimedia Commons. NEXT_PUBLIC_CITY_HERO_OSM — auf 0 setzen, um Satellitenkarten-Header zu deaktivieren (Standard an). NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 — Opt-in Google Street View, wenn OSM aus. NEXT_PUBLIC_GOOGLE_MAPS_API_KEY — optional Maps Embed API Key für Street-View-Iframes.',
+          'Dashboard-/Stadt-Heroes: Esri World Imagery (Leaflet) bei Zoom 8 mit NASA-Black-Marble-Lichtern, optionalem GIBS-Tagesakzent, RainViewer-Radar unter OpenWeather-Intensitäts-Overlays (Proxy; OPENWEATHER_API_KEY nötig). Der 24h-Regler steuert Tag/Nacht-Wäsche und Intensität — nicht die Vorhersagegeometrie. NEXT_PUBLIC_CITY_HERO_OSM=0 für Fotos. UNSPLASH_ACCESS_KEY / PEXELS_API_KEY — optionale Fotos (Server, hero_image_cache; Wikimedia schlüssellos). NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 + NEXT_PUBLIC_GOOGLE_MAPS_API_KEY für Street View. Proxies /api/weather/map-tile und night-lights sind IP-ratenbegrenzt.',
       },
       {
         id: 'env-email',

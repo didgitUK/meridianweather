@@ -6,6 +6,7 @@ import {
   clampHeroHourIndex,
   currentAsTimelinePoint,
   dayNightWashStrength,
+  diurnalWashStyle,
   disabledTheaterFrame,
   frameDiurnalState,
   frameOverlayOpacities,
@@ -122,6 +123,14 @@ describe('frameDiurnalState', () => {
     expect(night.lights).toBeGreaterThan(0.7);
     expect(day.lights).toBe(0);
     expect(night.wash).toBeGreaterThan(day.wash);
+    expect(night.washColor).toMatch(/^rgb\(/);
+    expect(day.dayGibs).toBeGreaterThan(night.dayGibs);
+    expect(day.satFilter).toContain('brightness');
+  });
+
+  it('exposes twilight wash palette helper', () => {
+    expect(diurnalWashStyle(1).washColor).toBe('rgb(2 6 18)');
+    expect(diurnalWashStyle(0).wash).toBe(0);
   });
 
   it('attenuates lights under overcast vs clear night', () => {

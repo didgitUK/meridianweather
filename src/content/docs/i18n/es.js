@@ -52,7 +52,7 @@ export const DOCS_PAGES_I18N = [
         id: 'layout',
         title: 'Qué ves en la página de inicio',
         body:
-          'De arriba a abajo:\n\n1. Hero — texto de bienvenida, búsqueda y una comprobación rápida del tiempo en tu ubicación.\n2. Tus ubicaciones — tarjetas del tiempo para los lugares que fijaste.\n3. Cerca y popular — dos columnas: Cerca de ti y Búsquedas populares.\n4. Un anuncio bajo Tus ubicaciones (marcador o AdSense).\n5. Journal — carrusel de artículos.\n\nOcultar con NEXT_PUBLIC_SHOW_HOME_STRETCH=0.',
+          'De arriba a abajo:\n\n1. Hero — mapa satelital (cuando se resuelve tu ubicación) con capas del tiempo, texto de bienvenida, búsqueda, comprobación rápida y control de 24 h de luz del día y condiciones. Las posiciones de nubes/lluvia son actuales; el control cambia intensidad y día/noche.\n2. Tus ubicaciones — tarjetas del tiempo para los lugares que fijaste.\n3. Cerca y popular — dos columnas: Cerca de ti y Búsquedas populares.\n4. Un anuncio bajo Tus ubicaciones (marcador o AdSense).\n5. Journal — carrusel de artículos.\n\nOcultar con NEXT_PUBLIC_SHOW_HOME_STRETCH=0.',
       },
       {
         id: 'cards',
@@ -119,7 +119,7 @@ export const DOCS_PAGES_I18N = [
         id: 'header',
         title: 'Mapa o foto arriba',
         body:
-          'Por defecto el encabezado muestra un mapa satelital de la zona. Los operadores pueden cambiar a fotos del lugar (de proveedores de fotos cuando estén disponibles, si no una imagen de marca simple). Street View opcional es un ajuste del operador cuando el fondo de mapa está desactivado.',
+          'Por defecto el encabezado muestra un mapa satelital de la zona, con capas de nubes y lluvia y un control de 24 h para la luz del día y la intensidad de las condiciones (reproducir/pausar abajo). Las posiciones de nubes y lluvia son actuales; el control cambia su intensidad y el día/noche. Los operadores pueden cambiar a fotos del lugar (de proveedores de fotos cuando estén disponibles, si no una imagen de marca simple). Street View opcional es un ajuste del operador cuando el fondo de mapa está desactivado.',
       },
       {
         id: 'today',
@@ -535,7 +535,7 @@ export const DOCS_PAGES_I18N = [
         id: 'env-hero',
         title: 'Entorno de imagen hero',
         body:
-          'UNSPLASH_ACCESS_KEY — opcional; primer proveedor de fotos para heroes de ubicación (solo servidor, en caché en hero_image_cache). PEXELS_API_KEY — tercer proveedor opcional tras Unsplash y Wikimedia Commons. NEXT_PUBLIC_CITY_HERO_OSM — poner a 0 para desactivar encabezado de mapa satelital (activado por defecto). NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 — opt-in Google Street View cuando OSM está off. NEXT_PUBLIC_GOOGLE_MAPS_API_KEY — clave Maps Embed API opcional para iframes Street View.',
+          'Héroes del panel/ciudad: Esri World Imagery (Leaflet) a zoom 8 con luces NASA Black Marble, acento diurno GIBS opcional, radar RainViewer bajo capas de intensidad OpenWeather (proxy; hace falta OPENWEATHER_API_KEY). El control 24 h mueve lavado día/noche e intensidad — no la geometría del pronóstico. NEXT_PUBLIC_CITY_HERO_OSM=0 para fotos. UNSPLASH_ACCESS_KEY / PEXELS_API_KEY — fotos opcionales (servidor, hero_image_cache; Wikimedia sin clave). NEXT_PUBLIC_CITY_HERO_STREET_VIEW=1 + NEXT_PUBLIC_GOOGLE_MAPS_API_KEY para Street View. Proxies /api/weather/map-tile y night-lights limitados por IP.',
       },
       {
         id: 'env-email',

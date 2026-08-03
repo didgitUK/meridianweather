@@ -160,7 +160,9 @@
 
 **Context:** Dashboard/city heroes use Esri World Imagery via Leaflet. Operators need a 24h scrub/play control tied to local solar framing without breaking the map mount.
 
-**Decision:** `HeroWeatherTimeline` + `useHeroWeatherTheater` drive continuous hour scrubbing, sunrise/sunset markers, and night wash. Leaflet mounts on a **stable inner DOM node** so React className updates (fade/ready) cannot strip `leaflet-container`. Live hour label tracks under the playhead.
+**Decision:** `HeroWeatherTimeline` + `useHeroWeatherTheater` drive continuous hour scrubbing, sunrise/sunset markers, and night wash. Leaflet mounts on a **stable inner DOM node** so React className updates (fade/ready) cannot strip `leaflet-container`. Live hour label tracks under the playhead. Cloud/precip tiles stay **current geometry**; scrub changes overlay intensity + diurnal state from the forecast frame (not a moving radar loop).
 
-**Trade-off:** Map needs finite lat/lon (location or place coords); empty-location OSM hero can still look black until coords exist.
+**Alignment:** NASA Black Marble lights are Web Mercator (`GoogleMapsCompatible_Level8`, native max z8). Heroes with city lights use zoom **8** so lights and Esri imagery share the same native footprint. Do **not** CSS-scale georeferenced light tiles (that drifts glow into the sea). Overzoom requests to `/api/weather/night-lights` remap to the parent z8 tile. Daytime uses a soft GIBS VIIRS true-color accent over Esri; live radar (RainViewer) sits under OWM precip intensity.
+
+**Trade-off:** Map needs finite lat/lon (location or place coords); empty-location OSM hero can still look black until coords exist. Black Marble sensor bloom can still soften coasts slightly at z8 — mitigated by native zoom match, no CSS scale, and a slightly lower lights peak opacity rather than a land mask.
 

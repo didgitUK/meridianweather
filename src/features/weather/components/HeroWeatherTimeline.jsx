@@ -69,7 +69,11 @@ export function HeroWeatherTimeline({
           <button
             type="button"
             className="dashboard-hero__timeline-play inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-white/25 bg-black/35 text-white shadow-sm backdrop-blur-sm transition-colors hover:bg-black/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
-            aria-label={playing ? 'Pause forecast animation' : 'Play forecast animation'}
+            aria-label={
+              playing
+                ? 'Pause daylight and conditions preview'
+                : 'Play daylight and conditions preview'
+            }
             aria-pressed={playing}
             onClick={onTogglePlaying}
           >
@@ -135,11 +139,15 @@ export function HeroWeatherTimeline({
               max={hourCount - 1}
               step="any"
               value={hourIndex}
-              aria-label="Forecast hour"
+              aria-label="Daylight and conditions over the next 24 hours"
               aria-valuemin={0}
               aria-valuemax={hourCount - 1}
               aria-valuenow={ariaNow}
-              aria-valuetext={activeLabel ?? undefined}
+              aria-valuetext={
+                activeLabel
+                  ? `${activeLabel}. Map overlays show daylight and condition intensity; cloud and rain positions are current.`
+                  : undefined
+              }
               onPointerDown={() => setDragging(true)}
               onPointerUp={() => setDragging(false)}
               onPointerCancel={() => setDragging(false)}
@@ -158,6 +166,10 @@ export function HeroWeatherTimeline({
               </span>
             </div>
           ) : null}
+
+          <p className="mt-1 text-[0.65rem] leading-snug text-white/55 sm:text-[0.7rem]">
+            Daylight &amp; conditions · cloud and rain positions are current
+          </p>
 
           <div className="relative mt-1 h-8" aria-hidden>
             {labels.map((row) => {

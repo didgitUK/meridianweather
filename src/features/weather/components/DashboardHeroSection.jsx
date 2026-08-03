@@ -228,12 +228,17 @@ function DashboardHeroSectionInner({ children, heroImage: initialHeroImage = nul
               showScrim={false}
               showClouds
               showPrecipitation
+              showLiveRadar
               showCityLights
+              showDayGibs
               cloudOpacity={theater.frame.cloudOpacity}
               precipOpacity={theater.frame.precipOpacity}
               lightsOpacity={theater.frame.lights}
               nightDarkOpacity={theater.frame.wash}
-              zoom={9}
+              washColor={theater.frame.washColor}
+              satFilter={theater.frame.satFilter}
+              dayGibsOpacity={theater.frame.dayGibs}
+              zoom={8}
             />
             <div
               aria-hidden

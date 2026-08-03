@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "next build",
-    "start": "node -r ./scripts/load-gandi-env.cjs ./node_modules/next/dist/bin/next start",
+    "build": "node ./scripts/gandi-next.cjs build",
+    "start": "node ./scripts/gandi-next.cjs start",
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -23,6 +23,7 @@
     "populate:place-content": "PLACE_CONTENT_LLM_MODE=${PLACE_CONTENT_LLM_MODE:-gemini} node --import ./scripts/alias-loader.mjs scripts/populate-place-content.mjs",
     "unpublish:stub-guides": "node --import ./scripts/alias-loader.mjs scripts/unpublish-stub-place-guides.mjs",
     "unpublish:all-guides": "node --import ./scripts/alias-loader.mjs scripts/unpublish-stub-place-guides.mjs --all",
+    "purge:admin-residue": "node scripts/purge-admin-test-residue.mjs",
     "reset:cms-public": "node --import ./scripts/alias-loader.mjs scripts/reset-cms-public-content.mjs",
     "generate:vapid": "node scripts/generate-vapid-keys.mjs",
     "prefetch:place-heroes": "node scripts/prefetch-place-heroes.mjs",
