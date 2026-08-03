@@ -5,7 +5,6 @@ import { DashboardHeroSection } from '@/features/weather/components/DashboardHer
 import { DashboardHeroWithCheck } from '@/features/weather/components/DashboardHeroWithCheck';
 import { HeroImagePreload } from '@/features/weather/components/HeroImagePreload';
 import { isCityHeroOsmEnabled } from '@/lib/city-hero-flags';
-import { HomeIntro } from '@/components/seo/HomeIntro';
 import { buildLanguageAlternates, buildLocalizedPath, getOgLocale } from '@/i18n/seo';
 import { resolveRegionHint } from '@/lib/geo/resolve-region-hint';
 import { getHeroImageForRegion } from '@/lib/hero-image/get-hero-image-for-region';
@@ -45,7 +44,6 @@ export default async function Home({ params }) {
         landscapeUrl={heroImage?.landscape?.imageUrl}
         portraitUrl={heroImage?.portrait?.imageUrl}
       />
-      <HomeIntro />
       <DashboardHeroSection heroImage={heroImage}>
         <DashboardHeroWithCheck />
       </DashboardHeroSection>
