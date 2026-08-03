@@ -5,6 +5,14 @@ Format: keep newest first. Dates are UTC calendar days of ship/merge.
 
 ## [Unreleased]
 
+## 2026-08-03 — Remove homepage intro strip
+
+**Why:** The visible `HomeIntro` block above the satellite hero broke the map-first first viewport (user request; PR #12 had been open since 2026-08-01 and was not merged/deployed).
+
+- Removed `<HomeIntro />` from the home page — hero is the first composition.
+- About / FAQ / Journal remain the editorial surface for Search / AdSense.
+- **PR:** https://github.com/didgitUK/meridianweather/pull/12
+
 ## 2026-08-03 — GA4 client build fix
 
 **Why:** GA4 property MeridianWeather (`G-QWS3EPNZCL`) was set in host `meridian.env`, but live client bundles had **no** Measurement ID — `NEXT_PUBLIC_*` is baked at build time, and Gandi’s build VM often cannot read `/srv/data/home/meridian.env`. Result: gtag never loaded; GA Realtime stayed empty.
