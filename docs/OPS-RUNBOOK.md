@@ -98,9 +98,8 @@ App HSTS remains apex-only (`max-age=63072000`, no `includeSubDomains`) until `w
 - **Property:** MeridianWeather (GA4)
 - **Measurement ID:** `G-QWS3EPNZCL` via `NEXT_PUBLIC_GA_MEASUREMENT_ID` (public in page source when analytics consent is on)
 - Loader: `AnalyticsProvider` → `@next/third-parties/google` (do not paste a second gtag snippet)
-- Gandi: upload env (`npm run deploy:gandi:env`) **before** redeploy so `postinstall` build can read `/srv/data/home/meridian.env` via `scripts/gandi-next.cjs`
-- “Accept all” does **not** enable analytics — Realtime only after Analytics opt-in in cookie prefs
-
+- Gandi: prefer committed `.env.production` for `NEXT_PUBLIC_GA_MEASUREMENT_ID` (build VM may not see `/srv/data/home/meridian.env`). Still keep the ID in `meridian.env` for runtime/admin chips. Upload env (`npm run deploy:gandi:env`) before redeploy when changing other secrets.
+- “Accept all” does **not** enable analytics — GA4 Realtime only after **Analytics** opt-in under Cookie preferences / Settings. First-party `/api/analytics/collect` pageviews use the same gate.
 ## Privacy / consent
 
 - AdSense runtime script loads only after advertising consent
